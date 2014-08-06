@@ -3,6 +3,7 @@
 	<name>gnuob-shop</name>
 	<comment></comment>
 	<projects>
+		<project>gnuob-app</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

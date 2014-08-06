@@ -1,0 +1,28 @@
+<wicket:panel xmlns:wicket="http://wicket.apache.org">
+	<script type="text/javascript">
+		$(document).ready(function() {
+					
+		    if ( $.cookie("scroll") !== null ) {
+		        $(document).scrollTop( $.cookie("scroll") );
+		    }
+		
+		    $(window).on("scroll", function() {
+		        $.cookie("scroll", $(document).scrollTop() );	
+		    });		
+		});
+	</script>
+	<div class="row">
+		<div class="col-md-6"></div>
+		<div class="col-md-1"></div>
+		<div class="col-md-1">My Account</div>
+		<div class="col-md-1">My Wishlist</div>
+		<div class="col-md-1">My Cart</div>
+		<div class="col-md-1">Checkout</div>
+		<div class="col-md-1">Login</div>
+	</div>
+	<div class="row"></div>
+	<div class="col-md-2"></div>
+	<div class="col-md-8">Logo</div>
+	<div class="col-md-1">Cart</div>
+	<div class="col-md-1">Search</div>
+</wicket:panel>

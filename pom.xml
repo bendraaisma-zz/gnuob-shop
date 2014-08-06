@@ -114,6 +114,11 @@
 			<version>${version.springframework.plugin}</version>
 		</dependency>
 		<dependency>
+			<groupId>com.netbrasoft.gnuob</groupId>
+			<artifactId>gnuob-api</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
 			<groupId>com.netbrasoft.application</groupId>
 			<artifactId>gnuob-category-service</artifactId>
 			<version>1.0</version>
