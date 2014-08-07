@@ -1,9 +1,9 @@
-package com.netbrasoft.gnuob.product.application.page;
+package com.netbrasoft.gnuob.shop.product.page;
 
 import org.apache.wicket.markup.head.IHeaderResponse;
 
-import com.netbrasoft.gnuob.application.border.ContentBorder;
-import com.netbrasoft.gnuob.application.page.BasePage;
+import com.netbrasoft.gnuob.shop.border.ContentBorder;
+import com.netbrasoft.gnuob.shop.page.BasePage;
 
 public class ProductListPage extends BasePage {
 

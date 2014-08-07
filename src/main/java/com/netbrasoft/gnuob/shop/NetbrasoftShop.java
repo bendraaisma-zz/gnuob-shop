@@ -1,4 +1,4 @@
-package com.netbrasoft.gnuob.application;
+package com.netbrasoft.gnuob.shop;
 
 import net.ftlines.wicketsource.WicketSource;
 
@@ -7,15 +7,15 @@ import org.apache.wicket.protocol.http.WebApplication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.netbrasoft.gnuob.generic.category.CategoryWebServiceRepository;
-import com.netbrasoft.gnuob.generic.content.ContentWebServiceRepository;
-import com.netbrasoft.gnuob.generic.contract.ContractWebServiceRepository;
-import com.netbrasoft.gnuob.generic.customer.CustomerWebServiceRepository;
-import com.netbrasoft.gnuob.generic.offer.OfferWebServiceRepository;
-import com.netbrasoft.gnuob.generic.order.OrderWebServiceRepository;
-import com.netbrasoft.gnuob.generic.order.PayPalExpressCheckOutWebServiceRepository;
-import com.netbrasoft.gnuob.generic.product.ProductWebServiceRepository;
-import com.netbrasoft.gnuob.product.application.page.ProductListPage;
+import com.netbrasoft.gnuob.api.category.CategoryWebServiceRepository;
+import com.netbrasoft.gnuob.api.content.ContentWebServiceRepository;
+import com.netbrasoft.gnuob.api.contract.ContractWebServiceRepository;
+import com.netbrasoft.gnuob.api.customer.CustomerWebServiceRepository;
+import com.netbrasoft.gnuob.api.offer.OfferWebServiceRepository;
+import com.netbrasoft.gnuob.api.order.OrderWebServiceRepository;
+import com.netbrasoft.gnuob.api.order.PayPalExpressCheckOutWebServiceRepository;
+import com.netbrasoft.gnuob.api.product.ProductWebServiceRepository;
+import com.netbrasoft.gnuob.shop.product.page.ProductListPage;
 
 @Service("wicketApplication")
 public class NetbrasoftShop extends WebApplication {

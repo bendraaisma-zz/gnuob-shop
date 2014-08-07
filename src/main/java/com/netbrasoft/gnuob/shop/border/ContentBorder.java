@@ -1,11 +1,11 @@
-package com.netbrasoft.gnuob.application.border;
+package com.netbrasoft.gnuob.shop.border;
 
 import org.apache.wicket.markup.html.border.Border;
 
-import com.netbrasoft.gnuob.application.panel.FooterPanel;
-import com.netbrasoft.gnuob.application.panel.HeaderPanel;
-import com.netbrasoft.gnuob.application.panel.MainMenuPanel;
-import com.netbrasoft.gnuob.application.panel.SlideShowPanel;
+import com.netbrasoft.gnuob.shop.panel.FooterPanel;
+import com.netbrasoft.gnuob.shop.panel.HeaderPanel;
+import com.netbrasoft.gnuob.shop.panel.MainMenuPanel;
+import com.netbrasoft.gnuob.shop.panel.SlideShowPanel;
 
 public class ContentBorder extends Border {
 

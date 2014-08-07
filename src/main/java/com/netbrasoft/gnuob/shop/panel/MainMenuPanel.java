@@ -1,4 +1,4 @@
-package com.netbrasoft.gnuob.application.panel;
+package com.netbrasoft.gnuob.shop.panel;
 
 import org.apache.wicket.markup.html.panel.Panel;
 

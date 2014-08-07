@@ -1,4 +1,4 @@
-package com.netbrasoft.gnuob.application.page;
+package com.netbrasoft.gnuob.shop.page;
 
 import org.apache.wicket.markup.head.CssUrlReferenceHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -18,6 +18,6 @@ public abstract class BasePage extends WebPage {
 		response.render(new CssUrlReferenceHeaderItem("//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css", "", ""));
 		response.render(new CssUrlReferenceHeaderItem("//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css", "", ""));
 		response.render(new JavaScriptUrlReferenceHeaderItem("//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js", "bootstrap", false, "UTF-8", ""));
-		response.render(new JavaScriptUrlReferenceHeaderItem("https://raw.githubusercontent.com/martinkr/jCookie/1.2.1/jcookie.js", "jquery.cookie", false, "UTF-8", ""));
+		response.render(new JavaScriptUrlReferenceHeaderItem("./script/jcookie.js", "jquery.cookie", false, "UTF-8", ""));
 	}
 }
