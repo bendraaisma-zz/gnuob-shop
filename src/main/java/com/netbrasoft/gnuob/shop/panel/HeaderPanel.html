@@ -2,12 +2,12 @@
 	<script type="text/javascript">
 		$(document).ready(function() {
 					
-		    if ( $.cookie("scroll") !== null ) {
-		        $(document).scrollTop( $.cookie("scroll") );
+			if ( jQuery.jCookie("scroll") !== null ) {
+		        $(document).scrollTop( jQuery.jCookie("scroll") );
 		    }
 		
 		    $(window).on("scroll", function() {
-		        $.cookie("scroll", $(document).scrollTop() );	
+		    	jQuery.jCookie("scroll", $(document).scrollTop() );	
 		    });		
 		});
 	</script>

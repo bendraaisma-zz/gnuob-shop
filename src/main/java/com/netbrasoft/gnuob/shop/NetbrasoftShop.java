@@ -15,6 +15,7 @@ import com.netbrasoft.gnuob.api.offer.OfferWebServiceRepository;
 import com.netbrasoft.gnuob.api.order.OrderWebServiceRepository;
 import com.netbrasoft.gnuob.api.order.PayPalExpressCheckOutWebServiceRepository;
 import com.netbrasoft.gnuob.api.product.ProductWebServiceRepository;
+import com.netbrasoft.gnuob.api.setting.SettingWebServiceRepository;
 import com.netbrasoft.gnuob.shop.product.page.ProductListPage;
 
 @Service("wicketApplication")
@@ -43,6 +44,9 @@ public class NetbrasoftShop extends WebApplication {
 
 	@Autowired(required = true)
 	private CustomerWebServiceRepository customerWebServiceRepository;
+
+	@Autowired(required = true)
+	private SettingWebServiceRepository settingWebServiceRepository;
 
 	public CategoryWebServiceRepository getCategoryWebServiceRepository() {
 		return categoryWebServiceRepository;
@@ -79,6 +83,10 @@ public class NetbrasoftShop extends WebApplication {
 
 	public ProductWebServiceRepository getProductWebServiceRepository() {
 		return productWebServiceRepository;
+	}
+
+	public SettingWebServiceRepository getSettingWebServiceRepository() {
+		return settingWebServiceRepository;
 	}
 
 	@Override
