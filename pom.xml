@@ -32,10 +32,9 @@
 	<properties>
 		<version.war.plugin>2.1.1</version.war.plugin>
 		<version.jboss.maven.plugin>7.4.Final</version.jboss.maven.plugin>
-		<version.wicket.plugin>6.16.0</version.wicket.plugin>
+		<version.wicket.plugin>6.17.0</version.wicket.plugin>
 		<version.wicket-source.plugin>6.0.0.8</version.wicket-source.plugin>
-		<version.wicket-bootstrap.plugin>0.9.5</version.wicket-bootstrap.plugin>
-		<version.springframework.plugin>4.0.1.RELEASE</version.springframework.plugin>
+		<version.springframework.plugin>4.1.0.RELEASE</version.springframework.plugin>
 		<version.surefire.plugin>2.10</version.surefire.plugin>
 
 		<maven.compiler.target>1.8</maven.compiler.target>
