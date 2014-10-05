@@ -11,7 +11,7 @@
 	<web>
 		<link target="/">
 			<dir name="${rebel.workspace.path}/gnuob-shop/target/m2e-wtp/web-resources">
-				<exclude name="/"/>
+				<exclude name="/" />
 			</dir>
 		</link>
 		<link target="/">
