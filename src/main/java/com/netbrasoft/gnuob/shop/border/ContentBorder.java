@@ -9,25 +9,24 @@ import com.netbrasoft.gnuob.shop.panel.SlideShowPanel;
 
 public class ContentBorder extends Border {
 
-    private static final long serialVersionUID = 6569587142042286311L;
+   private static final long serialVersionUID = 6569587142042286311L;
 
-    public ContentBorder(String id) {
-        super(id);
-    }
+   private HeaderPanel headerPanel = new HeaderPanel("headerPanel");
+   private MainMenuPanel mainMenuPanel = new MainMenuPanel("mainMenuPanel");
+   private SlideShowPanel slideShowPanel = new SlideShowPanel("slideShowPanel");
+   private FooterPanel footerPanel = new FooterPanel("footerPanel");
 
-    @Override
-    protected void onInitialize() {
-        super.onInitialize();
+   public ContentBorder(String id) {
+      super(id);
+   }
 
-        HeaderPanel headerPanel = new HeaderPanel("headerPanel");
-        MainMenuPanel mainMenuPanel = new MainMenuPanel("mainMenuPanel");
-        SlideShowPanel slideShowPanel = new SlideShowPanel("slideShowPanel");
-        FooterPanel footerPanel = new FooterPanel("footerPanel");
+   @Override
+   protected void onInitialize() {
+      super.onInitialize();
 
-        addToBorder(headerPanel);
-        addToBorder(mainMenuPanel);
-        addToBorder(slideShowPanel);
-        addToBorder(footerPanel);
-    }
-
+      addToBorder(headerPanel);
+      addToBorder(mainMenuPanel);
+      addToBorder(slideShowPanel);
+      addToBorder(footerPanel);
+   }
 }

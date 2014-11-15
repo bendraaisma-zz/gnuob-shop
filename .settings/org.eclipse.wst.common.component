@@ -6,6 +6,9 @@
         <dependent-module archiveName="gnuob-api-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/gnuob-api/gnuob-api">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="gnuob-wicket-bootstrap-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/gnuob-wicket-bootstrap/gnuob-wicket-bootstrap">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
 		<property name="context-root" value="gnuob-shop"/>
 		<property name="java-output-path" value="/gnuob-shop/target/classes"/>
 	</wb-module>

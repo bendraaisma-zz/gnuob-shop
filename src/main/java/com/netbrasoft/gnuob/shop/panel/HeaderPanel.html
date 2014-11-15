@@ -1,28 +1,32 @@
 <wicket:panel xmlns:wicket="http://wicket.apache.org">
-	<script type="text/javascript">
-		$(document).ready(function() {
-					
-			if ( jQuery.jCookie("scroll") !== null ) {
-		        $(document).scrollTop( jQuery.jCookie("scroll") );
-		    }
-		
-		    $(window).on("scroll", function() {
-		    	jQuery.jCookie("scroll", $(document).scrollTop() );	
-		    });		
-		});
-	</script>
 	<div class="row">
-		<div class="col-md-6"></div>
-		<div class="col-md-1"></div>
-		<div class="col-md-1">My Account</div>
-		<div class="col-md-1">My Wishlist</div>
-		<div class="col-md-1">My Cart</div>
-		<div class="col-md-1">Checkout</div>
-		<div class="col-md-1">Login</div>
+		<div class="col-md-offset-8">
+			<wicket:link>
+				<small><a href="myAccount.html"><wicket:message key="myAccountMessage">My Account</wicket:message></a></small>
+			</wicket:link>
+			<small>&nbsp;|&nbsp;</small>
+			<wicket:link>
+				<small><a href="myWishlist.html"><wicket:message key="myWishlistMessage">My Wishlist</wicket:message></a></small>
+			</wicket:link>
+			<small>&nbsp;|&nbsp;</small>
+			<wicket:link>
+				<small><a href="myCart.html"><wicket:message key="myCartMessage">My Cart</wicket:message></a></small>
+			</wicket:link>
+			<small>&nbsp;|&nbsp;</small>
+			<wicket:link>
+				<small><a href="checkout.html"><wicket:message key="checkoutMessage">Checkout</wicket:message></a></small>
+			</wicket:link>
+			<small>&nbsp;|&nbsp;</small>
+			<wicket:link>
+				<small><a href="login.html"><wicket:message key="loginMessage">Login</wicket:message></a></small>
+			</wicket:link>
+		</div>
 	</div>
-	<div class="row"></div>
-	<div class="col-md-2"></div>
-	<div class="col-md-8">Logo</div>
-	<div class="col-md-1">Cart</div>
-	<div class="col-md-1">Search</div>
+	<div class="row">
+		<div class="col-md-offset-1">
+			<h1 style="font-family: ballw; color: #f40d8e; font-size: 50px;">
+				<span wicket:id="gnuob.shop.site.title"></span><small><span wicket:id="gnuob.shop.site.subtitle"></span></small>
+			</h1>
+		</div>
+	</div>
 </wicket:panel>
