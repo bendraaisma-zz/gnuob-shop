@@ -1,19 +1,19 @@
 package com.netbrasoft.gnuob.shop.product.page;
 
+import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.basic.Label;
+
 import com.netbrasoft.gnuob.shop.border.ContentBorder;
-import com.netbrasoft.gnuob.shop.page.BasePage;
 
-public class ProductListPage extends BasePage {
+public class ProductListPage extends WebPage {
 
-    private static final long serialVersionUID = 7583829533111693200L;
+   private static final long serialVersionUID = 7583829533111693200L;
 
-    @Override
-    protected void onInitialize() {
-        super.onInitialize();
-
-        ContentBorder contentBorder = new ContentBorder("contentBorder");
-
-        add(contentBorder);
-    }
-
+   @Override
+   protected void onInitialize() {
+      ContentBorder contentBorder = new ContentBorder("contentBorder");
+      add(new Label("title", "Amaristore.com"));
+      add(contentBorder);
+      super.onInitialize();
+   }
 }
