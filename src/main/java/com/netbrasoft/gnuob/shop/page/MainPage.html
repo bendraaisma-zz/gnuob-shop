@@ -1,0 +1,90 @@
+<!doctype html>
+<html xmlns:wicket="http://wicket.apache.org">
+<head>
+<title wicket:id="gnuob.shop.site.title">[Page title]</title>
+<link rel="shortcut icon" type="image/png" href="./images/favicon.png" />
+<style type="text/css">
+body {
+	padding-top: 5px;
+}
+
+#elevator_item {
+	width: 60px;
+	height: 100px;
+	position: fixed;
+	right: 15px;
+	bottom: 10px;
+	-webkit-transition: opacity .4s ease-in-out;
+	-moz-transition: opacity .4s ease-in-out;
+	-o-transition: opacity .4s ease-in-out;
+	opacity: 1;
+	z-index: 100020;
+	display: none;
+}
+
+#elevator_item.off {
+	opacity: 0;
+	visibility: hidden
+}
+
+#elevator {
+	display: block;
+	width: 60px;
+	height: 50px;
+	background: url(images/icon_top.png) center center no-repeat;
+	background-color: #444;
+	background-color: rgba(0, 0, 0, .6);
+	border-radius: 2px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, .2);
+	cursor: pointer;
+	margin-bottom: 10px
+}
+
+#elevator:hover {
+	background-color: rgba(0, 0, 0, .7)
+}
+
+#elevator:active {
+	background-color: rgba(0, 0, 0, .75)
+}
+</style>
+</head>
+<body>
+	<script type="text/javascript">
+	$(document).ready(function() {
+				
+	    if ($.cookie("scroll") !== null ) {
+	        $(document).scrollTop($.cookie("scroll") );
+	    }
+	
+	    $(window).on("scroll", function() {
+	    	$.cookie("scroll", $(document).scrollTop() );	
+	    });		
+	});
+
+	$(function() {
+		$(window).scroll(function() {
+			var scrolltop=$(this).scrollTop();
+
+			if(scrolltop>=200){
+				$("#elevator_item").show();
+			} else {
+				$("#elevator_item").hide();
+			}
+		});
+		
+		$("#elevator").click(function(){
+			$("html,body").animate({scrollTop: 0}, 500);
+		});
+	});
+	</script>
+	<div class="container">
+		<wicket:container wicket:id="contentBorder">
+			<wicket:container wicket:id="mainMenuPanel"></wicket:container>
+		</wicket:container>
+		<div id="elevator_item">
+			<a id="elevator" onclick="return false;" title="Voltar para cima"></a>
+		</div>
+	</div>
+</body>
+</html>

@@ -6,8 +6,8 @@ import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.springframework.stereotype.Service;
 
-import com.netbrasoft.gnuob.shop.product.page.ProductListPage;
- 
+import com.netbrasoft.gnuob.shop.page.MainPage;
+
 import de.agilecoders.wicket.core.Bootstrap;
 import net.ftlines.wicketsource.WicketSource;
 
@@ -17,8 +17,8 @@ public class NetbrasoftShop extends WebApplication {
    private static final String INSPECTOR_PAGE_HTML = "InspectorPage.html";
 
    @Override
-   public Class<ProductListPage> getHomePage() {
-      return ProductListPage.class;
+   public Class<MainPage> getHomePage() {
+      return MainPage.class;
    }
 
    @Override

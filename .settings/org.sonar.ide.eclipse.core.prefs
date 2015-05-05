@@ -1,6 +1,6 @@
 eclipse.preferences.version=1
-extraProperties=sonar.host.url\=http\://localhost\:9000\r\nsonar.jdbc.password\=sonar\r\nsonar.jdbc.url\=jdbc\:mysql\://localhost\:3306/sonar?useUnicode\=true&characterEncoding\=utf8\r\nsonar.jdbc.username\=sonar
-lastAnalysisDate=1430594688798
+extraProperties=sonar.host.url\=http\://localhost\:9000\r\nsonar.jdbc.password\=sonar\r\nsonar.jdbc.url\=jdbc\:mysql\://localhost\:3306/sonar?useUnicode\r\nsonar.jdbc.username\=sonar
+lastAnalysisDate=1430862946827
 projectKey=com.netbrasoft.gnuob\:gnuob-shop
 serverUrl=http\://localhost\:9000
 version=2

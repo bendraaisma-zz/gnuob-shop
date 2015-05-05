@@ -27,12 +27,12 @@
 		<version.springframework.plugin>4.1.0.RELEASE</version.springframework.plugin>
 		<version.surefire.plugin>2.10</version.surefire.plugin>
 		<version.netbrasoft.gnuob>0.0.2-SNAPSHOT</version.netbrasoft.gnuob>
-		<javasimon.version>4.0.1</javasimon.version>
-		<wicket-dnd.version>0.6.0</wicket-dnd.version>
-		<wicket-bootstrap.version>0.10.1-SNAPSHOT</wicket-bootstrap.version>
-		<bootstrap-validator.version>0.8.1</bootstrap-validator.version>
-		<jquery.cookie.version>1.4.1</jquery.cookie.version>
-		<bootstrap-3-datepicker.version>1.4.0</bootstrap-3-datepicker.version>
+		<version.javasimon>4.0.1</version.javasimon>
+		<version.wicket-dnd>0.6.0</version.wicket-dnd>
+		<version.wicket-bootstrap>0.10.1-SNAPSHOT</version.wicket-bootstrap>
+		<version.bootstrap-validator>0.8.1</version.bootstrap-validator>
+		<version.jquery.cookie>1.4.1</version.jquery.cookie>
+		<version.bootstrap-3-datepicker>1.4.0</version.bootstrap-3-datepicker>
 
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.source>1.8</maven.compiler.source>
@@ -105,37 +105,37 @@
 		<dependency>
 			<groupId>com.github.svenmeier.wicket-dnd</groupId>
 			<artifactId>wicket-dnd</artifactId>
-			<version>${wicket-dnd.version}</version>
+			<version>${version.wicket-dnd}</version>
 		</dependency>
 		<dependency>
 			<groupId>de.agilecoders.wicket</groupId>
 			<artifactId>wicket-bootstrap-core</artifactId>
-			<version>${wicket-bootstrap.version}</version>
+			<version>${version.wicket-bootstrap}</version>
 		</dependency>
 		<dependency>
 			<groupId>de.agilecoders.wicket</groupId>
 			<artifactId>wicket-bootstrap-extensions</artifactId>
-			<version>${wicket-bootstrap.version}</version>
+			<version>${version.wicket-bootstrap}</version>
 		</dependency>
 		<dependency>
 			<groupId>de.agilecoders.wicket</groupId>
 			<artifactId>wicket-bootstrap-themes</artifactId>
-			<version>${wicket-bootstrap.version}</version>
+			<version>${version.wicket-bootstrap}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.webjars.bower</groupId>
 			<artifactId>bootstrap-validator</artifactId>
-			<version>${bootstrap-validator.version}</version>
+			<version>${version.bootstrap-validator}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.webjars.bower</groupId>
 			<artifactId>jquery.cookie</artifactId>
-			<version>${jquery.cookie.version}</version>
+			<version>${version.jquery.cookie}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.webjars.bower</groupId>
 			<artifactId>bootstrap-3-datepicker</artifactId>
-			<version>${bootstrap-3-datepicker.version}</version>
+			<version>${version.bootstrap-3-datepicker}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -171,27 +171,27 @@
 		<dependency>
 			<groupId>org.javasimon</groupId>
 			<artifactId>javasimon-core</artifactId>
-			<version>${javasimon.version}</version>
+			<version>${version.javasimon}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.javasimon</groupId>
 			<artifactId>javasimon-jdbc41</artifactId>
-			<version>${javasimon.version}</version>
+			<version>${version.javasimon}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.javasimon</groupId>
 			<artifactId>javasimon-javaee</artifactId>
-			<version>${javasimon.version}</version>
+			<version>${version.javasimon}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.javasimon</groupId>
 			<artifactId>javasimon-spring</artifactId>
-			<version>${javasimon.version}</version>
+			<version>${version.javasimon}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.javasimon</groupId>
 			<artifactId>javasimon-console-embed</artifactId>
-			<version>${javasimon.version}</version>
+			<version>${version.javasimon}</version>
 		</dependency>
 	</dependencies>
 
