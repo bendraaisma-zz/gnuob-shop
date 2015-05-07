@@ -12,8 +12,9 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import com.netbrasoft.gnuob.api.Category;
 import com.netbrasoft.gnuob.api.OrderBy;
 import com.netbrasoft.gnuob.api.generic.GenericTypeDataProvider;
+import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
+import com.netbrasoft.gnuob.shop.page.tab.CategoryTab;
 import com.netbrasoft.gnuob.shop.page.tab.HomeTab;
-import com.netbrasoft.gnuob.shop.page.tab.ProductTab;
 
 import de.agilecoders.wicket.core.markup.html.bootstrap.tabs.BootstrapTabbedPanel;
 
@@ -51,9 +52,9 @@ public class MainMenuPanel extends Panel {
 
    @Override
    protected void onInitialize() {
-      categoryDataProvider.setUser(System.getProperty("site.user", "administrator"));
-      categoryDataProvider.setPassword(System.getProperty("site.password", "administrator"));
-      categoryDataProvider.setSite(System.getProperty("site.name", "www.netbrasoft.com"));
+      categoryDataProvider.setUser(AppServletContainerAuthenticatedWebSession.getUserName());
+      categoryDataProvider.setPassword(AppServletContainerAuthenticatedWebSession.getPassword());
+      categoryDataProvider.setSite(AppServletContainerAuthenticatedWebSession.getSite());
       categoryDataProvider.setType((Category) getDefaultModelObject());
       categoryDataProvider.setOrderBy(OrderBy.POSITION_A_Z);
 
@@ -63,7 +64,7 @@ public class MainMenuPanel extends Panel {
 
       while (iterator.hasNext()) {
          Category category = iterator.next();
-         mainMenuTabbedPanel.getTabs().add(new ProductTab(new Model<String>(category.getName().toUpperCase())));
+         mainMenuTabbedPanel.getTabs().add(new CategoryTab(new Model<String>(category.getName().toUpperCase())));
       }
 
       mainMenuTabbedPanel.getTabs().add(contactTab);

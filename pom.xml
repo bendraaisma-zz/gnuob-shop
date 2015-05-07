@@ -22,7 +22,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<version.war.plugin>2.1.1</version.war.plugin>
 		<version.jboss.maven.plugin>7.4.Final</version.jboss.maven.plugin>
-		<version.wicket.plugin>7.0.0-M5</version.wicket.plugin>
+		<version.wicket.plugin>7.0.0-SNAPSHOT</version.wicket.plugin>
+		<version.wicketstuff.plugin>7.0-SNAPSHOT</version.wicketstuff.plugin>
 		<version.wicket-source.plugin>7.0.0</version.wicket-source.plugin>
 		<version.springframework.plugin>4.1.0.RELEASE</version.springframework.plugin>
 		<version.surefire.plugin>2.10</version.surefire.plugin>
@@ -43,7 +44,7 @@
 			<dependency>
 				<groupId>org.wildfly.bom</groupId>
 				<artifactId>jboss-javaee-7.0-with-all</artifactId>
-				<version>8.1.0.Final</version>
+				<version>8.2.0.Final</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -51,6 +52,9 @@
 	</dependencyManagement>
 
 	<dependencies>
+
+		<!-- JBOSS ETC. -->
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -73,10 +77,18 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.jboss.spec.javax.servlet</groupId>
+			<artifactId>jboss-servlet-api_3.1_spec</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>net.ftlines.wicket-source</groupId>
 			<artifactId>wicket-source</artifactId>
 			<version>${version.wicket-source.plugin}</version>
 		</dependency>
+		
+		<!-- WICKET -->
+		
 		<dependency>
 			<groupId>org.apache.wicket</groupId>
 			<artifactId>wicket-core</artifactId>
@@ -103,10 +115,18 @@
 			<version>${version.wicket.plugin}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.wicketstuff</groupId>
+			<artifactId>wicketstuff-servlet3-auth</artifactId>
+			<version>${version.wicketstuff.plugin}</version>
+		</dependency>
+		<dependency>
 			<groupId>com.github.svenmeier.wicket-dnd</groupId>
 			<artifactId>wicket-dnd</artifactId>
 			<version>${version.wicket-dnd}</version>
 		</dependency>
+		
+		<!-- WICKET BOOTSTRAP -->
+		
 		<dependency>
 			<groupId>de.agilecoders.wicket</groupId>
 			<artifactId>wicket-bootstrap-core</artifactId>
@@ -122,21 +142,9 @@
 			<artifactId>wicket-bootstrap-themes</artifactId>
 			<version>${version.wicket-bootstrap}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.webjars.bower</groupId>
-			<artifactId>bootstrap-validator</artifactId>
-			<version>${version.bootstrap-validator}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.webjars.bower</groupId>
-			<artifactId>jquery.cookie</artifactId>
-			<version>${version.jquery.cookie}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.webjars.bower</groupId>
-			<artifactId>bootstrap-3-datepicker</artifactId>
-			<version>${version.bootstrap-3-datepicker}</version>
-		</dependency>
+		
+		<!-- SPRING -->
+		
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
@@ -157,6 +165,9 @@
 			<artifactId>spring-web</artifactId>
 			<version>${version.springframework.plugin}</version>
 		</dependency>
+		
+		<!-- GNUOB -->
+		
 		<dependency>
 			<groupId>com.netbrasoft.gnuob</groupId>
 			<artifactId>gnuob-api</artifactId>
@@ -168,6 +179,9 @@
 			<version>${version.netbrasoft.gnuob}</version>
 			<scope>provided</scope>
 		</dependency>
+		
+		<!-- SIMON -->
+		
 		<dependency>
 			<groupId>org.javasimon</groupId>
 			<artifactId>javasimon-core</artifactId>

@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	version="3.0">
 	<display-name>gnuob-shop</display-name>
+
+	<session-config>
+		<session-timeout>30</session-timeout>
+	</session-config>
 
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
@@ -55,6 +62,8 @@
 	<filter-mapping>
 		<filter-name>wicket</filter-name>
 		<url-pattern>/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
 
 	<listener>
@@ -74,4 +83,51 @@
 		<servlet-name>SimonConsoleServlet</servlet-name>
 		<url-pattern>/console-servlet/*</url-pattern>
 	</servlet-mapping>
+
+	<security-constraint>
+		<display-name>GNUOBConstraint</display-name>
+		<web-resource-collection>
+			<web-resource-name>Restricted</web-resource-name>
+			<description />
+			<url-pattern>/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<description>GNUOB Roles</description>
+			<role-name>Administrator</role-name>
+			<role-name>Manager</role-name>
+			<role-name>Employee</role-name>
+			<role-name>Guest</role-name>
+		</auth-constraint>
+	</security-constraint>
+
+	<security-constraint>
+		<display-name>GNUOBConstraint</display-name>
+		<web-resource-collection>
+			<web-resource-name>UnRestricted</web-resource-name>
+			<description />
+			<url-pattern>/wicket/resource/*</url-pattern>
+		</web-resource-collection>
+	</security-constraint>
+
+	<login-config>
+		<auth-method>FORM</auth-method>
+		<realm-name>GNUOBRealm</realm-name>
+		<form-login-config>
+			<form-login-page>/login.html</form-login-page>
+			<form-error-page>/index.html</form-error-page>
+		</form-login-config>
+	</login-config>
+
+	<security-role>
+		<role-name>Administrator</role-name>
+	</security-role>
+	<security-role>
+		<role-name>Manager</role-name>
+	</security-role>
+	<security-role>
+		<role-name>Employee</role-name>
+	</security-role>
+	<security-role>
+		<role-name>Guest</role-name>
+	</security-role>
 </web-app>

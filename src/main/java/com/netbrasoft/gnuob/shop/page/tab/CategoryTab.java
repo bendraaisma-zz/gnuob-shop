@@ -8,11 +8,11 @@ import org.apache.wicket.model.Model;
 import com.netbrasoft.gnuob.api.Category;
 import com.netbrasoft.gnuob.shop.panel.SlideShowPanel;
 
-public class ProductTab extends AbstractTab {
+public class CategoryTab extends AbstractTab {
 
    private static final long serialVersionUID = 4835579949680085443L;
 
-   public ProductTab(final IModel<String> title) {
+   public CategoryTab(final IModel<String> title) {
       super(title);
    }
 

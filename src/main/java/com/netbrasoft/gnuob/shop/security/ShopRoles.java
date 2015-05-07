@@ -11,4 +11,8 @@ public class ShopRoles extends org.apache.wicket.authroles.authorization.strateg
    public static final String EMPLOYEE = "Employee";
 
    public static final String GUEST = "Guest";
+
+   public ShopRoles() {
+      super(new String[] { ADMINISTRATOR, MANAGER, EMPLOYEE, GUEST });
+   }
 }
