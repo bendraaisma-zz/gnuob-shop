@@ -6,6 +6,10 @@ public class SignInPage extends BasePage {
 
    private static final long serialVersionUID = -8219855140262365434L;
 
+   private boolean isSignedIn() {
+      return AuthenticatedWebSession.get().isSignedIn();
+   }
+
    @Override
    protected void onConfigure() {
       if (!isSignedIn()) {
@@ -18,9 +22,5 @@ public class SignInPage extends BasePage {
 
    private boolean signIn(String username, String password) {
       return AuthenticatedWebSession.get().signIn(username, password);
-   }
-
-   private boolean isSignedIn() {
-      return AuthenticatedWebSession.get().isSignedIn();
    }
 }

@@ -1,9 +1,14 @@
 package com.netbrasoft.gnuob.shop.panel;
 
 import org.apache.commons.lang3.text.WordUtils;
+import org.apache.wicket.authorization.Action;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 
+import com.netbrasoft.gnuob.shop.security.ShopRoles;
+
+@AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
 public class HeaderPanel extends Panel {
 
    private static final long serialVersionUID = 3137234732197409313L;

@@ -6,7 +6,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
 import com.netbrasoft.gnuob.api.Category;
-import com.netbrasoft.gnuob.shop.panel.SlideShowPanel;
+import com.netbrasoft.gnuob.shop.panel.ContactPanel;
 
 public class ContactTab extends AbstractTab {
 
@@ -18,6 +18,6 @@ public class ContactTab extends AbstractTab {
 
    @Override
    public WebMarkupContainer getPanel(final String panelId) {
-      return new SlideShowPanel(panelId, new Model<Category>(new Category()));
+      return new ContactPanel(panelId, new Model<Category>(new Category()));
    }
 }

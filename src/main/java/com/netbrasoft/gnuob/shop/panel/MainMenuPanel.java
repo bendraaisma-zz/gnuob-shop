@@ -3,6 +3,8 @@ package com.netbrasoft.gnuob.shop.panel;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.apache.wicket.authorization.Action;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
@@ -14,10 +16,13 @@ import com.netbrasoft.gnuob.api.OrderBy;
 import com.netbrasoft.gnuob.api.generic.GenericTypeDataProvider;
 import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
 import com.netbrasoft.gnuob.shop.page.tab.CategoryTab;
+import com.netbrasoft.gnuob.shop.page.tab.ContactTab;
 import com.netbrasoft.gnuob.shop.page.tab.HomeTab;
+import com.netbrasoft.gnuob.shop.security.ShopRoles;
 
 import de.agilecoders.wicket.core.markup.html.bootstrap.tabs.BootstrapTabbedPanel;
 
+@AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
 public class MainMenuPanel extends Panel {
 
    class MainMenuTabbedPanel extends BootstrapTabbedPanel<ITab> {
@@ -38,7 +43,7 @@ public class MainMenuPanel extends Panel {
 
    private final ITab homeTab = new HomeTab(new Model<String>(getString("homeMessage", new Model<String>(), "INICIO")));
 
-   private final ITab contactTab = new HomeTab(new Model<String>(getString("contactMessage", new Model<String>(), "CONTATO")));
+   private final ITab contactTab = new ContactTab(new Model<String>(getString("contactMessage", new Model<String>(), "CONTATO")));
 
    private final MainMenuTabbedPanel mainMenuTabbedPanel = new MainMenuTabbedPanel();
 
@@ -47,7 +52,6 @@ public class MainMenuPanel extends Panel {
 
    public MainMenuPanel(final String id, final IModel<Category> model) {
       super(id, model);
-      model.getObject().setActive(true);
    }
 
    @Override
@@ -55,16 +59,15 @@ public class MainMenuPanel extends Panel {
       categoryDataProvider.setUser(AppServletContainerAuthenticatedWebSession.getUserName());
       categoryDataProvider.setPassword(AppServletContainerAuthenticatedWebSession.getPassword());
       categoryDataProvider.setSite(AppServletContainerAuthenticatedWebSession.getSite());
-      categoryDataProvider.setType((Category) getDefaultModelObject());
+      categoryDataProvider.setType(new Category());
+      categoryDataProvider.getType().setActive(true);
       categoryDataProvider.setOrderBy(OrderBy.POSITION_A_Z);
 
       mainMenuTabbedPanel.getTabs().add(homeTab);
 
-      Iterator<? extends Category> iterator = categoryDataProvider.iterator(0, 5);
-
-      while (iterator.hasNext()) {
+      for (Iterator<? extends Category> iterator = categoryDataProvider.iterator(0, 5); iterator.hasNext();) {
          Category category = iterator.next();
-         mainMenuTabbedPanel.getTabs().add(new CategoryTab(new Model<String>(category.getName().toUpperCase())));
+         mainMenuTabbedPanel.getTabs().add(new CategoryTab(new Model<String>(category.getName().toUpperCase()), new Model<Category>(category)));
       }
 
       mainMenuTabbedPanel.getTabs().add(contactTab);

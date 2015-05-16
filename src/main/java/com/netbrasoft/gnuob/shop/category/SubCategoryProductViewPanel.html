@@ -1,0 +1,21 @@
+<wicket:panel xmlns:wicket="http://wicket.apache.org">
+	<wicket:container wicket:id="subCategoryProductViewFragement"></wicket:container>
+	<wicket:fragment wicket:id="subCategoryViewFragement">
+		<div class="col-md-2">
+			<ul class="nav nav-list">
+				<li wicket:id="subCategoryMenuBootstrapListView"><h4>
+						<small><strong><span wicket:id="name"></span></strong></small>
+					</h4>
+					<ul class="nav nav-list">
+						<li wicket:id="subCategoryBootstrapListView"><a wicket:id="subCategoryLink" style="text-align: left;"></a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		<div class="col-md-10" wicket:id="subCategoryDataview">
+			<div class="row featurette">
+				<span wicket:id="content"></span>
+			</div>
+		</div>
+	</wicket:fragment>
+</wicket:panel>
