@@ -16,6 +16,7 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
+import com.google.common.net.MediaType;
 import com.netbrasoft.gnuob.api.Category;
 import com.netbrasoft.gnuob.api.Content;
 import com.netbrasoft.gnuob.api.OrderBy;
@@ -49,13 +50,13 @@ public class HomePanel extends Panel {
 
             @Override
             public String getObject() {
-               StringBuilder contentStringBuilder = new StringBuilder();
-
                for (Content content : item.getModelObject().getContents()) {
-                  contentStringBuilder.append(new String(content.getContent()));
-               }
 
-               return contentStringBuilder.toString();
+                  if (MediaType.HTML_UTF_8.is(MediaType.parse(content.getFormat()))) {
+                     return new String(content.getContent());
+                  }
+               }
+               return new String("");
             }
          }).setEscapeModelStrings(false));
          item.add(new AjaxEventBehavior("click") {

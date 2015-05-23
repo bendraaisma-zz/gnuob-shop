@@ -43,8 +43,8 @@
 		<dependencies>
 			<dependency>
 				<groupId>org.wildfly.bom</groupId>
-				<artifactId>jboss-javaee-7.0-with-all</artifactId>
-				<version>8.2.0.Final</version>
+				<artifactId>jboss-javaee-7.0-wildfly-with-tools</artifactId>
+				<version>9.0.0.CR1</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -56,35 +56,9 @@
 		<!-- JBOSS ETC. -->
 
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>1.9.5</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.arquillian.junit</groupId>
-			<artifactId>arquillian-junit-container</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.arquillian.protocol</groupId>
-			<artifactId>arquillian-protocol-servlet</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.jboss.spec.javax.servlet</groupId>
 			<artifactId>jboss-servlet-api_3.1_spec</artifactId>
 			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>net.ftlines.wicket-source</groupId>
-			<artifactId>wicket-source</artifactId>
-			<version>${version.wicket-source.plugin}</version>
 		</dependency>
 		
 		<!-- WICKET -->
@@ -113,6 +87,11 @@
 			<groupId>org.apache.wicket</groupId>
 			<artifactId>wicket-devutils</artifactId>
 			<version>${version.wicket.plugin}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.ftlines.wicket-source</groupId>
+			<artifactId>wicket-source</artifactId>
+			<version>${version.wicket-source.plugin}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.wicketstuff</groupId>
@@ -273,19 +252,6 @@
 					</plugin>
 				</plugins>
 			</build>
-		</profile>
-		<profile>
-			<!-- An optional Arquillian testing profile that executes tests in your JBoss EAP instance -->
-			<!-- This profile will start a new JBoss EAP instance, and execute the test, shutting it down when done -->
-			<!-- Run with: mvn clean test -Parq-jbossas-managed -->
-			<id>arq-jbossas-managed</id>
-			<dependencies>
-				<dependency>
-					<groupId>org.wildfly</groupId>
-					<artifactId>wildfly-arquillian-container-remote</artifactId>
-					<scope>test</scope>
-				</dependency>
-			</dependencies>
 		</profile>
 		<profile>
 			<id>sonar</id>

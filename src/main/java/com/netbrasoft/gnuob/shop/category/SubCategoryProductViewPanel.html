@@ -1,20 +1,116 @@
 <wicket:panel xmlns:wicket="http://wicket.apache.org">
 	<wicket:container wicket:id="subCategoryProductViewFragement"></wicket:container>
 	<wicket:fragment wicket:id="subCategoryViewFragement">
-		<div class="col-md-2">
-			<ul class="nav nav-list">
-				<li wicket:id="subCategoryMenuBootstrapListView"><h4>
-						<small><strong><span wicket:id="name"></span></strong></small>
-					</h4>
-					<ul class="nav nav-list">
-						<li wicket:id="subCategoryBootstrapListView"><a wicket:id="subCategoryLink" style="text-align: left;"></a></li>
-					</ul>
-				</li>
-			</ul>
+		<div class="row">
+			<div class="col-md-2">
+				<ul class="nav nav-list">
+					<li wicket:id="subCategoryMenuBootstrapListView"><h4>
+							<small><strong><span wicket:id="name"></span></strong></small>
+						</h4>
+						<ul class="nav nav-list">
+							<li wicket:id="subCategoryBootstrapListView"><a wicket:id="link" style="text-align: left;"></a></li>
+						</ul></li>
+				</ul>
+			</div>
+			<div class="col-md-10">
+				<div wicket:id="subCategoryDataview" class="featurette">
+					<span wicket:id="content"></span>
+				</div>
+			</div>
 		</div>
-		<div class="col-md-10" wicket:id="subCategoryDataview">
-			<div class="row featurette">
-				<span wicket:id="content"></span>
+	</wicket:fragment>
+	<wicket:fragment wicket:id="productViewFragement">
+		<div class="row">
+			<div class="col-md-2">
+				<ul class="nav nav-list">
+					<li wicket:id="subCategoryMenuBootstrapListView"><h4>
+							<small><strong><span wicket:id="name"></span></strong></small>
+						</h4>
+						<ul class="nav nav-list">
+							<li wicket:id="subCategoryBootstrapListView"><a wicket:id="link" style="text-align: left;"></a></li>
+						</ul></li>
+				</ul>
+			</div>
+			<div class="col-md-10">
+				<div wicket:id="subCategoryDataview" class="featurette">
+					<span wicket:id="content"></span>
+				</div>
+				<div wicket:id="productDataview" class="featurette">
+					<div class="col-md-3">
+						<div wicket:id="productCarousel"></div>
+						<h4>
+							<span wicket:id="name"></span>
+						</h4>
+						<p>
+							<span wicket:id="rating"></span>
+						</p>
+						<h5>
+							<small><wicket:message key="stockQuantityMessage">[Stock Quantity Message]</wicket:message>:&nbsp;<span wicket:id="stock.quantity"></span></small>
+						</h5>
+						<br>
+						<h4>
+							<span wicket:id="amountWithDiscount"></span>&nbsp;<small><s><span wicket:id="amount"></span></s></small>
+						</h4>
+						<div class="col-md-3 col-md-offset-6">
+							<a wicket:id="purchase"></a>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6 col-md-offset-3 text-center">
+					<ul wicket:id="productPagingNavigator"></ul>
+				</div>
+			</div>
+		</div>
+	</wicket:fragment>
+	<wicket:fragment wicket:id="orderRecordViewFragement">
+		<div class="row">
+			<div class="col-md-6">
+				<div wicket:id=orderRecordProductDataView class="featurette">
+					<div class="col-md-6">
+						<div wicket:id="productCarousel"></div>
+					</div>
+					<div class="col-md-6">
+						<h4>
+							<span wicket:id="name"></span>
+						</h4>
+						<p>
+							<span wicket:id="rating"></span>
+						</p>
+						<h5>
+							<small><wicket:message key="stockQuantityMessage">[Stock Quantity Message]</wicket:message>:&nbsp;<span wicket:id="stock.quantity"></span></small>
+						</h5>
+						<br>
+						<h4>
+							<span wicket:id="amountWithDiscount"></span>&nbsp;<small><s><span wicket:id="amount"></span></s></small>
+						</h4>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<table class="table">
+					<thead>
+						<tr>
+							<th colspan="2"><small><wicket:message key="nameMessage">[Name Message]</wicket:message></small></th>
+							<th><small><wicket:message key="quantityMessage">[Quantity Message]</wicket:message></small></th>
+							<th><small><wicket:message key="amountMessage">[Amount Message]</wicket:message></small></th>
+							<th><small><wicket:message key="amountWithDiscount">[Amount With Discount Message]</wicket:message></small></th>
+						</tr>
+					</thead>
+					<tbody wicket:id="orderRecordDataviewContainer">
+						<tr wicket:id="orderRecordDataview">
+							<td>X</td>
+							<td><small><span wicket:id="product.name"></span></small></td>
+							<td><small><span wicket:id="quantity"></span></small></td>
+							<td><small><s><span wicket:id="amountWithDiscount"></span></s></small></td>
+							<td><small><span wicket:id="amount"></span></small></td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan="5" align="right"><a class="btn btn-primary" href="#" role="button">Proxima</a></td>
+						</tr>
+					</tfoot>
+				</table>
 			</div>
 		</div>
 	</wicket:fragment>

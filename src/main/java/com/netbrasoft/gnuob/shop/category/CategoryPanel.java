@@ -22,7 +22,7 @@ public class CategoryPanel extends Panel {
 
    @Override
    protected void onInitialize() {
-      add(subCategoryProductViewPanel.add(subCategoryProductViewPanel.new SubCategoryViewFragement().setOutputMarkupId(true)));
+      add(subCategoryProductViewPanel.add(subCategoryProductViewPanel.new SubCategoryViewFragement()).setOutputMarkupId(true));
       super.onInitialize();
    }
 }
