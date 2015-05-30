@@ -30,13 +30,17 @@ import org.apache.wicket.util.time.Duration;
 import com.google.common.net.MediaType;
 import com.netbrasoft.gnuob.api.Category;
 import com.netbrasoft.gnuob.api.Content;
-import com.netbrasoft.gnuob.api.OrderBy;
-import com.netbrasoft.gnuob.api.OrderRecord;
+import com.netbrasoft.gnuob.api.Contract;
+import com.netbrasoft.gnuob.api.Offer;
+import com.netbrasoft.gnuob.api.OfferRecord;
+import com.netbrasoft.gnuob.api.Order;
 import com.netbrasoft.gnuob.api.Product;
 import com.netbrasoft.gnuob.api.SubCategory;
 import com.netbrasoft.gnuob.api.generic.GenericTypeDataProvider;
 import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
+import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
+import com.netbrasoft.gnuob.shop.shopper.Shopper;
 
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapAjaxLink;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.Buttons;
@@ -55,67 +59,69 @@ import de.agilecoders.wicket.core.markup.html.bootstrap.navigation.BootstrapPagi
 @AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
 public class SubCategoryProductViewPanel extends Panel {
 
-   class OrderRecordDataProvider implements IDataProvider<OrderRecord> {
+   class OfferRecordDataProvider implements IDataProvider<OfferRecord> {
 
       private static final long serialVersionUID = 3755475588885853693L;
-
-      private List<OrderRecord> orderRecords = new ArrayList<OrderRecord>();
 
       @Override
       public void detach() {
          return;
       }
 
-      public List<OrderRecord> getOrderRecords() {
-         return orderRecords;
-      }
-
       @Override
-      public Iterator<? extends OrderRecord> iterator(long first, long count) {
-         List<OrderRecord> orderRecordIteratorList = new ArrayList<OrderRecord>();
+      public Iterator<? extends OfferRecord> iterator(long first, long count) {
+         List<OfferRecord> offerRecordIteratorList = new ArrayList<OfferRecord>();
 
          for (int index = (int) first; index < first + count; index++) {
-            orderRecordIteratorList.add(orderRecords.get(index));
+            offerRecordIteratorList.add(shopperDataProvider.find(new Shopper()).getCart().getRecords().get(index));
          }
 
-         return orderRecordIteratorList.iterator();
+         return offerRecordIteratorList.iterator();
       }
 
       @Override
-      public IModel<OrderRecord> model(OrderRecord object) {
+      public IModel<OfferRecord> model(OfferRecord object) {
          return Model.of(object);
-      }
-
-      public void setOrderRecords(List<OrderRecord> orderRecords) {
-         this.orderRecords = orderRecords;
       }
 
       @Override
       public long size() {
-         return orderRecords.size();
+         return shopperDataProvider.find(new Shopper()).getCart().getRecords().size();
       }
    }
 
-   class OrderRecordDataView extends DataView<OrderRecord> {
+   class OfferRecordDataView extends DataView<OfferRecord> {
 
       private static final long serialVersionUID = -8885578770770605991L;
 
-      protected OrderRecordDataView() {
-         super("orderRecordDataview", orderRecordDataProvider);
+      protected OfferRecordDataView() {
+         super("offerRecordDataview", offerRecordDataProvider);
       }
 
       @Override
-      protected void populateItem(Item<OrderRecord> item) {
-         IModel<OrderRecord> compound = new CompoundPropertyModel<OrderRecord>(item.getModelObject());
+      protected void populateItem(Item<OfferRecord> item) {
+         IModel<OfferRecord> compound = new CompoundPropertyModel<OfferRecord>(item.getModelObject());
          item.setModel(compound);
          item.add(new Label("product.name"));
-         item.add(new Label("quantity"));
+         item.add(new Label("product.stock.quantity"));
          item.add(new Label("amountWithDiscount", Model.of(NumberFormat.getCurrencyInstance().format(item.getModelObject().getProduct().getAmount().subtract(item.getModelObject().getProduct().getDiscount())))));
          item.add(new Label("amount", Model.of(NumberFormat.getCurrencyInstance().format(item.getModelObject().getProduct().getAmount()))));
+         item.add(new AjaxEventBehavior("click") {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void onEvent(AjaxRequestTarget target) {
+               offerRecordProductDataProvider.products.clear();
+               offerRecordProductDataProvider.getProducts().add(item.getModelObject().getProduct());
+               target.add(offerRecordProductDataViewContainer);
+               target.add(offerRecordDataviewContainer);
+            }
+         });
       }
    }
 
-   class OrderRecordProductDataProvider implements IDataProvider<Product> {
+   class OfferRecordProductDataProvider implements IDataProvider<Product> {
 
       private static final long serialVersionUID = 9170940545796805775L;
 
@@ -156,14 +162,14 @@ public class SubCategoryProductViewPanel extends Panel {
       }
    }
 
-   class OrderRecordProductDataView extends DataView<Product> {
+   class OfferRecordProductDataView extends DataView<Product> {
 
       private static final long serialVersionUID = -3333902779955513421L;
 
       private static final int ITEMS_PER_PAGE = 5;
 
-      protected OrderRecordProductDataView() {
-         super("orderRecordProductDataView", orderRecordProductDataProvider, ITEMS_PER_PAGE);
+      protected OfferRecordProductDataView() {
+         super("offerRecordProductDataView", offerRecordProductDataProvider, ITEMS_PER_PAGE);
       }
 
       @Override
@@ -194,18 +200,18 @@ public class SubCategoryProductViewPanel extends Panel {
       }
    }
 
-   class OrderRecordViewFragement extends Fragment {
+   class OfferRecordViewFragement extends Fragment {
 
       private static final long serialVersionUID = -5518685687286043845L;
 
-      public OrderRecordViewFragement() {
-         super("subCategoryProductViewFragement", "orderRecordViewFragement", SubCategoryProductViewPanel.this, SubCategoryProductViewPanel.this.getDefaultModel());
+      public OfferRecordViewFragement() {
+         super("subCategoryProductViewFragement", "offerRecordViewFragement", SubCategoryProductViewPanel.this, SubCategoryProductViewPanel.this.getDefaultModel());
       }
 
       @Override
       protected void onInitialize() {
-         add(orderRecordProductDataView.setOutputMarkupId(true));
-         add(orderRecordDataviewContainer.setOutputMarkupId(true));
+         add(offerRecordProductDataViewContainer.setOutputMarkupId(true));
+         add(offerRecordDataviewContainer.setOutputMarkupId(true));
          super.onInitialize();
       }
    }
@@ -275,15 +281,15 @@ public class SubCategoryProductViewPanel extends Panel {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-               OrderRecord orderRecord = new OrderRecord();
-               orderRecord.setProduct(item.getModelObject());
+               OfferRecord offerRecord = new OfferRecord();
+               offerRecord.setProduct(item.getModelObject());
 
-               orderRecordProductDataProvider.getProducts().clear();
-               orderRecordProductDataProvider.getProducts().add(orderRecord.getProduct());
-               orderRecordDataProvider.getOrderRecords().add(orderRecord);
+               offerRecordProductDataProvider.getProducts().clear();
+               offerRecordProductDataProvider.getProducts().add(offerRecord.getProduct());
+               shopperDataProvider.find(new Shopper()).getCart().getRecords().add(offerRecord);
 
                SubCategoryProductViewPanel.this.removeAll();
-               SubCategoryProductViewPanel.this.add(new OrderRecordViewFragement().setOutputMarkupId(true));
+               SubCategoryProductViewPanel.this.add(new OfferRecordViewFragement().setOutputMarkupId(true));
 
                target.add(SubCategoryProductViewPanel.this);
             }
@@ -302,7 +308,7 @@ public class SubCategoryProductViewPanel extends Panel {
       @Override
       protected void onInitialize() {
          add(subCategoryMenuBootstrapListView.setOutputMarkupId(true));
-         add(subCategoryDataview.setOutputMarkupId(true));
+         add(subCategoryDataviewContainer.setOutputMarkupId(true));
          add(productDataView.setOutputMarkupId(true));
          add(productPagingNavigator);
          super.onInitialize();
@@ -461,37 +467,59 @@ public class SubCategoryProductViewPanel extends Panel {
       @Override
       protected void onInitialize() {
          add(subCategoryMenuBootstrapListView.setOutputMarkupId(true));
-         add(subCategoryDataview.setOutputMarkupId(true));
+         add(subCategoryDataviewContainer.setOutputMarkupId(true));
          super.onInitialize();
       }
    }
 
    private static final long serialVersionUID = -9083340164646887954L;
 
-   private WebMarkupContainer orderRecordDataviewContainer = new WebMarkupContainer("orderRecordDataviewContainer") {
+   private WebMarkupContainer offerRecordDataviewContainer = new WebMarkupContainer("offerRecordDataviewContainer") {
 
       private static final long serialVersionUID = 1L;
 
       @Override
       protected void onInitialize() {
-         add(orderRecordDataview);
+         add(offerRecordDataview);
+         super.onInitialize();
+      }
+   };
+
+   private WebMarkupContainer subCategoryDataviewContainer = new WebMarkupContainer("subCategoryDataviewContainer") {
+
+      private static final long serialVersionUID = -497527332092449028L;
+
+      @Override
+      protected void onInitialize() {
+         add(subCategoryDataview);
+         super.onInitialize();
+      }
+   };
+
+   private WebMarkupContainer offerRecordProductDataViewContainer = new WebMarkupContainer("offerRecordProductDataViewContainer") {
+
+      private static final long serialVersionUID = -497527332092449028L;
+
+      @Override
+      protected void onInitialize() {
+         add(offerRecordProductDataView);
          super.onInitialize();
       }
    };
 
    private SubCategoryDataProvider subCategoryDataProvider = new SubCategoryDataProvider();
 
-   private OrderRecordDataProvider orderRecordDataProvider = new OrderRecordDataProvider();
+   private OfferRecordDataProvider offerRecordDataProvider = new OfferRecordDataProvider();
 
-   private OrderRecordProductDataProvider orderRecordProductDataProvider = new OrderRecordProductDataProvider();
+   private OfferRecordProductDataProvider offerRecordProductDataProvider = new OfferRecordProductDataProvider();
 
    private SubCategoryMenuBootstrapListView subCategoryMenuBootstrapListView = new SubCategoryMenuBootstrapListView();
 
    private SubCategoryDataview subCategoryDataview = new SubCategoryDataview();
 
-   private OrderRecordProductDataView orderRecordProductDataView = new OrderRecordProductDataView();
+   private OfferRecordProductDataView offerRecordProductDataView = new OfferRecordProductDataView();
 
-   private OrderRecordDataView orderRecordDataview = new OrderRecordDataView();
+   private OfferRecordDataView offerRecordDataview = new OfferRecordDataView();
 
    private ProductDataView productDataView = new ProductDataView();
 
@@ -499,6 +527,18 @@ public class SubCategoryProductViewPanel extends Panel {
 
    @SpringBean(name = "ProductDataProvider", required = true)
    private GenericTypeDataProvider<Product> productDataProvider;
+
+   @SpringBean(name = "OrderDataProvider", required = true)
+   private GenericTypeDataProvider<Order> orderDataProvider;
+
+   @SpringBean(name = "OfferDataProvider", required = true)
+   private GenericTypeDataProvider<Offer> offerDataProvider;
+
+   @SpringBean(name = "ContractDataProvider", required = true)
+   private GenericTypeDataProvider<Contract> contractDataProvider;
+
+   @SpringBean(name = "ShopperDataProvider", required = true)
+   private GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
    public SubCategoryProductViewPanel(final String id, final IModel<Category> model) {
       super(id, model);
@@ -521,7 +561,12 @@ public class SubCategoryProductViewPanel extends Panel {
       productDataProvider.setSite(AppServletContainerAuthenticatedWebSession.getSite());
       productDataProvider.setType(new Product());
       productDataProvider.getType().setActive(true);
-      productDataProvider.setOrderBy(OrderBy.NONE);
+
+      contractDataProvider.setUser(AppServletContainerAuthenticatedWebSession.getUserName());
+      contractDataProvider.setPassword(AppServletContainerAuthenticatedWebSession.getPassword());
+      contractDataProvider.setSite(AppServletContainerAuthenticatedWebSession.getSite());
+      contractDataProvider.setType(new Contract());
+      contractDataProvider.getType().setActive(true);
 
       subCategoryDataProvider.setSubCategories(createFlatSubCategoryList(((Category) SubCategoryProductViewPanel.this.getDefaultModelObject()).getSubCategories()));
 

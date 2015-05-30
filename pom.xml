@@ -60,9 +60,9 @@
 			<artifactId>jboss-servlet-api_3.1_spec</artifactId>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<!-- WICKET -->
-		
+
 		<dependency>
 			<groupId>org.apache.wicket</groupId>
 			<artifactId>wicket-core</artifactId>
@@ -103,9 +103,9 @@
 			<artifactId>wicket-dnd</artifactId>
 			<version>${version.wicket-dnd}</version>
 		</dependency>
-		
+
 		<!-- WICKET BOOTSTRAP -->
-		
+
 		<dependency>
 			<groupId>de.agilecoders.wicket</groupId>
 			<artifactId>wicket-bootstrap-core</artifactId>
@@ -121,9 +121,9 @@
 			<artifactId>wicket-bootstrap-themes</artifactId>
 			<version>${version.wicket-bootstrap}</version>
 		</dependency>
-		
+
 		<!-- SPRING -->
-		
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
@@ -144,9 +144,14 @@
 			<artifactId>spring-web</artifactId>
 			<version>${version.springframework.plugin}</version>
 		</dependency>
-		
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<version>${version.springframework.plugin}</version>
+		</dependency>
+
 		<!-- GNUOB -->
-		
+
 		<dependency>
 			<groupId>com.netbrasoft.gnuob</groupId>
 			<artifactId>gnuob-api</artifactId>
@@ -158,9 +163,9 @@
 			<version>${version.netbrasoft.gnuob}</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<!-- SIMON -->
-		
+
 		<dependency>
 			<groupId>org.javasimon</groupId>
 			<artifactId>javasimon-core</artifactId>
@@ -202,6 +207,16 @@
 					<exclude>**/*.java</exclude>
 				</excludes>
 			</resource>
+			<resource>
+				<filtering>false</filtering>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>**/*</include>
+				</includes>
+				<excludes>
+					<exclude>**/*.java</exclude>
+				</excludes>
+			</resource>
 		</resources>
 		<plugins>
 			<plugin>
@@ -214,7 +229,7 @@
 						<manifestEntries>
 							<mode>development</mode>
 							<url>${project.url}</url>
-							<dependencies>org.apache.cxf services,org.apache.cxf.impl</dependencies>
+							<dependencies>org.apache.cxf services,org.apache.cxf.impl, net.sf.ehcache</dependencies>
 						</manifestEntries>
 						<manifest>
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>

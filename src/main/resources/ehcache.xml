@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="ehcache.xsd"
+         updateCheck="true" monitoring="autodetect"
+         dynamicConfig="true" name="GNUOP_SHOP_CACHEMANAGER">
+    <diskStore path="java.io.tmpdir"/>
+    <transactionManagerLookup class="net.sf.ehcache.transaction.manager.DefaultTransactionManagerLookup"
+                              properties="jndiName=java:/TransactionManager" propertySeparator=";"/>
+    <cacheManagerEventListenerFactory class="" properties=""/>
+	<terracottaConfig url="${serverAndPort}"/>
+    <defaultCache
+            eternal="false"
+            timeToIdleSeconds="120"
+            timeToLiveSeconds="120"
+            diskSpoolBufferSizeMB="30"
+            diskExpiryThreadIntervalSeconds="120"
+            memoryStoreEvictionPolicy="LRU">
+        <terracotta/>
+    </defaultCache>
+    <cache name="com.netbrasoft.gnuob.shop.shopper.Shopper"
+		maxElementsInMemory="1000"
+      	maxElementsOnDisk="10000" 
+      	eternal="false" 
+      	statistics="true"
+      	timeToIdleSeconds="3600"
+      	timeToLiveSeconds="0" 
+      	memoryStoreEvictionPolicy="LFU">
+		<terracotta/>
+	</cache>
+</ehcache>

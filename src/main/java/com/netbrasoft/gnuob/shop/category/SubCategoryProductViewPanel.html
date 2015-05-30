@@ -9,10 +9,11 @@
 						</h4>
 						<ul class="nav nav-list">
 							<li wicket:id="subCategoryBootstrapListView"><a wicket:id="link" style="text-align: left;"></a></li>
-						</ul></li>
+						</ul>
+					</li>
 				</ul>
 			</div>
-			<div class="col-md-10">
+			<div class="col-md-10" wicket:id="subCategoryDataviewContainer">
 				<div wicket:id="subCategoryDataview" class="featurette">
 					<span wicket:id="content"></span>
 				</div>
@@ -28,12 +29,15 @@
 						</h4>
 						<ul class="nav nav-list">
 							<li wicket:id="subCategoryBootstrapListView"><a wicket:id="link" style="text-align: left;"></a></li>
-						</ul></li>
+						</ul>
+					</li>
 				</ul>
 			</div>
 			<div class="col-md-10">
-				<div wicket:id="subCategoryDataview" class="featurette">
-					<span wicket:id="content"></span>
+				<div wicket:id="subCategoryDataviewContainer">
+					<div wicket:id="subCategoryDataview" class="featurette">
+						<span wicket:id="content"></span>
+					</div>
 				</div>
 				<div wicket:id="productDataview" class="featurette">
 					<div class="col-md-3">
@@ -62,10 +66,10 @@
 			</div>
 		</div>
 	</wicket:fragment>
-	<wicket:fragment wicket:id="orderRecordViewFragement">
+	<wicket:fragment wicket:id="offerRecordViewFragement">
 		<div class="row">
-			<div class="col-md-6">
-				<div wicket:id=orderRecordProductDataView class="featurette">
+			<div class="col-md-6" wicket:id="offerRecordProductDataViewContainer">
+				<div wicket:id=offerRecordProductDataView class="featurette">
 					<div class="col-md-6">
 						<div wicket:id="productCarousel"></div>
 					</div>
@@ -91,16 +95,16 @@
 					<thead>
 						<tr>
 							<th colspan="2"><small><wicket:message key="nameMessage">[Name Message]</wicket:message></small></th>
-							<th><small><wicket:message key="quantityMessage">[Quantity Message]</wicket:message></small></th>
+							<th><small><wicket:message key="stockQuantityMessage">[Stock Quantity Message]</wicket:message></small></th>
 							<th><small><wicket:message key="amountMessage">[Amount Message]</wicket:message></small></th>
 							<th><small><wicket:message key="amountWithDiscount">[Amount With Discount Message]</wicket:message></small></th>
 						</tr>
 					</thead>
-					<tbody wicket:id="orderRecordDataviewContainer">
-						<tr wicket:id="orderRecordDataview">
+					<tbody wicket:id="offerRecordDataviewContainer">
+						<tr wicket:id="offerRecordDataview">
 							<td>X</td>
 							<td><small><span wicket:id="product.name"></span></small></td>
-							<td><small><span wicket:id="quantity"></span></small></td>
+							<td><small><span wicket:id="product.stock.quantity"></span></small></td>
 							<td><small><s><span wicket:id="amountWithDiscount"></span></s></small></td>
 							<td><small><span wicket:id="amount"></span></small></td>
 						</tr>
