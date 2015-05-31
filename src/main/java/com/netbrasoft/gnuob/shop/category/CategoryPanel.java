@@ -14,7 +14,7 @@ public class CategoryPanel extends Panel {
 
    private static final long serialVersionUID = 1970275605681803223L;
 
-   private SubCategoryProductViewPanel subCategoryProductViewPanel = new SubCategoryProductViewPanel("subCategoryProductViewPanel", (IModel<Category>) getDefaultModel());
+   private CategoryViewPanel categoryViewPanel = new CategoryViewPanel("categoryViewPanel", (IModel<Category>) getDefaultModel());
 
    public CategoryPanel(final String id, final IModel<Category> model) {
       super(id, model);
@@ -22,7 +22,7 @@ public class CategoryPanel extends Panel {
 
    @Override
    protected void onInitialize() {
-      add(subCategoryProductViewPanel.add(subCategoryProductViewPanel.new SubCategoryViewFragement()).setOutputMarkupId(true));
+      add(categoryViewPanel.add(categoryViewPanel.new SubCategoryViewFragement()).setOutputMarkupId(true));
       super.onInitialize();
    }
 }

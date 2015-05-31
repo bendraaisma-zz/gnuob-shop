@@ -5,16 +5,16 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.flow.RedirectToUrlException;
 
-public class HomeTab extends AbstractTab {
+public class CartTab extends AbstractTab {
 
    private static final long serialVersionUID = -6273530217694775697L;
 
-   public HomeTab(final IModel<String> title) {
+   public CartTab(final IModel<String> title) {
       super(title);
    }
 
    @Override
    public WebMarkupContainer getPanel(final String panelId) {
-      throw new RedirectToUrlException("shop.html");
+      throw new RedirectToUrlException("cart.html");
    }
 }

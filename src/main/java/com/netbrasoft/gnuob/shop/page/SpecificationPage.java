@@ -4,18 +4,18 @@ import org.apache.wicket.authroles.authorization.strategies.role.annotations.Aut
 import org.apache.wicket.model.Model;
 import org.wicketstuff.wicket.mount.core.annotation.MountPath;
 
-import com.netbrasoft.gnuob.api.Category;
 import com.netbrasoft.gnuob.shop.border.ContentBorder;
-import com.netbrasoft.gnuob.shop.category.CategoryMainMenuPanel;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
+import com.netbrasoft.gnuob.shop.shopper.Shopper;
+import com.netbrasoft.gnuob.shop.specification.SpecificationMainMenuPanel;
 
-@MountPath("shop.html")
+@MountPath("specification.html")
 @AuthorizeInstantiation({ ShopRoles.GUEST })
-public class MainPage extends BasePage {
+public class SpecificationPage extends BasePage {
 
-   private static final long serialVersionUID = 7583829533111693200L;
+   private static final long serialVersionUID = 120059668578792943L;
 
-   private CategoryMainMenuPanel mainMenuPanel = new CategoryMainMenuPanel("mainMenuPanel", Model.of(new Category()));
+   private SpecificationMainMenuPanel mainMenuPanel = new SpecificationMainMenuPanel("mainMenuPanel", Model.of(new Shopper()));
 
    private ContentBorder contentBorder = new ContentBorder("contentBorder");
 

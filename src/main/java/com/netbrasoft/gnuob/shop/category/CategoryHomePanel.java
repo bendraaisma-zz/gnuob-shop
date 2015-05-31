@@ -1,4 +1,4 @@
-package com.netbrasoft.gnuob.shop.panel;
+package com.netbrasoft.gnuob.shop.category;
 
 import java.util.Iterator;
 
@@ -22,14 +22,13 @@ import com.netbrasoft.gnuob.api.Content;
 import com.netbrasoft.gnuob.api.OrderBy;
 import com.netbrasoft.gnuob.api.generic.GenericTypeDataProvider;
 import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
-import com.netbrasoft.gnuob.shop.page.tab.CategoryTab;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
 
 import de.agilecoders.wicket.core.markup.html.bootstrap.tabs.BootstrapTabbedPanel;
 
 @SuppressWarnings("unchecked")
 @AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
-public class HomePanel extends Panel {
+public class CategoryHomePanel extends Panel {
 
    class CategoryDataview extends DataView<Category> {
 
@@ -87,7 +86,7 @@ public class HomePanel extends Panel {
 
    private CategoryDataview categoryDataView = new CategoryDataview();
 
-   public HomePanel(final String id, final IModel<Category> model) {
+   public CategoryHomePanel(final String id, final IModel<Category> model) {
       super(id, model);
    }
 

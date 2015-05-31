@@ -1,4 +1,4 @@
-package com.netbrasoft.gnuob.shop.panel;
+package com.netbrasoft.gnuob.shop.category;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -15,15 +15,13 @@ import com.netbrasoft.gnuob.api.Category;
 import com.netbrasoft.gnuob.api.OrderBy;
 import com.netbrasoft.gnuob.api.generic.GenericTypeDataProvider;
 import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
-import com.netbrasoft.gnuob.shop.page.tab.CategoryTab;
 import com.netbrasoft.gnuob.shop.page.tab.ContactTab;
-import com.netbrasoft.gnuob.shop.page.tab.HomeTab;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
 
 import de.agilecoders.wicket.core.markup.html.bootstrap.tabs.BootstrapTabbedPanel;
 
 @AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
-public class MainMenuPanel extends Panel {
+public class CategoryMainMenuPanel extends Panel {
 
    class MainMenuTabbedPanel extends BootstrapTabbedPanel<ITab> {
 
@@ -41,16 +39,16 @@ public class MainMenuPanel extends Panel {
 
    private static final long serialVersionUID = 6083651059402628915L;
 
-   private final ITab homeTab = new HomeTab(new Model<String>(getString("homeMessage", new Model<String>(), "INICIO")));
+   private final ITab homeTab = new CategoryHomeTab(Model.of(getString("homeMessage", new Model<String>(), "INICIO")));
 
-   private final ITab contactTab = new ContactTab(new Model<String>(getString("contactMessage", new Model<String>(), "CONTATO")));
+   private final ITab contactTab = new ContactTab(Model.of(getString("contactMessage", new Model<String>(), "CONTATO")));
 
    private final MainMenuTabbedPanel mainMenuTabbedPanel = new MainMenuTabbedPanel();
 
    @SpringBean(name = "CategoryDataProvider", required = true)
    private GenericTypeDataProvider<Category> categoryDataProvider;
 
-   public MainMenuPanel(final String id, final IModel<Category> model) {
+   public CategoryMainMenuPanel(final String id, final IModel<Category> model) {
       super(id, model);
    }
 
@@ -67,12 +65,12 @@ public class MainMenuPanel extends Panel {
 
       for (Iterator<? extends Category> iterator = categoryDataProvider.iterator(0, 5); iterator.hasNext();) {
          Category category = iterator.next();
-         mainMenuTabbedPanel.getTabs().add(new CategoryTab(new Model<String>(category.getName().toUpperCase()), new Model<Category>(category)));
+         mainMenuTabbedPanel.getTabs().add(new CategoryTab(Model.of(category.getName().toUpperCase()), Model.of(category)));
       }
 
       mainMenuTabbedPanel.getTabs().add(contactTab);
 
-      add(mainMenuTabbedPanel);
+      add(mainMenuTabbedPanel.setOutputMarkupId(true));
 
       super.onInitialize();
    }

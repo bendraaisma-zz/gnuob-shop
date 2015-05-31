@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.authorization.Action;
@@ -30,22 +29,20 @@ import org.apache.wicket.util.time.Duration;
 import com.google.common.net.MediaType;
 import com.netbrasoft.gnuob.api.Category;
 import com.netbrasoft.gnuob.api.Content;
-import com.netbrasoft.gnuob.api.Contract;
-import com.netbrasoft.gnuob.api.Offer;
 import com.netbrasoft.gnuob.api.OfferRecord;
-import com.netbrasoft.gnuob.api.Order;
 import com.netbrasoft.gnuob.api.Product;
 import com.netbrasoft.gnuob.api.SubCategory;
 import com.netbrasoft.gnuob.api.generic.GenericTypeDataProvider;
 import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
 import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
+import com.netbrasoft.gnuob.shop.page.CartPage;
+import com.netbrasoft.gnuob.shop.product.ProductCarousel;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
 import com.netbrasoft.gnuob.shop.shopper.Shopper;
 
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapAjaxLink;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.Buttons;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.Buttons.Size;
-import de.agilecoders.wicket.core.markup.html.bootstrap.carousel.Carousel;
 import de.agilecoders.wicket.core.markup.html.bootstrap.carousel.CarouselImage;
 import de.agilecoders.wicket.core.markup.html.bootstrap.carousel.ICarouselImage;
 import de.agilecoders.wicket.core.markup.html.bootstrap.components.PopoverBehavior;
@@ -57,7 +54,7 @@ import de.agilecoders.wicket.core.markup.html.bootstrap.list.BootstrapListView;
 import de.agilecoders.wicket.core.markup.html.bootstrap.navigation.BootstrapPagingNavigator;
 
 @AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
-public class SubCategoryProductViewPanel extends Panel {
+public class CategoryViewPanel extends Panel {
 
    class OfferRecordDataProvider implements IDataProvider<OfferRecord> {
 
@@ -87,37 +84,6 @@ public class SubCategoryProductViewPanel extends Panel {
       @Override
       public long size() {
          return shopperDataProvider.find(new Shopper()).getCart().getRecords().size();
-      }
-   }
-
-   class OfferRecordDataView extends DataView<OfferRecord> {
-
-      private static final long serialVersionUID = -8885578770770605991L;
-
-      protected OfferRecordDataView() {
-         super("offerRecordDataview", offerRecordDataProvider);
-      }
-
-      @Override
-      protected void populateItem(Item<OfferRecord> item) {
-         IModel<OfferRecord> compound = new CompoundPropertyModel<OfferRecord>(item.getModelObject());
-         item.setModel(compound);
-         item.add(new Label("product.name"));
-         item.add(new Label("product.stock.quantity"));
-         item.add(new Label("amountWithDiscount", Model.of(NumberFormat.getCurrencyInstance().format(item.getModelObject().getProduct().getAmount().subtract(item.getModelObject().getProduct().getDiscount())))));
-         item.add(new Label("amount", Model.of(NumberFormat.getCurrencyInstance().format(item.getModelObject().getProduct().getAmount()))));
-         item.add(new AjaxEventBehavior("click") {
-
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void onEvent(AjaxRequestTarget target) {
-               offerRecordProductDataProvider.products.clear();
-               offerRecordProductDataProvider.getProducts().add(item.getModelObject().getProduct());
-               target.add(offerRecordProductDataViewContainer);
-               target.add(offerRecordDataviewContainer);
-            }
-         });
       }
    }
 
@@ -159,83 +125,6 @@ public class SubCategoryProductViewPanel extends Panel {
       @Override
       public long size() {
          return products.size();
-      }
-   }
-
-   class OfferRecordProductDataView extends DataView<Product> {
-
-      private static final long serialVersionUID = -3333902779955513421L;
-
-      private static final int ITEMS_PER_PAGE = 5;
-
-      protected OfferRecordProductDataView() {
-         super("offerRecordProductDataView", offerRecordProductDataProvider, ITEMS_PER_PAGE);
-      }
-
-      @Override
-      protected void populateItem(Item<Product> item) {
-         List<ICarouselImage> carouselImages = new ArrayList<ICarouselImage>();
-
-         for (Content content : item.getModelObject().getContents()) {
-            if (MediaType.HTML_UTF_8.is(MediaType.parse(content.getFormat()))) {
-               carouselImages.add(new CarouselImage(new String(content.getContent())));
-            }
-         }
-
-         item.setModel(new CompoundPropertyModel<Product>(item.getModelObject()));
-         item.add(new ProductCarousel("productCarousel", carouselImages));
-         item.add(new Loop("rating", ITEMS_PER_PAGE) {
-
-            private static final long serialVersionUID = -443304621920358169L;
-
-            @Override
-            protected void populateItem(LoopItem loopItem) {
-               loopItem.add(new IconBehavior(loopItem.getIndex() < item.getModelObject().getRating() ? GlyphIconType.star : GlyphIconType.starempty));
-            }
-         });
-         item.add(new Label("name"));
-         item.add(new Label("stock.quantity"));
-         item.add(new Label("amountWithDiscount", Model.of(NumberFormat.getCurrencyInstance().format(item.getModelObject().getAmount().subtract(item.getModelObject().getDiscount())))));
-         item.add(new Label("amount", Model.of(NumberFormat.getCurrencyInstance().format(item.getModelObject().getAmount()))));
-      }
-   }
-
-   class OfferRecordViewFragement extends Fragment {
-
-      private static final long serialVersionUID = -5518685687286043845L;
-
-      public OfferRecordViewFragement() {
-         super("subCategoryProductViewFragement", "offerRecordViewFragement", SubCategoryProductViewPanel.this, SubCategoryProductViewPanel.this.getDefaultModel());
-      }
-
-      @Override
-      protected void onInitialize() {
-         add(offerRecordProductDataViewContainer.setOutputMarkupId(true));
-         add(offerRecordDataviewContainer.setOutputMarkupId(true));
-         super.onInitialize();
-      }
-   }
-
-   class ProductCarousel extends Carousel {
-
-      private static final long serialVersionUID = -8356867197970835590L;
-
-      private ProductCarousel(final String markupId, final List<ICarouselImage> images) {
-         super(markupId, images);
-      }
-
-      @Override
-      protected Component newImage(String markupId, ICarouselImage image) {
-         final Label html = new Label(markupId, new AbstractReadOnlyModel<String>() {
-
-            private static final long serialVersionUID = -7501719023515852494L;
-
-            @Override
-            public String getObject() {
-               return image.url();
-            }
-         });
-         return html.setEscapeModelStrings(false);
       }
    }
 
@@ -284,14 +173,8 @@ public class SubCategoryProductViewPanel extends Panel {
                OfferRecord offerRecord = new OfferRecord();
                offerRecord.setProduct(item.getModelObject());
 
-               offerRecordProductDataProvider.getProducts().clear();
-               offerRecordProductDataProvider.getProducts().add(offerRecord.getProduct());
                shopperDataProvider.find(new Shopper()).getCart().getRecords().add(offerRecord);
-
-               SubCategoryProductViewPanel.this.removeAll();
-               SubCategoryProductViewPanel.this.add(new OfferRecordViewFragement().setOutputMarkupId(true));
-
-               target.add(SubCategoryProductViewPanel.this);
+               setResponsePage(new CartPage());
             }
          }.setSize(Buttons.Size.Small).setOutputMarkupId(true));
       }
@@ -302,7 +185,7 @@ public class SubCategoryProductViewPanel extends Panel {
       private static final long serialVersionUID = -1722501866439698640L;
 
       public ProductViewFragement() {
-         super("subCategoryProductViewFragement", "productViewFragement", SubCategoryProductViewPanel.this, SubCategoryProductViewPanel.this.getDefaultModel());
+         super("subCategoryProductViewFragement", "productViewFragement", CategoryViewPanel.this, CategoryViewPanel.this.getDefaultModel());
       }
 
       @Override
@@ -341,9 +224,9 @@ public class SubCategoryProductViewPanel extends Panel {
                productDataProvider.getType().setActive(true);
                productDataProvider.getType().getSubCategories().addAll(subCategories);
 
-               SubCategoryProductViewPanel.this.removeAll();
-               SubCategoryProductViewPanel.this.add(new ProductViewFragement().setOutputMarkupId(true));
-               target.add(SubCategoryProductViewPanel.this);
+               CategoryViewPanel.this.removeAll();
+               CategoryViewPanel.this.add(new ProductViewFragement().setOutputMarkupId(true));
+               target.add(CategoryViewPanel.this);
             }
 
          }.setSize(Size.Small).setOutputMarkupId(true));
@@ -378,7 +261,7 @@ public class SubCategoryProductViewPanel extends Panel {
 
       @Override
       public IModel<SubCategory> model(SubCategory object) {
-         return new Model<SubCategory>(object);
+         return Model.of(object);
       }
 
       public void setSubCategories(List<SubCategory> subCategories) {
@@ -432,9 +315,9 @@ public class SubCategoryProductViewPanel extends Panel {
                productDataProvider.getType().setActive(true);
                productDataProvider.getType().getSubCategories().addAll(subCategories);
 
-               SubCategoryProductViewPanel.this.removeAll();
-               SubCategoryProductViewPanel.this.add(new ProductViewFragement().setOutputMarkupId(true));
-               target.add(SubCategoryProductViewPanel.this);
+               CategoryViewPanel.this.removeAll();
+               CategoryViewPanel.this.add(new ProductViewFragement().setOutputMarkupId(true));
+               target.add(CategoryViewPanel.this);
             }
          });
       }
@@ -445,7 +328,7 @@ public class SubCategoryProductViewPanel extends Panel {
       private static final long serialVersionUID = 2148940232228759419L;
 
       private SubCategoryMenuBootstrapListView() {
-         super("subCategoryMenuBootstrapListView", ((Category) SubCategoryProductViewPanel.this.getDefaultModelObject()).getSubCategories());
+         super("subCategoryMenuBootstrapListView", ((Category) CategoryViewPanel.this.getDefaultModelObject()).getSubCategories());
       }
 
       @Override
@@ -461,7 +344,7 @@ public class SubCategoryProductViewPanel extends Panel {
       private static final long serialVersionUID = -3028153699938016168L;
 
       public SubCategoryViewFragement() {
-         super("subCategoryProductViewFragement", "subCategoryViewFragement", SubCategoryProductViewPanel.this, SubCategoryProductViewPanel.this.getDefaultModel());
+         super("subCategoryProductViewFragement", "subCategoryViewFragement", CategoryViewPanel.this, CategoryViewPanel.this.getDefaultModel());
       }
 
       @Override
@@ -474,17 +357,6 @@ public class SubCategoryProductViewPanel extends Panel {
 
    private static final long serialVersionUID = -9083340164646887954L;
 
-   private WebMarkupContainer offerRecordDataviewContainer = new WebMarkupContainer("offerRecordDataviewContainer") {
-
-      private static final long serialVersionUID = 1L;
-
-      @Override
-      protected void onInitialize() {
-         add(offerRecordDataview);
-         super.onInitialize();
-      }
-   };
-
    private WebMarkupContainer subCategoryDataviewContainer = new WebMarkupContainer("subCategoryDataviewContainer") {
 
       private static final long serialVersionUID = -497527332092449028L;
@@ -496,30 +368,11 @@ public class SubCategoryProductViewPanel extends Panel {
       }
    };
 
-   private WebMarkupContainer offerRecordProductDataViewContainer = new WebMarkupContainer("offerRecordProductDataViewContainer") {
-
-      private static final long serialVersionUID = -497527332092449028L;
-
-      @Override
-      protected void onInitialize() {
-         add(offerRecordProductDataView);
-         super.onInitialize();
-      }
-   };
-
    private SubCategoryDataProvider subCategoryDataProvider = new SubCategoryDataProvider();
-
-   private OfferRecordDataProvider offerRecordDataProvider = new OfferRecordDataProvider();
-
-   private OfferRecordProductDataProvider offerRecordProductDataProvider = new OfferRecordProductDataProvider();
 
    private SubCategoryMenuBootstrapListView subCategoryMenuBootstrapListView = new SubCategoryMenuBootstrapListView();
 
    private SubCategoryDataview subCategoryDataview = new SubCategoryDataview();
-
-   private OfferRecordProductDataView offerRecordProductDataView = new OfferRecordProductDataView();
-
-   private OfferRecordDataView offerRecordDataview = new OfferRecordDataView();
 
    private ProductDataView productDataView = new ProductDataView();
 
@@ -528,19 +381,10 @@ public class SubCategoryProductViewPanel extends Panel {
    @SpringBean(name = "ProductDataProvider", required = true)
    private GenericTypeDataProvider<Product> productDataProvider;
 
-   @SpringBean(name = "OrderDataProvider", required = true)
-   private GenericTypeDataProvider<Order> orderDataProvider;
-
-   @SpringBean(name = "OfferDataProvider", required = true)
-   private GenericTypeDataProvider<Offer> offerDataProvider;
-
-   @SpringBean(name = "ContractDataProvider", required = true)
-   private GenericTypeDataProvider<Contract> contractDataProvider;
-
    @SpringBean(name = "ShopperDataProvider", required = true)
    private GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
-   public SubCategoryProductViewPanel(final String id, final IModel<Category> model) {
+   public CategoryViewPanel(final String id, final IModel<Category> model) {
       super(id, model);
    }
 
@@ -562,13 +406,7 @@ public class SubCategoryProductViewPanel extends Panel {
       productDataProvider.setType(new Product());
       productDataProvider.getType().setActive(true);
 
-      contractDataProvider.setUser(AppServletContainerAuthenticatedWebSession.getUserName());
-      contractDataProvider.setPassword(AppServletContainerAuthenticatedWebSession.getPassword());
-      contractDataProvider.setSite(AppServletContainerAuthenticatedWebSession.getSite());
-      contractDataProvider.setType(new Contract());
-      contractDataProvider.getType().setActive(true);
-
-      subCategoryDataProvider.setSubCategories(createFlatSubCategoryList(((Category) SubCategoryProductViewPanel.this.getDefaultModelObject()).getSubCategories()));
+      subCategoryDataProvider.setSubCategories(createFlatSubCategoryList(((Category) CategoryViewPanel.this.getDefaultModelObject()).getSubCategories()));
 
       super.onInitialize();
    }

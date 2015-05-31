@@ -1,11 +1,10 @@
-package com.netbrasoft.gnuob.shop.page.tab;
+package com.netbrasoft.gnuob.shop.category;
 
 import org.apache.wicket.extensions.markup.html.tabs.AbstractTab;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.IModel;
 
 import com.netbrasoft.gnuob.api.Category;
-import com.netbrasoft.gnuob.shop.category.CategoryPanel;
 
 public class CategoryTab extends AbstractTab {
 
