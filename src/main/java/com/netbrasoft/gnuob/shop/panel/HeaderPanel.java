@@ -37,7 +37,7 @@ public class HeaderPanel extends Panel {
       add(new Label(GNUOB_SITE_TITLE_PROPERTY, System.getProperty(GNUOB_SITE_TITLE_PROPERTY, WordUtils.capitalize(title))));
       add(new Label(GNUOB_SITE_SUBTITLE_PROPERTY, System.getProperty(GNUOB_SITE_SUBTITLE_PROPERTY, subTitle)));
 
-      add(new Label("chartSize", Model.of(shopperDataProvider.find(new Shopper()).getCart().getRecords().size())).add(new BadgeBehavior()));
+      add(new Label("chartSize", Model.of(shopperDataProvider.find(new Shopper()).getCart().size())).add(new BadgeBehavior()));
 
       super.onInitialize();
    }

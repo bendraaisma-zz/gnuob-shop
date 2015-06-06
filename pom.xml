@@ -34,6 +34,7 @@
 		<version.bootstrap-validator>0.8.1</version.bootstrap-validator>
 		<version.jquery.cookie>1.4.1</version.jquery.cookie>
 		<version.bootstrap-3-datepicker>1.4.0</version.bootstrap-3-datepicker>
+		<version.com.nimbusds>4.13</version.com.nimbusds>
 
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.source>1.8</maven.compiler.source>
@@ -190,6 +191,13 @@
 			<groupId>org.javasimon</groupId>
 			<artifactId>javasimon-console-embed</artifactId>
 			<version>${version.javasimon}</version>
+		</dependency>
+
+		<!-- OPENID -->
+		<dependency>
+			<groupId>com.nimbusds</groupId>
+			<artifactId>oauth2-oidc-sdk</artifactId>
+			<version>${version.com.nimbusds}</version>
 		</dependency>
 	</dependencies>
 

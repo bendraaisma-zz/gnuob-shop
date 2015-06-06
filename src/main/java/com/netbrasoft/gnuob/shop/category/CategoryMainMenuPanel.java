@@ -39,9 +39,9 @@ public class CategoryMainMenuPanel extends Panel {
 
    private static final long serialVersionUID = 6083651059402628915L;
 
-   private final ITab homeTab = new CategoryHomeTab(Model.of(getString("homeMessage", new Model<String>(), "INICIO")));
+   private final ITab homeTab = new CategoryHomeTab(Model.of(getString("homeMessage", new Model<String>(), "INICIO").toUpperCase()));
 
-   private final ITab contactTab = new ContactTab(Model.of(getString("contactMessage", new Model<String>(), "CONTATO")));
+   private final ITab contactTab = new ContactTab(Model.of(getString("contactMessage", new Model<String>(), "CONTATO").toUpperCase()));
 
    private final MainMenuTabbedPanel mainMenuTabbedPanel = new MainMenuTabbedPanel();
 

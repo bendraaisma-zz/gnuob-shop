@@ -1,4 +1,4 @@
-package com.netbrasoft.gnuob.shop.confirmation;
+package com.netbrasoft.gnuob.shop.wishlist;
 
 import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
@@ -10,19 +10,19 @@ import com.netbrasoft.gnuob.shop.shopper.Shopper;
 
 @SuppressWarnings("unchecked")
 @AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
-public class ConfirmationPanel extends Panel {
+public class WishListPanel extends Panel {
 
-   private static final long serialVersionUID = -305453593387396902L;
+   private static final long serialVersionUID = 2034566325989232879L;
 
-   private ConfirmationViewPanel confirmationViewPanel = new ConfirmationViewPanel("confirmationViewPanel", (IModel<Shopper>) getDefaultModel());
+   private WishListViewPanel wishListViewPanel = new WishListViewPanel("wishListViewPanel", (IModel<Shopper>) getDefaultModel());
 
-   public ConfirmationPanel(final String id, final IModel<Shopper> model) {
+   public WishListPanel(final String id, final IModel<Shopper> model) {
       super(id, model);
    }
 
    @Override
    protected void onInitialize() {
-      add(confirmationViewPanel.add(confirmationViewPanel.new ConfirmationViewFragement()).setOutputMarkupId(true));
+      add(wishListViewPanel.setOutputMarkupId(true));
       super.onInitialize();
    }
 }

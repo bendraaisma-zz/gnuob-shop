@@ -7,7 +7,7 @@
     <transactionManagerLookup class="net.sf.ehcache.transaction.manager.DefaultTransactionManagerLookup"
                               properties="jndiName=java:/TransactionManager" propertySeparator=";"/>
     <cacheManagerEventListenerFactory class="" properties=""/>
-	<terracottaConfig url="${serverAndPort}"/>
+	<terracottaConfig url="${serverAndPort}" rejoin="true"/>
     <defaultCache
             eternal="false"
             timeToIdleSeconds="120"
@@ -15,7 +15,11 @@
             diskSpoolBufferSizeMB="30"
             diskExpiryThreadIntervalSeconds="120"
             memoryStoreEvictionPolicy="LRU">
-        <terracotta/>
+        <terracotta>
+	        <nonstop immediateTimeout="false" timeoutMillis="30000">
+		    	<timeoutBehavior type="noop" />
+		    </nonstop>
+        </terracotta>
     </defaultCache>
     <cache name="com.netbrasoft.gnuob.shop.shopper.Shopper"
 		maxElementsInMemory="1000"
@@ -25,6 +29,10 @@
       	timeToIdleSeconds="3600"
       	timeToLiveSeconds="0" 
       	memoryStoreEvictionPolicy="LFU">
-		<terracotta/>
+		<terracotta>
+	        <nonstop immediateTimeout="false" timeoutMillis="30000">
+		    	<timeoutBehavior type="noop" />
+		    </nonstop>
+        </terracotta>
 	</cache>
 </ehcache>

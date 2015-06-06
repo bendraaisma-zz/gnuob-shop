@@ -1,0 +1,73 @@
+<wicket:panel xmlns:wicket="http://wicket.apache.org">
+	<style>
+#google {
+	width: 102px;
+	height: 62px;
+	background: url(./images/openid-logos.png) 0 0;
+}
+
+#microsoft {
+	width: 102px;
+	height: 62px;
+	background: url(./images/openid-logos.png) 0 -62px;
+}
+
+#yahoo {
+	width: 102px;
+	height: 62px;
+	background: url(./images/openid-logos.png) -102px 0;
+}
+
+#facebook {
+	width: 102px;
+	height: 62px;
+	background: url(./images/openid-logos.png) -102px -124px;
+}
+
+#paypal {
+	width: 102px;
+	height: 62px;
+	background: url(./images/openid-logos.png) 0px -124px;
+}
+
+#openid {
+	width: 102px;
+	height: 62px;
+	background: url(./images/openid-logos.png) -102px -62px;
+}
+</style>
+	<table class="table" style="border-top: none;">
+		<tbody>
+			<tr>
+				<td style="border-top: none;">
+					<form class="form-horizontal">
+						<div class="panel-heading">
+							<h3>
+								<wicket:message key="editAndSeeYourInformation"></wicket:message>
+							</h3>
+							<h5>
+								<wicket:message key="signInUsingYourAccountMessage"></wicket:message>
+							</h5>
+						</div>
+						<div class="panel-body">
+							<div class="row">
+								<div class="col-md-3">
+									<a wicket:id="google" href="#"><img id="google"></a>
+								</div>
+								<div class="col-md-3">
+									<a href="#"><img id="microsoft"></a>
+								</div>
+								<div class="col-md-3">
+									<a href="#"><img id="facebook"></a>
+								</div>
+								<div class="col-md-3">
+									<a href="#"><img id="paypal"></a>
+								</div>
+							</div>
+						</div>
+					</form>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</wicket:panel>

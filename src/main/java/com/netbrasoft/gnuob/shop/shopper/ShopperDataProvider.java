@@ -24,13 +24,13 @@ public class ShopperDataProvider<S extends Shopper> implements GenericTypeCacheD
    private transient GenericTypeCacheRepository<S> shopperCacheRepository;
 
    @Override
-   public S merge(S type) {
-      return shopperCacheRepository.merge(setShopperId(type));
+   public S find(S type) {
+      return shopperCacheRepository.find(setShopperId(type));
    }
 
    @Override
-   public S find(S type) {
-      return shopperCacheRepository.find(setShopperId(type));
+   public S merge(S type) {
+      return shopperCacheRepository.merge(setShopperId(type));
    }
 
    @Override

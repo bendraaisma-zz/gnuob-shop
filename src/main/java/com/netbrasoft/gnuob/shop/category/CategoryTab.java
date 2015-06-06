@@ -16,16 +16,16 @@ public class CategoryTab extends AbstractTab {
       this.model = model;
    }
 
-   @Override
-   public WebMarkupContainer getPanel(final String panelId) {
-      return new CategoryPanel(panelId, model);
+   public IModel<Category> getModel() {
+      return model;
    }
 
    public Category getModelObject() {
       return model.getObject();
    }
 
-   public IModel<Category> getModel() {
-      return model;
+   @Override
+   public WebMarkupContainer getPanel(final String panelId) {
+      return new CategoryPanel(panelId, model);
    }
 }

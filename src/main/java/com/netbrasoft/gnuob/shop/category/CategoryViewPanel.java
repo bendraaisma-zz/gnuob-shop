@@ -1,5 +1,6 @@
 package com.netbrasoft.gnuob.shop.category;
 
+import java.math.BigInteger;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -70,7 +71,7 @@ public class CategoryViewPanel extends Panel {
          List<OfferRecord> offerRecordIteratorList = new ArrayList<OfferRecord>();
 
          for (int index = (int) first; index < first + count; index++) {
-            offerRecordIteratorList.add(shopperDataProvider.find(new Shopper()).getCart().getRecords().get(index));
+            offerRecordIteratorList.add(shopperDataProvider.find(new Shopper()).getCart().get(index));
          }
 
          return offerRecordIteratorList.iterator();
@@ -83,7 +84,7 @@ public class CategoryViewPanel extends Panel {
 
       @Override
       public long size() {
-         return shopperDataProvider.find(new Shopper()).getCart().getRecords().size();
+         return shopperDataProvider.find(new Shopper()).getCart().size();
       }
    }
 
@@ -172,8 +173,9 @@ public class CategoryViewPanel extends Panel {
             public void onClick(AjaxRequestTarget target) {
                OfferRecord offerRecord = new OfferRecord();
                offerRecord.setProduct(item.getModelObject());
+               offerRecord.setQuantity(BigInteger.valueOf(1));
 
-               shopperDataProvider.find(new Shopper()).getCart().getRecords().add(offerRecord);
+               shopperDataProvider.find(new Shopper()).getCart().add(offerRecord);
                setResponsePage(new CartPage());
             }
          }.setSize(Buttons.Size.Small).setOutputMarkupId(true));

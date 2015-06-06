@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.authorization.Action;
@@ -54,7 +55,7 @@ public class CartViewPanel extends Panel {
          List<OfferRecord> offerRecordIteratorList = new ArrayList<OfferRecord>();
 
          for (int index = (int) first; index < first + count; index++) {
-            offerRecordIteratorList.add(shopperDataProvider.find(new Shopper()).getCart().getRecords().get(index));
+            offerRecordIteratorList.add(shopperDataProvider.find(new Shopper()).getCart().get(index));
          }
 
          return offerRecordIteratorList.iterator();
@@ -67,7 +68,7 @@ public class CartViewPanel extends Panel {
 
       @Override
       public long size() {
-         return shopperDataProvider.find(new Shopper()).getCart().getRecords().size();
+         return shopperDataProvider.find(new Shopper()).getCart().size();
       }
    }
 
@@ -75,8 +76,21 @@ public class CartViewPanel extends Panel {
 
       private static final long serialVersionUID = -8885578770770605991L;
 
+      private int selectedIndex = 0;
+
       protected OfferRecordDataView() {
          super("offerRecordDataview", offerRecordDataProvider);
+      }
+
+      @Override
+      protected Item<OfferRecord> newItem(String id, int index, IModel<OfferRecord> model) {
+         Item<OfferRecord> item = super.newItem(id, index, model);
+
+         if (index == selectedIndex) {
+            item.add(new AttributeModifier("class", "info"));
+         }
+
+         return item;
       }
 
       @Override
@@ -93,6 +107,8 @@ public class CartViewPanel extends Panel {
 
             @Override
             public void onEvent(AjaxRequestTarget target) {
+               selectedIndex = item.getIndex();
+
                offerRecordProductDataProvider.products.clear();
                offerRecordProductDataProvider.getProducts().add(item.getModelObject().getProduct());
                target.add(offerRecordProductDataViewContainer);
@@ -193,6 +209,8 @@ public class CartViewPanel extends Panel {
       protected void onInitialize() {
          add(offerRecordProductDataViewContainer.setOutputMarkupId(true));
          add(offerRecordDataviewContainer.setOutputMarkupId(true));
+         add(new Label("totalDiscount", Model.of(NumberFormat.getCurrencyInstance().format(shopperDataProvider.find(new Shopper()).getChartTotalDiscount()))));
+         add(new Label("total", Model.of(NumberFormat.getCurrencyInstance().format(shopperDataProvider.find(new Shopper()).getChartTotal()))));
          super.onInitialize();
       }
    }
@@ -205,6 +223,12 @@ public class CartViewPanel extends Panel {
 
       @Override
       protected void onInitialize() {
+         int index = shopperDataProvider.find(new Shopper()).getCart().size();
+
+         if (index > 0) {
+            offerRecordProductDataProvider.products.add(shopperDataProvider.find(new Shopper()).getCart().get(0).getProduct());
+         }
+
          add(offerRecordProductDataView);
          super.onInitialize();
       }

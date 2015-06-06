@@ -14,15 +14,15 @@ import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheRepository;
 @Repository("ShopperCacheRepository")
 public class ShopperCacheRepository<S extends Shopper> implements GenericTypeCacheRepository<S> {
 
-   @CachePut(key = "#paramType.id", condition = "#paramType.id != null")
-   @Override
-   public S merge(S paramType) {
-      return paramType;
-   }
-
    @Cacheable(key = "#paramType.id", condition = "#paramType.id != null")
    @Override
    public S find(S paramType) {
+      return paramType;
+   }
+
+   @CachePut(key = "#paramType.id", condition = "#paramType.id != null")
+   @Override
+   public S merge(S paramType) {
       return paramType;
    }
 

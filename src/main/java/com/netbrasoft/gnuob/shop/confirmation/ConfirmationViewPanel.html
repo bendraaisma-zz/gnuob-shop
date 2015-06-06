@@ -13,12 +13,12 @@
 							<td style="border-top: none;">
 								<form class="form-horizontal">
 									<div class="panel-heading">
-										<h3>Thank you for placing your order with us.</h3>
+										<h3><wicket:message key="thankYouForPlacingYourOrderWithUs"></wicket:message></h3>
 										<h5>
-											The order number is: <strong>308475673</strong>.
+											<wicket:message key="theOrderNumberIs"></wicket:message>&nbsp;<strong>308475673</strong>.
 										</h5>
 										<h5>
-											You will receive an email confirmation shortly at: <strong>bendraaisma@gmail.com</strong>.
+											<wicket:message key="youWillReceiveAnEmailConfirmationShortlyAt"></wicket:message>&nbsp;<strong>test@ribelli.com.br</strong>.
 										</h5>
 									</div>
 								</form>
@@ -28,25 +28,6 @@
 				</table>
 			</div>
 			<div class="col-md-6">
-				<table class="table" style="border-top: none;">
-					<tbody>
-						<tr>
-							<td style="border-top: none;">
-								<form class="form-horizontal">
-									<div class="panel-heading">
-										<h3>Save your information for next time</h3>
-										<h5>
-											Sign in using your account:
-										</h5>
-									</div>
-									<div class="panel-body">
-										<img alt="" src="./images/openid.png">
-									</div>
-								</form>
-							</td>
-						</tr>
-					</tbody>
-				</table>
 			</div>
 		</div>
 		<div class="row">
@@ -63,7 +44,7 @@
 							<span wicket:id="rating"></span>
 						</p>
 						<h5>
-							<small><wicket:message key="quantityMessage">[Quantity Message]</wicket:message>&nbsp;<span wicket:id="stock.quantity"></span></small>
+							<small><wicket:message key="quantityMessage"></wicket:message>&nbsp;<span wicket:id="stock.quantity"></span></small>
 						</h5>
 						<br>
 						<h4>
@@ -76,36 +57,36 @@
 				<table class="table">
 					<thead>
 						<tr>
-							<td><small><strong><wicket:message key="nameMessage">[Name Message]</wicket:message></strong></small></td>
-							<td align="right"><small><strong><wicket:message key="quantityMessage">[Quantity Message]</wicket:message></strong></small></td>
-							<td align="right"><small><strong><wicket:message key="amountMessage">[Amount Message]</wicket:message></strong></small></td>
-							<td align="right"><small><strong><wicket:message key="amountWithDiscount">[Amount With Discount Message]</wicket:message></strong></small></td>
+							<td><small><strong><wicket:message key="nameMessage"></wicket:message></strong></small></td>
+							<td align="right"><small><strong><wicket:message key="quantityMessage"></wicket:message></strong></small></td>
+							<td align="right"><small><strong><wicket:message key="amountMessage"></wicket:message></strong></small></td>
+							<td align="right"><small><strong><wicket:message key="amountWithDiscount"></wicket:message></strong></small></td>
 						</tr>
 					</thead>
 					<tbody wicket:id="offerRecordDataviewContainer">
 						<tr wicket:id="offerRecordDataview">
 							<td><small><span wicket:id="product.name"></span></small></td>
 							<td align="right"><small><span wicket:id="quantity"></span></small></td>
-							<td align="right"><small><s><span wicket:id="amountWithDiscount"></span></s></small></td>
-							<td align="right"><small><span wicket:id="amount"></span></small></td>
+							<td align="right"><small><s><span wicket:id="amount"></span></s></small></td>
+							<td align="right"><small><span wicket:id="amountWithDiscount"></span></small></td>
 						</tr>
 					</tbody>
 					<tfoot>
 						<tr>
 							<td style="border: none;"></td>
-							<td align="left" style="border: none; background-color: #f7f7f9"><u><small><strong><wicket:message key="yourTotalDiscountMessage">[Your Total Discount Message]</wicket:message>:</strong></small></u><br> <small><wicket:message key="allIncludedMessage">[All Included Message]</wicket:message></small></td>
+							<td align="left" style="border: none; background-color: #f7f7f9"><u><small><strong><wicket:message key="yourTotalDiscountMessage"></wicket:message>:</strong></small></u><br> <small><wicket:message key="allIncludedMessage"></wicket:message></small></td>
 							<td align="left" style="border: none; background-color: #f7f7f9"></td>
-							<td align="right" style="border: none; background-color: #f7f7f9"><small>R$ 100,00</small></td>
+							<td align="right" style="border: none; background-color: #f7f7f9"><small><span wicket:id="totalDiscount"></span></small></td>
 						</tr>
 						<tr>
 							<td style="border: none;"></td>
-							<td align="left" style="border: none; background-color: #f7f7f9"><strong><wicket:message key="totalMessage">[Total Message]</wicket:message>:</strong><br> <u><small><wicket:message key="includedTransportMessage">[Included Transport Message]</wicket:message></small></u></td>
+							<td align="left" style="border: none; background-color: #f7f7f9"><strong><wicket:message key="totalMessage"></wicket:message>:</strong><br> <u><small><wicket:message key="includedTransportMessage"></wicket:message></small></u></td>
 							<td align="left" style="border: none; background-color: #f7f7f9"></td>
-							<td align="right" style="border: none; background-color: #f7f7f9"><strong>R$ 100,00</strong></td>
+							<td align="right" style="border: none; background-color: #f7f7f9"><strong><span wicket:id="total"></span></strong></td>
 						</tr>
 						<tr>
-							<td align="left" style="border: none;"><a class="btn btn-default" onclick="window.history.back();" role="button"><wicket:message key="continueShoppingMessage">[Continue Shopping Message]</wicket:message></a></td>
-							<td colspan="3" align="right" style="border: none; background-color: #f7f7f9"><a class="btn btn-primary" href="delivery.html" role="button"><wicket:message key="nextMessage">[Next Message]</wicket:message></a></td>
+							<td align="left" style="border: none;"></td>
+							<td colspan="3" align="right" style="border: none; background-color: #f7f7f9"></td>
 						</tr>
 					</tfoot>
 				</table>

@@ -36,19 +36,19 @@ public class ConfirmationMainMenuPanel extends Panel {
 
    private static final long serialVersionUID = -4776222984181317489L;
 
+   private final ITab homeTab = new HomeTab(Model.of(getString("homeMessage", new Model<String>(), "HOME").toUpperCase()));
+
+   private final ITab cartTab = new CartTab(Model.of(getString("cartMessage", new Model<String>(), "CART").toUpperCase()));
+
+   private final ITab specificationTab = new SpecificationTab(Model.of(getString("specificationMessage", new Model<String>(), "SPECIFICATIONS").toUpperCase()));
+
+   private final ITab confirmationTab = new ConfirmationTab(Model.of(getString("confirmationMessage", new Model<String>(), "CONFIRMATION").toUpperCase()));
+
+   private final MainMenuTabbedPanel mainMenuTabbedPanel = new MainMenuTabbedPanel();
+
    public ConfirmationMainMenuPanel(final String id, final IModel<Shopper> model) {
       super(id, model);
    }
-
-   private final ITab homeTab = new HomeTab(Model.of(getString("homeMessage", new Model<String>(), "HOME")));
-
-   private final ITab cartTab = new CartTab(Model.of(getString("cartMessage", new Model<String>(), "CART")));
-
-   private final ITab specificationTab = new SpecificationTab(Model.of(getString("specificationMessage", new Model<String>(), "SPECIFICATIONS")));
-
-   private final ITab confirmationTab = new ConfirmationTab(Model.of(getString("confirmationMessage", new Model<String>(), "CONFIRMATION")));
-
-   private final MainMenuTabbedPanel mainMenuTabbedPanel = new MainMenuTabbedPanel();
 
    @Override
    protected void onInitialize() {
