@@ -9,7 +9,6 @@ import java.util.TreeMap;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormChoiceComponentUpdatingBehavior;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
 import org.apache.wicket.markup.html.basic.Label;
@@ -43,6 +42,8 @@ import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
 import com.netbrasoft.gnuob.shop.shopper.Shopper;
 
+import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapAjaxButton;
+import de.agilecoders.wicket.core.markup.html.bootstrap.button.Buttons;
 import de.agilecoders.wicket.core.markup.html.bootstrap.form.BootstrapForm;
 import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.validation.TooltipValidation;
 
@@ -50,12 +51,13 @@ import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.validation.To
 public class SpecificationViewPanel extends CartViewPanel {
 
    @AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
-   class SaveAjaxButton extends AjaxButton {
+   class SaveAjaxButton extends BootstrapAjaxButton {
 
       private static final long serialVersionUID = 2695394292963384938L;
 
       public SaveAjaxButton(Form<Contract> form) {
-         super("save", form);
+         super("save", Model.of(SpecificationViewPanel.this.getString("payMessage")), form, Buttons.Type.Primary);
+         setSize(Buttons.Size.Small);
       }
 
       @Override

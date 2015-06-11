@@ -7,7 +7,6 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
@@ -36,6 +35,8 @@ import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
 import com.netbrasoft.gnuob.shop.shopper.Shopper;
 
+import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapAjaxButton;
+import de.agilecoders.wicket.core.markup.html.bootstrap.button.Buttons;
 import de.agilecoders.wicket.core.markup.html.bootstrap.form.BootstrapForm;
 import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.validation.TooltipValidation;
 
@@ -100,12 +101,13 @@ public class AccountViewPanel extends Panel {
    }
 
    @AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
-   class SaveAjaxButton extends AjaxButton {
+   class SaveAjaxButton extends BootstrapAjaxButton {
 
       private static final long serialVersionUID = 2695394292963384938L;
 
-      public SaveAjaxButton(Form<Contract> form) {
-         super("save", form);
+      public SaveAjaxButton(final Form<Contract> form) {
+         super("save", Model.of(AccountViewPanel.this.getString("saveMessage")), form, Buttons.Type.Primary);
+         setSize(Buttons.Size.Small);
       }
 
       @Override
