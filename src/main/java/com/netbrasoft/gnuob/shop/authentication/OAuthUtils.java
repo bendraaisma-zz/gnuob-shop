@@ -42,48 +42,69 @@ import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
 
 public final class OAuthUtils {
 
+   private static final String ISSUER_FACEBOOK = "https://www.facebook.com";
+   public static final String ACCOUNTS_GOOGLE_COM = "https://accounts.google.com/.well-known/openid-configuration";
    private static final String GNUOB_SITE_GOOGLE_CLIENT_SECRET = "gnuob.site.google.clientSecret";
    private static final String GNUOB_SITE_GOOGLE_CLIENT_ID = "gnuob.site.google.clientId";
+   private static final String GNUOB_SITE_GOOGLE_SCOPE = "gnuob.site.google.scope";
 
-   public static AuthenticationRequest getAuthenticationRequest(final URI issuerURI, final ClientID clientID, final URI redirectURI, State state) {
-      try {
-         OIDCProviderMetadata providerConfiguration = getProviderConfigurationURL(issuerURI);
-         return new AuthenticationRequest(providerConfiguration.getAuthorizationEndpointURI(), new ResponseType(ResponseType.Value.CODE), Scope.parse("openid profile email"), clientID, redirectURI, state, new Nonce());
-      } catch (ParseException | IOException e) {
-         throw new GNUOpenBusinessApplicationException("Couldn't get Authentication Request", e);
-      }
+   public static final String ACCOUNTS_FACEBOOK_COM = "http://localhost:8080/json/facebook/openid-configuration";
+   private static final String GNUOB_SITE_FACEBOOK_CLIENT_SECRET = "gnuob.site.facebook.clientSecret";
+   private static final String GNUOB_SITE_FACEBOOK_CLIENT_ID = "gnuob.site.facebook.clientId";
+   private static final String GNUOB_SITE_FACEBOOK_SCOPE = "gnuob.site.facebook.scope";
+
+   public static AuthenticationRequest getAuthenticationRequest(final OIDCProviderMetadata providerConfiguration, final URI issuerURI, final ClientID clientID, final URI redirectURI, Scope scope, State state) {
+      return new AuthenticationRequest(providerConfiguration.getAuthorizationEndpointURI(), new ResponseType(ResponseType.Value.CODE), scope, clientID, redirectURI, state, new Nonce());
    }
 
    public static ClientID getClientID(URI issuerURI) {
 
-      switch (issuerURI.getHost()) {
-      case "accounts.google.com":
+      switch (issuerURI.toString()) {
+      case ACCOUNTS_GOOGLE_COM:
          return new ClientID(System.getProperty(GNUOB_SITE_GOOGLE_CLIENT_ID));
+      case ACCOUNTS_FACEBOOK_COM:
+         return new ClientID(System.getProperty(GNUOB_SITE_FACEBOOK_CLIENT_ID));
       }
 
       return new ClientID();
    }
 
+   public static Scope getScope(URI issuerURI) {
+      switch (issuerURI.toString()) {
+      case ACCOUNTS_GOOGLE_COM:
+         return Scope.parse(System.getProperty(GNUOB_SITE_GOOGLE_SCOPE));
+      case ACCOUNTS_FACEBOOK_COM:
+         return Scope.parse(System.getProperty(GNUOB_SITE_FACEBOOK_SCOPE));
+      }
+      return new Scope();
+   }
+
    public static String getClientSecret(URI issuerURI) {
-      switch (issuerURI.getHost()) {
-      case "accounts.google.com":
+      switch (issuerURI.toString()) {
+      case ACCOUNTS_GOOGLE_COM:
          return System.getProperty(GNUOB_SITE_GOOGLE_CLIENT_SECRET);
+      case ACCOUNTS_FACEBOOK_COM:
+         return System.getProperty(GNUOB_SITE_FACEBOOK_CLIENT_SECRET);
       }
 
       return "";
    }
 
-   private static OIDCProviderMetadata getProviderConfigurationURL(final URI issuerURI) throws IOException, ParseException {
-      final URL providerConfigurationURL = issuerURI.resolve(".well-known/openid-configuration").toURL();
-      final InputStream inputStream = providerConfigurationURL.openStream();
+   public static OIDCProviderMetadata getProviderConfigurationURL(final URI issuerURI) {
+      try {
+         URL providerConfigurationURL = issuerURI.toURL();
+         InputStream inputStream = providerConfigurationURL.openStream();
 
-      String providerInfo = null;
+         String providerInfo = null;
 
-      try (java.util.Scanner json = new java.util.Scanner(inputStream)) {
-         providerInfo = json.useDelimiter("\\A").hasNext() ? json.next() : "";
+         try (java.util.Scanner json = new java.util.Scanner(inputStream)) {
+            providerInfo = json.useDelimiter("\\A").hasNext() ? json.next() : "";
+         }
+
+         return OIDCProviderMetadata.parse(providerInfo);
+      } catch (ParseException | IOException e) {
+         throw new GNUOpenBusinessApplicationException("Couldn't get OIDCProviderMetadata", e);
       }
-
-      return OIDCProviderMetadata.parse(providerInfo);
    }
 
    private static BearerAccessToken getTokenRequest(final OIDCProviderMetadata providerConfiguration, final ClientID clientID, final AuthorizationCode authorizationCode, final URI redirectURI, String clientSecret)
@@ -111,7 +132,18 @@ public final class OAuthUtils {
 
    private static UserInfo getUserInfo(final OIDCProviderMetadata providerConfiguration, final BearerAccessToken bearerAccessToken) throws ParseException, SerializeException, IOException {
       UserInfoRequest userInfoRequest = new UserInfoRequest(providerConfiguration.getUserInfoEndpointURI(), bearerAccessToken);
-      UserInfoResponse userInfoResponse = UserInfoResponse.parse(userInfoRequest.toHTTPRequest().send());
+
+      UserInfoResponse userInfoResponse;
+
+      switch (providerConfiguration.getIssuer().getValue()) {
+
+      case ISSUER_FACEBOOK:
+         userInfoResponse = FacebookUserInfoResponse.parse(userInfoRequest.toHTTPRequest().send());
+         break;
+      default:
+         userInfoResponse = UserInfoResponse.parse(userInfoRequest.toHTTPRequest().send());
+         break;
+      }
 
       if (userInfoResponse instanceof UserInfoErrorResponse) {
          ErrorObject error = ((UserInfoErrorResponse) userInfoResponse).getErrorObject();
@@ -121,9 +153,8 @@ public final class OAuthUtils {
       return ((UserInfoSuccessResponse) userInfoResponse).getUserInfo();
    }
 
-   public static UserInfo getUserInfo(final URI issuerURI, final ClientID clientID, final State state, final URI requestURI, final URI redirectURI, String clientSecret) {
+   public static UserInfo getUserInfo(final OIDCProviderMetadata providerConfiguration, final URI issuerURI, final ClientID clientID, final State state, final URI requestURI, final URI redirectURI, String clientSecret) {
       try {
-         OIDCProviderMetadata providerConfiguration = getProviderConfigurationURL(issuerURI);
          AuthorizationCode authorizationCode = retrieveAuthenticationCode(requestURI, state);
          BearerAccessToken bearerAccessToken = getTokenRequest(providerConfiguration, clientID, authorizationCode, redirectURI, clientSecret);
          return getUserInfo(providerConfiguration, bearerAccessToken);

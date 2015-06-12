@@ -29,6 +29,7 @@ import com.netbrasoft.gnuob.shop.shopper.Shopper;
 import com.nimbusds.oauth2.sdk.id.ClientID;
 import com.nimbusds.oauth2.sdk.id.State;
 import com.nimbusds.openid.connect.sdk.claims.UserInfo;
+import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
 
 import de.agilecoders.wicket.webjars.request.resource.WebjarsCssResourceReference;
 import de.agilecoders.wicket.webjars.request.resource.WebjarsJavaScriptResourceReference;
@@ -93,7 +94,8 @@ public abstract class BasePage extends WebPage {
       State state = new State(shopper.getId());
       URI requestURI = URI.create(getRequest().getClientUrl().toString());
       URI redirectURI = URI.create(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getClientUrl()).split("\\?")[0]);
-      return OAuthUtils.getUserInfo(issuerURI, clientID, state, requestURI, redirectURI, OAuthUtils.getClientSecret(issuerURI));
+      OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
+      return OAuthUtils.getUserInfo(providerConfiguration, issuerURI, clientID, state, requestURI, redirectURI, OAuthUtils.getClientSecret(issuerURI));
    }
 
    @Override

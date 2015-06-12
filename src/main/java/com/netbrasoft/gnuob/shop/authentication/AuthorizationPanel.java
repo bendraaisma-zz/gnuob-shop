@@ -16,9 +16,11 @@ import com.netbrasoft.gnuob.api.generic.GNUOpenBusinessApplicationException;
 import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
 import com.netbrasoft.gnuob.shop.shopper.Shopper;
+import com.nimbusds.oauth2.sdk.Scope;
 import com.nimbusds.oauth2.sdk.SerializeException;
 import com.nimbusds.oauth2.sdk.id.ClientID;
 import com.nimbusds.oauth2.sdk.id.State;
+import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
 
 @AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
 public class AuthorizationPanel extends Panel {
@@ -36,16 +38,49 @@ public class AuthorizationPanel extends Panel {
       public void onClick(AjaxRequestTarget target) {
          try {
             Shopper shopper = shopperDataProvider.find(new Shopper());
-            shopper.setIssuer("https://accounts.google.com/");
+            shopper.setIssuer(OAuthUtils.ACCOUNTS_GOOGLE_COM);
 
             URI issuerURI = new URI(shopper.getIssuer());
             ClientID clientID = OAuthUtils.getClientID(issuerURI);
             State state = new State(shopper.getId());
             URI redirectURI = URI.create(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getClientUrl()).split("\\?")[0]);
+            Scope scope = OAuthUtils.getScope(issuerURI);
+            OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
 
             shopperDataProvider.merge(shopper);
 
-            throw new RedirectToUrlException(OAuthUtils.getAuthenticationRequest(issuerURI, clientID, redirectURI, state).toURI().toString());
+            throw new RedirectToUrlException(OAuthUtils.getAuthenticationRequest(providerConfiguration, issuerURI, clientID, redirectURI, scope, state).toURI().toString());
+         } catch (GNUOpenBusinessApplicationException | URISyntaxException | SerializeException e) {
+
+         }
+      }
+   }
+
+   @AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
+   class FacebookAjaxLink extends AjaxLink<String> {
+
+      private static final long serialVersionUID = -8317730269644885290L;
+
+      public FacebookAjaxLink() {
+         super("facebook");
+      }
+
+      @Override
+      public void onClick(AjaxRequestTarget target) {
+         try {
+            Shopper shopper = shopperDataProvider.find(new Shopper());
+            shopper.setIssuer(OAuthUtils.ACCOUNTS_FACEBOOK_COM);
+
+            URI issuerURI = new URI(shopper.getIssuer());
+            ClientID clientID = OAuthUtils.getClientID(issuerURI);
+            State state = new State(shopper.getId());
+            URI redirectURI = URI.create(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getClientUrl()).split("\\?")[0]);
+            Scope scope = OAuthUtils.getScope(issuerURI);
+            OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
+
+            shopperDataProvider.merge(shopper);
+
+            throw new RedirectToUrlException(OAuthUtils.getAuthenticationRequest(providerConfiguration, issuerURI, clientID, redirectURI, scope, state).toURI().toString());
          } catch (GNUOpenBusinessApplicationException | URISyntaxException | SerializeException e) {
 
          }
@@ -64,6 +99,7 @@ public class AuthorizationPanel extends Panel {
    @Override
    protected void onInitialize() {
       add(new GoogleAjaxLink());
+      add(new FacebookAjaxLink());
       super.onInitialize();
    }
 }

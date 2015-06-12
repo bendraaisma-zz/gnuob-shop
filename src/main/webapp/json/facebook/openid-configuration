@@ -1,0 +1,27 @@
+{
+ "issuer": "https://www.facebook.com",
+ "authorization_endpoint": "https://www.facebook.com/dialog/oauth",
+ "token_endpoint": "https://graph.facebook.com/v2.3/oauth/access_token",
+ "userinfo_endpoint": "https://graph.facebook.com/me",
+ "jwks_uri": "https://www.facebook.com/dialog/oauth",
+ "response_types_supported": [
+  "code",
+  "token",
+  "code token",
+  "granted_scopes"
+ ],
+ "subject_types_supported": [
+  "public"
+ ],
+ "id_token_signing_alg_values_supported": [
+  "RS256"
+ ],
+ "scopes_supported": [
+  "openid",
+  "email",
+  "user_likes",
+  "publish_actions",
+  "basic_info",
+  "user_photos"
+ ]
+}
