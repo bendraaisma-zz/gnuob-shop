@@ -36,14 +36,6 @@ public class CartMainMenuPanel extends Panel {
 
    private static final long serialVersionUID = -4776222984181317489L;
 
-   private final ITab homeTab = new HomeTab(Model.of(getString("homeMessage", new Model<String>(), "HOME").toUpperCase()));
-
-   private final ITab cartTab = new CartTab(Model.of(getString("cartMessage", new Model<String>(), "CART").toUpperCase()));
-
-   private final ITab specificationTab = new SpecificationTab(Model.of(getString("specificationMessage", new Model<String>(), "SPECIFICATIONS").toUpperCase()));
-
-   private final ITab confirmationTab = new ConfirmationTab(Model.of(getString("confirmationMessage", new Model<String>(), "CONFIRMATION").toUpperCase()));
-
    private final MainMenuTabbedPanel mainMenuTabbedPanel = new MainMenuTabbedPanel();
 
    public CartMainMenuPanel(final String id, final IModel<Shopper> model) {
@@ -52,11 +44,11 @@ public class CartMainMenuPanel extends Panel {
 
    @Override
    protected void onInitialize() {
-      mainMenuTabbedPanel.getTabs().add(homeTab);
-      mainMenuTabbedPanel.getTabs().add(cartTab);
-      mainMenuTabbedPanel.getTabs().add(specificationTab);
-      mainMenuTabbedPanel.getTabs().add(confirmationTab);
-      mainMenuTabbedPanel.setSelectedTab(mainMenuTabbedPanel.getTabs().indexOf(cartTab));
+      mainMenuTabbedPanel.getTabs().add(new HomeTab(Model.of(getString("homeMessage", new Model<String>(), "HOME").toUpperCase())));
+      mainMenuTabbedPanel.getTabs().add(new CartTab(Model.of(getString("cartMessage", new Model<String>(), "CART").toUpperCase())));
+      mainMenuTabbedPanel.getTabs().add(new SpecificationTab(Model.of(getString("specificationMessage", new Model<String>(), "SPECIFICATIONS").toUpperCase())));
+      mainMenuTabbedPanel.getTabs().add(new ConfirmationTab(Model.of(getString("confirmationMessage", new Model<String>(), "CONFIRMATION").toUpperCase())));
+      mainMenuTabbedPanel.setSelectedTab(1);
 
       add(mainMenuTabbedPanel.setOutputMarkupId(true));
       super.onInitialize();

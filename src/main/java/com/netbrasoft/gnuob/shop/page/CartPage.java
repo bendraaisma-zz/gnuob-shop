@@ -1,6 +1,7 @@
 package com.netbrasoft.gnuob.shop.page;
 
-import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.authorization.Action;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
 import org.apache.wicket.model.Model;
 import org.wicketstuff.wicket.mount.core.annotation.MountPath;
 
@@ -10,7 +11,7 @@ import com.netbrasoft.gnuob.shop.security.ShopRoles;
 import com.netbrasoft.gnuob.shop.shopper.Shopper;
 
 @MountPath("cart.html")
-@AuthorizeInstantiation({ ShopRoles.GUEST })
+@AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
 public class CartPage extends BasePage {
 
    private static final long serialVersionUID = -7854507374209656133L;

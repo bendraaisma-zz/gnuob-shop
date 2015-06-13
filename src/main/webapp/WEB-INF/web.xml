@@ -106,6 +106,7 @@
 			<web-resource-name>UnRestricted</web-resource-name>
 			<description />
 			<url-pattern>/json/facebook/openid-configuration</url-pattern>
+			<url-pattern>/json/google/openid-configuration</url-pattern>
 		</web-resource-collection>
 	</security-constraint>
 

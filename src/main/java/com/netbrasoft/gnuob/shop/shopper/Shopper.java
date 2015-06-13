@@ -34,44 +34,6 @@ public class Shopper implements IClusterable {
       return cart;
    }
 
-   public Contract getContract() {
-      return contract;
-   }
-
-   public String getId() {
-      return id;
-   }
-
-   public String getIssuer() {
-      return issuer;
-   }
-
-   public boolean login() {
-      return issuer != null && !issuer.equals("") && RequestCycle.get().getRequest().getClientUrl().getQueryParameter("state") != null;
-   }
-
-   public void logout() {
-      contract.setActive(true);
-      contract.setCustomer(new Customer());
-      contract.getCustomer().setActive(true);
-   }
-
-   public boolean loggedIn() {
-      return contract.getContractId() != null && !"".equals(contract.getContractId()) && contract.getId() != 0;
-   }
-
-   public void setContract(Contract contract) {
-      this.contract = contract;
-   }
-
-   public void setId(String id) {
-      this.id = id;
-   }
-
-   public void setIssuer(String issuer) {
-      this.issuer = issuer;
-   }
-
    public BigDecimal getChartTotal() {
       BigDecimal total = BigDecimal.ZERO;
 
@@ -96,5 +58,44 @@ public class Shopper implements IClusterable {
          }
       }
       return discountTotal;
+   }
+
+   public Contract getContract() {
+      return contract;
+   }
+
+   public String getId() {
+      return id;
+   }
+
+   public String getIssuer() {
+      return issuer;
+   }
+
+   public boolean loggedIn() {
+      return contract.getContractId() != null && !"".equals(contract.getContractId()) && contract.getId() != 0;
+   }
+
+   public boolean login() {
+      return issuer != null && !issuer.equals("") && RequestCycle.get().getRequest().getClientUrl().getQueryParameter("state") != null;
+   }
+
+   public void logout() {
+      contract = new Contract();
+      contract.setActive(true);
+      contract.setCustomer(new Customer());
+      contract.getCustomer().setActive(true);
+   }
+
+   public void setContract(Contract contract) {
+      this.contract = contract;
+   }
+
+   public void setId(String id) {
+      this.id = id;
+   }
+
+   public void setIssuer(String issuer) {
+      this.issuer = issuer;
    }
 }

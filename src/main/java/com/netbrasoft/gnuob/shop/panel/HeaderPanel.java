@@ -1,13 +1,17 @@
 package com.netbrasoft.gnuob.shop.panel;
 
 import org.apache.commons.lang3.text.WordUtils;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.flow.RedirectToUrlException;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
+import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
 import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
 import com.netbrasoft.gnuob.shop.shopper.Shopper;
@@ -38,7 +42,29 @@ public class HeaderPanel extends Panel {
       add(new Label(GNUOB_SITE_SUBTITLE_PROPERTY, System.getProperty(GNUOB_SITE_SUBTITLE_PROPERTY, subTitle)));
 
       add(new Label("chartSize", Model.of(shopperDataProvider.find(new Shopper()).getCart().size())).add(new BadgeBehavior()));
+      add(new AjaxLink<String>("logout") {
 
+         private static final long serialVersionUID = -3560695505363960953L;
+
+         @Override
+         public void onClick(AjaxRequestTarget target) {
+            Shopper shopper = shopperDataProvider.find(new Shopper());
+            shopper.logout();
+            shopperDataProvider.merge(shopper);
+            ((AppServletContainerAuthenticatedWebSession) getSession()).signOut();
+            ((AppServletContainerAuthenticatedWebSession) getSession()).invalidate();
+            throw new RedirectToUrlException("account.html");
+         }
+      }.setVisible(shopperDataProvider.find(new Shopper()).loggedIn()));
+      add(new AjaxLink<String>("login") {
+
+         private static final long serialVersionUID = -3560695505363960953L;
+
+         @Override
+         public void onClick(AjaxRequestTarget target) {
+            throw new RedirectToUrlException("account.html");
+         }
+      }.setVisible(!shopperDataProvider.find(new Shopper()).loggedIn()));
       super.onInitialize();
    }
 }

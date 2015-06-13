@@ -100,6 +100,11 @@
 			<version>${version.wicketstuff.plugin}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.wicketstuff</groupId>
+			<artifactId>wicketstuff-minis</artifactId>
+			<version>${version.wicketstuff.plugin}</version>
+		</dependency>
+		<dependency>
 			<groupId>com.github.svenmeier.wicket-dnd</groupId>
 			<artifactId>wicket-dnd</artifactId>
 			<version>${version.wicket-dnd}</version>

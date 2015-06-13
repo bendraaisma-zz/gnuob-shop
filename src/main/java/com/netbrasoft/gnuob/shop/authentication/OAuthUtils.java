@@ -42,12 +42,12 @@ import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
 
 public final class OAuthUtils {
 
-   private static final String ISSUER_FACEBOOK = "https://www.facebook.com";
-   public static final String ACCOUNTS_GOOGLE_COM = "https://accounts.google.com/.well-known/openid-configuration";
+   public static final String ACCOUNTS_GOOGLE_COM = "http://localhost:8080/json/google/openid-configuration";
    private static final String GNUOB_SITE_GOOGLE_CLIENT_SECRET = "gnuob.site.google.clientSecret";
    private static final String GNUOB_SITE_GOOGLE_CLIENT_ID = "gnuob.site.google.clientId";
    private static final String GNUOB_SITE_GOOGLE_SCOPE = "gnuob.site.google.scope";
 
+   private static final String ISSUER_FACEBOOK = "https://www.facebook.com";
    public static final String ACCOUNTS_FACEBOOK_COM = "http://localhost:8080/json/facebook/openid-configuration";
    private static final String GNUOB_SITE_FACEBOOK_CLIENT_SECRET = "gnuob.site.facebook.clientSecret";
    private static final String GNUOB_SITE_FACEBOOK_CLIENT_ID = "gnuob.site.facebook.clientId";
@@ -67,16 +67,6 @@ public final class OAuthUtils {
       }
 
       return new ClientID();
-   }
-
-   public static Scope getScope(URI issuerURI) {
-      switch (issuerURI.toString()) {
-      case ACCOUNTS_GOOGLE_COM:
-         return Scope.parse(System.getProperty(GNUOB_SITE_GOOGLE_SCOPE));
-      case ACCOUNTS_FACEBOOK_COM:
-         return Scope.parse(System.getProperty(GNUOB_SITE_FACEBOOK_SCOPE));
-      }
-      return new Scope();
    }
 
    public static String getClientSecret(URI issuerURI) {
@@ -105,6 +95,16 @@ public final class OAuthUtils {
       } catch (ParseException | IOException e) {
          throw new GNUOpenBusinessApplicationException("Couldn't get OIDCProviderMetadata", e);
       }
+   }
+
+   public static Scope getScope(URI issuerURI) {
+      switch (issuerURI.toString()) {
+      case ACCOUNTS_GOOGLE_COM:
+         return Scope.parse(System.getProperty(GNUOB_SITE_GOOGLE_SCOPE));
+      case ACCOUNTS_FACEBOOK_COM:
+         return Scope.parse(System.getProperty(GNUOB_SITE_FACEBOOK_SCOPE));
+      }
+      return new Scope();
    }
 
    private static BearerAccessToken getTokenRequest(final OIDCProviderMetadata providerConfiguration, final ClientID clientID, final AuthorizationCode authorizationCode, final URI redirectURI, String clientSecret)

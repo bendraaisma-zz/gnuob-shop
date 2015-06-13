@@ -5,6 +5,9 @@ import java.net.URISyntaxException;
 import java.util.Iterator;
 
 import org.apache.commons.lang3.text.WordUtils;
+import org.apache.wicket.ajax.IAjaxIndicatorAware;
+import org.apache.wicket.authorization.Action;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
 import org.apache.wicket.markup.head.CssContentHeaderItem;
 import org.apache.wicket.markup.head.CssReferenceHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -25,6 +28,7 @@ import com.netbrasoft.gnuob.shop.NetbrasoftShop;
 import com.netbrasoft.gnuob.shop.authentication.OAuthUtils;
 import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
 import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
+import com.netbrasoft.gnuob.shop.security.ShopRoles;
 import com.netbrasoft.gnuob.shop.shopper.Shopper;
 import com.nimbusds.oauth2.sdk.id.ClientID;
 import com.nimbusds.oauth2.sdk.id.State;
@@ -34,7 +38,8 @@ import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
 import de.agilecoders.wicket.webjars.request.resource.WebjarsCssResourceReference;
 import de.agilecoders.wicket.webjars.request.resource.WebjarsJavaScriptResourceReference;
 
-public abstract class BasePage extends WebPage {
+@AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
+public abstract class BasePage extends WebPage implements IAjaxIndicatorAware {
 
    private static final long serialVersionUID = 8192334293970678397L;
 
@@ -49,6 +54,8 @@ public abstract class BasePage extends WebPage {
    private static final CssReferenceHeaderItem CSS_BOOTSTRAP_3_DATEPICKER = CssContentHeaderItem.forReference(new WebjarsCssResourceReference("/ajax/libs/bootstrap-datepicker/1.4.0/css/bootstrap-datepicker.min.css"));
 
    private static final JavaScriptReferenceHeaderItem JS_JQUERY = JavaScriptHeaderItem.forReference(NetbrasoftShop.get().getJavaScriptLibrarySettings().getJQueryReference());
+
+   private static final String VEIL_HEX_LOADING = "veil-hex-loading";
 
    private static final Logger LOGGER = LoggerFactory.getLogger(BasePage.class);
 
@@ -138,5 +145,10 @@ public abstract class BasePage extends WebPage {
       } else {
          shopper.setContract(contractDataProvider.persist(shopper.getContract()));
       }
+   }
+
+   @Override
+   public String getAjaxIndicatorMarkupId() {
+      return VEIL_HEX_LOADING;
    }
 }

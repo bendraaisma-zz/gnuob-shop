@@ -39,10 +39,6 @@ public class CategoryMainMenuPanel extends Panel {
 
    private static final long serialVersionUID = 6083651059402628915L;
 
-   private final ITab homeTab = new CategoryHomeTab(Model.of(getString("homeMessage", new Model<String>(), "INICIO").toUpperCase()));
-
-   private final ITab contactTab = new ContactTab(Model.of(getString("contactMessage", new Model<String>(), "CONTATO").toUpperCase()));
-
    private final MainMenuTabbedPanel mainMenuTabbedPanel = new MainMenuTabbedPanel();
 
    @SpringBean(name = "CategoryDataProvider", required = true)
@@ -61,14 +57,14 @@ public class CategoryMainMenuPanel extends Panel {
       categoryDataProvider.getType().setActive(true);
       categoryDataProvider.setOrderBy(OrderBy.POSITION_A_Z);
 
-      mainMenuTabbedPanel.getTabs().add(homeTab);
+      mainMenuTabbedPanel.getTabs().add(new CategoryHomeTab(Model.of(getString("homeMessage", new Model<String>(), "INIT").toUpperCase())));
 
       for (Iterator<? extends Category> iterator = categoryDataProvider.iterator(0, 5); iterator.hasNext();) {
          Category category = iterator.next();
          mainMenuTabbedPanel.getTabs().add(new CategoryTab(Model.of(category.getName().toUpperCase()), Model.of(category)));
       }
 
-      mainMenuTabbedPanel.getTabs().add(contactTab);
+      mainMenuTabbedPanel.getTabs().add(new ContactTab(Model.of(getString("contactMessage", new Model<String>(), "CONTACT").toUpperCase())));
 
       add(mainMenuTabbedPanel.setOutputMarkupId(true));
 

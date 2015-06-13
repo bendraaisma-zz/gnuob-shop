@@ -38,10 +38,10 @@ public class ConfirmationViewPanel extends SpecificationViewPanel {
 
    private static final long serialVersionUID = 4629799686885772339L;
 
+   @SpringBean(name = "ShopperDataProvider", required = true)
+   private GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
+
    public ConfirmationViewPanel(final String id, final IModel<Shopper> model) {
       super(id, model);
    }
-
-   @SpringBean(name = "ShopperDataProvider", required = true)
-   private GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 }

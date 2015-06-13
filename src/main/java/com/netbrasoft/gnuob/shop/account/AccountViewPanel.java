@@ -37,6 +37,7 @@ import com.netbrasoft.gnuob.shop.shopper.Shopper;
 
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapAjaxButton;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.Buttons;
+import de.agilecoders.wicket.core.markup.html.bootstrap.button.LoadingBehavior;
 import de.agilecoders.wicket.core.markup.html.bootstrap.form.BootstrapForm;
 import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.validation.TooltipValidation;
 
@@ -68,7 +69,7 @@ public class AccountViewPanel extends Panel {
       protected void onInitialize() {
          BootstrapForm<Contract> customerEditForm = new BootstrapForm<Contract>("customerEditForm");
          customerEditForm.setModel(new CompoundPropertyModel<Contract>(Model.of(shopperDataProvider.find(new Shopper()).getContract())));
-         customerEditForm.add(new RequiredTextField<String>("customer.buyerEmail").setLabel(Model.of(getString("buyerEmailMessage"))).add(EmailAddressValidator.getInstance()).add(StringValidator.maximumLength(40)));
+         customerEditForm.add(new RequiredTextField<String>("customer.buyerEmail").setLabel(Model.of(getString("buyerEmailMessage"))).add(EmailAddressValidator.getInstance()).add(StringValidator.maximumLength(60)));
          customerEditForm.add(new RequiredTextField<String>("customer.firstName").setLabel(Model.of(getString("firstNameMessage"))).add(StringValidator.maximumLength(40)));
          customerEditForm.add(new RequiredTextField<String>("customer.lastName").setLabel(Model.of(getString("lastNameMessage"))).add(StringValidator.maximumLength(40)));
          customerEditForm.add(new TextField<String>("customer.address.phone").add(StringValidator.maximumLength(40)));
@@ -77,7 +78,7 @@ public class AccountViewPanel extends Panel {
          customerEditForm.add(new DropDownChoice<Locale>("customer.address.country", getSortedISOCountries(), new ChoiceRenderer<Locale>("displayCountry", "")).setRequired(true).setLabel(Model.of(getString("countryNameMessage"))));
          customerEditForm.add(new RequiredTextField<String>("customer.address.cityName").setLabel(Model.of(getString("cityNameMessage"))).add(StringValidator.maximumLength(40)));
          customerEditForm.add(new RequiredTextField<String>("customer.address.postalCode").setLabel(Model.of(getString("postalCodeMessage"))).add(StringValidator.maximumLength(15)));
-         customerEditForm.add(new RequiredTextField<String>("customer.address.stateOrProvince").setLabel(Model.of(getString("stateOrProvinceMessage"))).add(StringValidator.maximumLength(40)));
+         customerEditForm.add(new RequiredTextField<String>("customer.address.stateOrProvince").setLabel(Model.of(getString("stateOrProvinceMessage"))).add(StringValidator.maximumLength(2)));
 
          customerEditForm.add(new SaveAjaxButton(customerEditForm).setOutputMarkupId(true));
          add(customerEditForm.setOutputMarkupId(true));
@@ -108,28 +109,29 @@ public class AccountViewPanel extends Panel {
       public SaveAjaxButton(final Form<Contract> form) {
          super("save", Model.of(AccountViewPanel.this.getString("saveMessage")), form, Buttons.Type.Primary);
          setSize(Buttons.Size.Small);
+         add(new LoadingBehavior(Model.of(AccountViewPanel.this.getString("savingMessage"))));
       }
 
       @Override
       protected void onError(AjaxRequestTarget target, Form<?> form) {
          form.add(new TooltipValidation());
          target.add(form);
+         target.add(SaveAjaxButton.this.add(new LoadingBehavior(Model.of(AccountViewPanel.this.getString("savingMessage")))));
       }
 
       @Override
       protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
          try {
-            saveContract(form);
+            saveContract((Contract) form.getDefaultModelObject());
+            target.add(SaveAjaxButton.this.add(new LoadingBehavior(Model.of(AccountViewPanel.this.getString("savingMessage")))));
          } catch (RuntimeException e) {
             LOGGER.warn(e.getMessage(), e);
          }
          throw new RedirectToUrlException("account.html");
       }
 
-      private void saveContract(Form<?> form) {
-         Contract contract = (Contract) form.getDefaultModelObject();
+      private void saveContract(Contract contract) {
          Shopper shopper = shopperDataProvider.find(new Shopper());
-
          contract = contractDataProvider.merge(contract);
          shopper.setContract(contractDataProvider.findById(contract));
 

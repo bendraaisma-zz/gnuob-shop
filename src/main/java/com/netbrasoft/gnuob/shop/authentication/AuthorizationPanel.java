@@ -26,19 +26,19 @@ import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
 public class AuthorizationPanel extends Panel {
 
    @AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
-   class GoogleAjaxLink extends AjaxLink<String> {
+   class FacebookAjaxLink extends AjaxLink<String> {
 
       private static final long serialVersionUID = -8317730269644885290L;
 
-      public GoogleAjaxLink() {
-         super("google");
+      public FacebookAjaxLink() {
+         super("facebook");
       }
 
       @Override
       public void onClick(AjaxRequestTarget target) {
          try {
             Shopper shopper = shopperDataProvider.find(new Shopper());
-            shopper.setIssuer(OAuthUtils.ACCOUNTS_GOOGLE_COM);
+            shopper.setIssuer(OAuthUtils.ACCOUNTS_FACEBOOK_COM);
 
             URI issuerURI = new URI(shopper.getIssuer());
             ClientID clientID = OAuthUtils.getClientID(issuerURI);
@@ -57,19 +57,19 @@ public class AuthorizationPanel extends Panel {
    }
 
    @AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
-   class FacebookAjaxLink extends AjaxLink<String> {
+   class GoogleAjaxLink extends AjaxLink<String> {
 
       private static final long serialVersionUID = -8317730269644885290L;
 
-      public FacebookAjaxLink() {
-         super("facebook");
+      public GoogleAjaxLink() {
+         super("google");
       }
 
       @Override
       public void onClick(AjaxRequestTarget target) {
          try {
             Shopper shopper = shopperDataProvider.find(new Shopper());
-            shopper.setIssuer(OAuthUtils.ACCOUNTS_FACEBOOK_COM);
+            shopper.setIssuer(OAuthUtils.ACCOUNTS_GOOGLE_COM);
 
             URI issuerURI = new URI(shopper.getIssuer());
             ClientID clientID = OAuthUtils.getClientID(issuerURI);

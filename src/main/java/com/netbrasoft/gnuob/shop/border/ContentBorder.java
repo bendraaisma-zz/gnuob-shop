@@ -21,7 +21,7 @@ public class ContentBorder extends Border {
    protected void onInitialize() {
       super.onInitialize();
 
-      addToBorder(headerPanel);
-      addToBorder(footerPanel);
+      addToBorder(headerPanel.setOutputMarkupId(true));
+      addToBorder(footerPanel.setOutputMarkupId(true));
    }
 }

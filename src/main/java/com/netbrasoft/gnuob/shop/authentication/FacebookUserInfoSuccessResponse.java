@@ -14,14 +14,6 @@ import net.minidev.json.JSONObject;
 
 public class FacebookUserInfoSuccessResponse extends UserInfoSuccessResponse {
 
-   public FacebookUserInfoSuccessResponse(UserInfo claimsSet) {
-      super(claimsSet);
-   }
-
-   public FacebookUserInfoSuccessResponse(JWT jwt) {
-      super(jwt);
-   }
-
    public static FacebookUserInfoSuccessResponse parse(final HTTPResponse httpResponse) throws ParseException {
       httpResponse.ensureStatusCode(HTTPResponse.SC_OK);
 
@@ -64,5 +56,13 @@ public class FacebookUserInfoSuccessResponse extends UserInfoSuccessResponse {
       }
 
       return response;
+   }
+
+   public FacebookUserInfoSuccessResponse(JWT jwt) {
+      super(jwt);
+   }
+
+   public FacebookUserInfoSuccessResponse(UserInfo claimsSet) {
+      super(claimsSet);
    }
 }
