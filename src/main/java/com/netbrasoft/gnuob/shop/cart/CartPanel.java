@@ -14,7 +14,7 @@ public class CartPanel extends Panel {
 
    private static final long serialVersionUID = 2034566325989232879L;
 
-   private CartViewPanel cartOfferProductViewPanel = new CartViewPanel("cartViewPanel", (IModel<Shopper>) getDefaultModel());
+   private CartViewPanel cartViewPanel = new CartViewPanel("cartViewPanel", (IModel<Shopper>) getDefaultModel());
 
    public CartPanel(final String id, final IModel<Shopper> model) {
       super(id, model);
@@ -22,7 +22,7 @@ public class CartPanel extends Panel {
 
    @Override
    protected void onInitialize() {
-      add(cartOfferProductViewPanel.add(cartOfferProductViewPanel.new OfferRecordViewFragement()).setOutputMarkupId(true));
+      add(cartViewPanel.add(cartViewPanel.new OfferRecordViewFragement().setOutputMarkupId(true)).setOutputMarkupId(true));
       super.onInitialize();
    }
 }

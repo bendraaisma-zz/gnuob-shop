@@ -44,7 +44,7 @@
 							<span wicket:id="rating"></span>
 						</p>
 						<h5>
-							<small><wicket:message key="quantityMessage"></wicket:message>&nbsp;<span wicket:id="stock.quantity"></span></small>
+							<small><wicket:message key="quantityMessage"></wicket:message>&nbsp;<span wicket:id="product.stock.quantity"></span></small>
 						</h5>
 						<br>
 						<h4>
@@ -58,6 +58,7 @@
 					<thead>
 						<tr>
 							<td><small><strong><wicket:message key="nameMessage"></wicket:message></strong></small></td>
+							<td><small><strong><wicket:message key="optionMessage"></wicket:message></strong></small></td>
 							<td align="right"><small><strong><wicket:message key="quantityMessage"></wicket:message></strong></small></td>
 							<td align="right"><small><strong><wicket:message key="amountMessage"></wicket:message></strong></small></td>
 							<td align="right"><small><strong><wicket:message key="amountWithDiscount"></wicket:message></strong></small></td>
@@ -65,27 +66,28 @@
 					</thead>
 					<tbody wicket:id="offerRecordDataviewContainer">
 						<tr wicket:id="offerRecordDataview">
-							<td><small><span wicket:id="product.name"></span></small></td>
+							<td><small><span wicket:id="name"></span></small></td>
+							<td><small><span wicket:id="option"></span></small></td>
 							<td align="right"><small><span wicket:id="quantity"></span></small></td>
 							<td align="right"><small><s><span wicket:id="amount"></span></s></small></td>
 							<td align="right"><small><span wicket:id="amountWithDiscount"></span></small></td>
 						</tr>
 					</tbody>
-					<tfoot>
+					<tfoot wicket:id="offerRecordTotalDataviewContainer">
 						<tr>
 							<td style="border: none;"></td>
-							<td align="left" style="border: none; background-color: #f7f7f9"><u><small><strong><wicket:message key="yourTotalDiscountMessage"></wicket:message>:</strong></small></u><br> <small><wicket:message key="allIncludedMessage"></wicket:message></small></td>
+							<td colspan="2" align="left" style="border: none; background-color: #f7f7f9"><small><strong><u><wicket:message key="yourTotalDiscountMessage"></wicket:message>:</u></strong></small><br> <small><wicket:message key="allIncludedMessage"></wicket:message></small></td>
 							<td align="left" style="border: none; background-color: #f7f7f9"></td>
 							<td align="right" style="border: none; background-color: #f7f7f9"><small><span wicket:id="totalDiscount"></span></small></td>
 						</tr>
 						<tr>
 							<td style="border: none;"></td>
-							<td align="left" style="border: none; background-color: #f7f7f9"><strong><wicket:message key="totalMessage"></wicket:message>:</strong><br> <u><small><wicket:message key="includedTransportMessage"></wicket:message></small></u></td>
+							<td colspan="2" align="left" style="border: none; background-color: #f7f7f9"><strong><wicket:message key="totalMessage"></wicket:message>:</strong><br><small><u>(<wicket:message key="includedTransportMessage"></wicket:message>&nbsp;<span wicket:id="totalShippingCost"></span>)</u></small></td>
 							<td align="left" style="border: none; background-color: #f7f7f9"></td>
 							<td align="right" style="border: none; background-color: #f7f7f9"><strong><span wicket:id="total"></span></strong></td>
 						</tr>
 						<tr>
-							<td align="left" style="border: none;"></td>
+							<td colspan="2" align="left" style="border: none;"></td>
 							<td colspan="3" align="right" style="border: none; background-color: #f7f7f9"></td>
 						</tr>
 					</tfoot>

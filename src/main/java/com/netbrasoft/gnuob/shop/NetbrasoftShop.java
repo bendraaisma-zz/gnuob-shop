@@ -7,8 +7,6 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.settings.SecuritySettings;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.apache.wicket.util.crypt.CachingSunJceCryptFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
 import org.wicketstuff.wicket.servlet3.auth.ServletContainerAuthenticatedWebApplication;
@@ -29,8 +27,6 @@ import net.ftlines.wicketsource.WicketSource;
 public class NetbrasoftShop extends ServletContainerAuthenticatedWebApplication {
 
    private static final String INSPECTOR_PAGE_HTML = "InspectorPage.html";
-
-   private Logger LOGGER = LoggerFactory.getLogger(NetbrasoftShop.class);
 
    @Override
    protected Class<? extends ServletContainerAuthenticatedWebSession> getContainerManagedWebSessionClass() {

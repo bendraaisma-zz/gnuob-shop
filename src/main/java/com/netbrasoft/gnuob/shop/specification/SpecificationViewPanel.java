@@ -1,7 +1,6 @@
 package com.netbrasoft.gnuob.shop.specification;
 
 import java.math.BigDecimal;
-import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -13,7 +12,6 @@ import org.apache.wicket.ajax.IAjaxIndicatorAware;
 import org.apache.wicket.ajax.form.AjaxFormChoiceComponentUpdatingBehavior;
 import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
@@ -29,8 +27,6 @@ import org.apache.wicket.request.flow.RedirectToUrlException;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.apache.wicket.validation.validator.StringValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.netbrasoft.gnuob.api.Address;
 import com.netbrasoft.gnuob.api.Contract;
@@ -102,6 +98,7 @@ public class SpecificationViewPanel extends CartViewPanel {
 
       private Order saveOrder(Shopper shopper) {
          Order order = new Order();
+
          order.setActive(true);
          order.setInsuranceTotal(BigDecimal.ZERO);
          order.setHandlingTotal(BigDecimal.ZERO);
@@ -129,6 +126,7 @@ public class SpecificationViewPanel extends CartViewPanel {
             OrderRecord orderRecord = new OrderRecord();
             orderRecord.setProduct(offerRecord.getProduct());
             orderRecord.setQuantity(offerRecord.getQuantity());
+            orderRecord.setOption(offerRecord.getOption());
             order.getRecords().add(orderRecord);
          }
 
@@ -183,6 +181,7 @@ public class SpecificationViewPanel extends CartViewPanel {
       @Override
       protected void onInitialize() {
          BootstrapForm<Contract> customerEditForm = new BootstrapForm<Contract>("customerEditForm");
+
          customerEditForm.setModel(new CompoundPropertyModel<Contract>(Model.of(shopperDataProvider.find(new Shopper()).getContract())));
          customerEditForm.add(new RequiredTextField<String>("customer.buyerEmail").setLabel(Model.of(getString("buyerEmailMessage"))).add(EmailAddressValidator.getInstance()).add(StringValidator.maximumLength(60)));
          customerEditForm.add(new RequiredTextField<String>("customer.firstName").setLabel(Model.of(getString("firstNameMessage"))).add(StringValidator.maximumLength(40)));
@@ -206,20 +205,18 @@ public class SpecificationViewPanel extends CartViewPanel {
                orderDataProvider.setCheckOut((CheckOut) paymentOptions.getDefaultModelObject());
             }
          });
+
          customerEditForm.add(paymentOptions);
-         add(new SaveAjaxButton(customerEditForm).setOutputMarkupId(true));
+
          add(customerEditForm.setOutputMarkupId(true));
          add(offerRecordProductDataViewContainer.setOutputMarkupId(true));
          add(offerRecordDataviewContainer.setOutputMarkupId(true));
-         add(new Label("totalDiscount", Model.of(NumberFormat.getCurrencyInstance().format(shopperDataProvider.find(new Shopper()).getChartTotalDiscount()))));
-         add(new Label("total", Model.of(NumberFormat.getCurrencyInstance().format(shopperDataProvider.find(new Shopper()).getChartTotal()))));
+         add(offerRecordTotalDataviewContainer.add(new SaveAjaxButton(customerEditForm).setOutputMarkupId(true)).setOutputMarkupId(true));
          super.onInitialize();
       }
    }
 
    private static final long serialVersionUID = 293941244262646336L;
-
-   private static final Logger LOGGER = LoggerFactory.getLogger(SpecificationViewPanel.class);
 
    @SpringBean(name = "ShopperDataProvider", required = true)
    private GenericTypeCacheDataProvider<Shopper> shopperDataProvider;

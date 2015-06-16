@@ -44,7 +44,7 @@ public class Shopper implements IClusterable {
             total = total.add(offerRecord.getAmount().multiply(BigDecimal.valueOf(offerRecord.getQuantity().longValue())));
          }
       }
-      return total.subtract(getChartTotalDiscount());
+      return total.add(getTaxTotal()).add(getShippingCostTotal()).subtract(getChartTotalDiscount());
    }
 
    public BigDecimal getChartTotalDiscount() {
@@ -70,6 +70,32 @@ public class Shopper implements IClusterable {
 
    public String getIssuer() {
       return issuer;
+   }
+
+   public BigDecimal getShippingCostTotal() {
+      BigDecimal shippingCostTotal = BigDecimal.ZERO;
+
+      for (OfferRecord offerRecord : cart) {
+         if (offerRecord.getProduct() != null) {
+            shippingCostTotal = shippingCostTotal.add(offerRecord.getProduct().getShippingCost().multiply(BigDecimal.valueOf(offerRecord.getQuantity().longValue())));
+         } else {
+            shippingCostTotal = shippingCostTotal.add(offerRecord.getShippingCost().multiply(BigDecimal.valueOf(offerRecord.getQuantity().longValue())));
+         }
+      }
+      return shippingCostTotal;
+   }
+
+   public BigDecimal getTaxTotal() {
+      BigDecimal taxTotal = BigDecimal.ZERO;
+
+      for (OfferRecord offerRecord : cart) {
+         if (offerRecord.getProduct() != null) {
+            taxTotal = taxTotal.add(offerRecord.getProduct().getTax().multiply(BigDecimal.valueOf(offerRecord.getQuantity().longValue())));
+         } else {
+            taxTotal = taxTotal.add(offerRecord.getTax().multiply(BigDecimal.valueOf(offerRecord.getQuantity().longValue())));
+         }
+      }
+      return taxTotal;
    }
 
    public boolean loggedIn() {

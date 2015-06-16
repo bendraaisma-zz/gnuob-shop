@@ -5,43 +5,7 @@
         <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/generated-sources/annotations"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-        <dependent-module archiveName="wicket-core-7.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/wicket-core/wicket-core">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="wicket-request-7.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/wicket-request/wicket-request">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="wicket-util-7.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/wicket-util/wicket-util">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="wicket-spring-7.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/wicket-spring/wicket-spring">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="wicket-ioc-7.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/wicket-ioc/wicket-ioc">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="wicket-extensions-7.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/wicket-extensions/wicket-extensions">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="wicket-auth-roles-7.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/wicket-auth-roles/wicket-auth-roles">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="wicket-devutils-7.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/wicket-devutils/wicket-devutils">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="wicketstuff-servlet3-auth-7.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/wicketstuff-servlet3-auth/wicketstuff-servlet3-auth">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="wicket-mount-core-7.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/wicket-mount-core/wicket-mount-core">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="wicketstuff-minis-7.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/wicketstuff-minis/wicketstuff-minis">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <dependent-module archiveName="gnuob-api-0.0.2-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/gnuob-api/gnuob-api">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="oauth2-oidc-sdk-4.14-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/oauth-2.0-sdk-with-openid-connect-extensions/oauth-2.0-sdk-with-openid-connect-extensions">
             <dependency-type>uses</dependency-type>
         </dependent-module>
 		<property name="context-root" value="gnuob-shop"/>

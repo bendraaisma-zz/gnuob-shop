@@ -30,7 +30,7 @@
 		<version.netbrasoft.gnuob>0.0.2-SNAPSHOT</version.netbrasoft.gnuob>
 		<version.javasimon>4.0.1</version.javasimon>
 		<version.wicket-dnd>0.6.0</version.wicket-dnd>
-		<version.wicket-bootstrap>0.10.1-SNAPSHOT</version.wicket-bootstrap>
+		<version.wicket-bootstrap>0.10.2-SNAPSHOT</version.wicket-bootstrap>
 		<version.bootstrap-validator>0.8.1</version.bootstrap-validator>
 		<version.jquery.cookie>1.4.1</version.jquery.cookie>
 		<version.bootstrap-3-datepicker>1.4.0</version.bootstrap-3-datepicker>
@@ -97,11 +97,6 @@
 		<dependency>
 			<groupId>org.wicketstuff</groupId>
 			<artifactId>wicketstuff-servlet3-auth</artifactId>
-			<version>${version.wicketstuff.plugin}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.wicketstuff</groupId>
-			<artifactId>wicketstuff-minis</artifactId>
 			<version>${version.wicketstuff.plugin}</version>
 		</dependency>
 		<dependency>

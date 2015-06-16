@@ -31,6 +31,7 @@ import com.google.common.net.MediaType;
 import com.netbrasoft.gnuob.api.Category;
 import com.netbrasoft.gnuob.api.Content;
 import com.netbrasoft.gnuob.api.OfferRecord;
+import com.netbrasoft.gnuob.api.Option;
 import com.netbrasoft.gnuob.api.Product;
 import com.netbrasoft.gnuob.api.SubCategory;
 import com.netbrasoft.gnuob.api.generic.GenericTypeDataProvider;
@@ -150,6 +151,10 @@ public class CategoryViewPanel extends Panel {
          }
 
          item.setModel(new CompoundPropertyModel<Product>(item.getModelObject()));
+         item.add(new Label("name"));
+         item.add(new Label("stock.quantity"));
+         item.add(new Label("amountWithDiscount", Model.of(NumberFormat.getCurrencyInstance().format(item.getModelObject().getAmount().subtract(item.getModelObject().getDiscount())))));
+         item.add(new Label("amount", Model.of(NumberFormat.getCurrencyInstance().format(item.getModelObject().getAmount()))));
          item.add(new ProductCarousel("productCarousel", carouselImages).setInterval(Duration.NONE)
                .add(new PopoverBehavior(Model.of(getString("descriptionMessage")), Model.of(item.getModelObject().getDescription()), new PopoverConfig().withHoverTrigger().withPlacement(Placement.bottom))));
          item.add(new Loop("rating", ITEMS_PER_PAGE) {
@@ -161,10 +166,6 @@ public class CategoryViewPanel extends Panel {
                loopItem.add(new IconBehavior(loopItem.getIndex() < item.getModelObject().getRating() ? GlyphIconType.star : GlyphIconType.starempty));
             }
          });
-         item.add(new Label("name"));
-         item.add(new Label("stock.quantity"));
-         item.add(new Label("amountWithDiscount", Model.of(NumberFormat.getCurrencyInstance().format(item.getModelObject().getAmount().subtract(item.getModelObject().getDiscount())))));
-         item.add(new Label("amount", Model.of(NumberFormat.getCurrencyInstance().format(item.getModelObject().getAmount()))));
          item.add(new BootstrapAjaxLink<String>("purchase", Model.of(getString("purchaseMessage")), Buttons.Type.Primary) {
 
             private static final long serialVersionUID = -2845735209719008615L;
@@ -173,9 +174,16 @@ public class CategoryViewPanel extends Panel {
             public void onClick(AjaxRequestTarget target) {
                OfferRecord offerRecord = new OfferRecord();
                offerRecord.setProduct(item.getModelObject());
-               offerRecord.setQuantity(BigInteger.valueOf(1));
+               offerRecord.setName(item.getModelObject().getName());
+               for (Option option : item.getModelObject().getOptions()) {
+                  if (!option.isDisabled()) {
+                     offerRecord.setOption(option.getValue());
+                     break;
+                  }
+               }
+               offerRecord.setQuantity(BigInteger.ONE);
 
-               shopperDataProvider.find(new Shopper()).getCart().add(offerRecord);
+               shopperDataProvider.find(new Shopper()).getCart().add(0, offerRecord);
                setResponsePage(new CartPage());
             }
          }.setSize(Buttons.Size.Small).setOutputMarkupId(true));

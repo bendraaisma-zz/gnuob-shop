@@ -1,13 +1,9 @@
 package com.netbrasoft.gnuob.shop.confirmation;
 
-import java.text.NumberFormat;
-
 import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
@@ -30,8 +26,7 @@ public class ConfirmationViewPanel extends SpecificationViewPanel {
       protected void onInitialize() {
          add(offerRecordProductDataViewContainer.setOutputMarkupId(true));
          add(offerRecordDataviewContainer.setOutputMarkupId(true));
-         add(new Label("totalDiscount", Model.of(NumberFormat.getCurrencyInstance().format(shopperDataProvider.find(new Shopper()).getChartTotalDiscount()))));
-         add(new Label("total", Model.of(NumberFormat.getCurrencyInstance().format(shopperDataProvider.find(new Shopper()).getChartTotal()))));
+         add(offerRecordTotalDataviewContainer.setOutputMarkupId(true));
          super.onInitialize();
       }
    }
