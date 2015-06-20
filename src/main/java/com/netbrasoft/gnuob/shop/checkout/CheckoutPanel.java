@@ -22,7 +22,7 @@ public class CheckoutPanel extends Panel {
 
    @Override
    protected void onInitialize() {
-      add(checkoutViewPanel.setOutputMarkupId(true));
+      add(checkoutViewPanel.add(checkoutViewPanel.new CheckoutViewFragment()).setOutputMarkupId(true));
       super.onInitialize();
    }
 }

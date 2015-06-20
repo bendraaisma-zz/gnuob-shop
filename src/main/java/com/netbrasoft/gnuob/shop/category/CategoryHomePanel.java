@@ -1,7 +1,5 @@
 package com.netbrasoft.gnuob.shop.category;
 
-import java.util.Iterator;
-
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.authorization.Action;
@@ -49,7 +47,7 @@ public class CategoryHomePanel extends Panel {
 
             @Override
             public String getObject() {
-               for (Content content : item.getModelObject().getContents()) {
+               for (final Content content : item.getModelObject().getContents()) {
 
                   if (MediaType.HTML_UTF_8.is(MediaType.parse(content.getFormat()))) {
                      return new String(content.getContent());
@@ -63,11 +61,9 @@ public class CategoryHomePanel extends Panel {
 
             @Override
             public void onEvent(AjaxRequestTarget target) {
-               BootstrapTabbedPanel<ITab> bootstrapTabbedPanel = (BootstrapTabbedPanel<ITab>) getPage().get("contentBorder:contentBorder_body:mainMenuPanel:mainMenuTabbedPanel");
+               final BootstrapTabbedPanel<ITab> bootstrapTabbedPanel = (BootstrapTabbedPanel<ITab>) getPage().get("contentBorder:contentBorder_body:mainMenuPanel:mainMenuTabbedPanel");
 
-               for (Iterator<ITab> iterator = bootstrapTabbedPanel.getTabs().iterator(); iterator.hasNext();) {
-                  ITab tab = iterator.next();
-
+               for (final ITab tab : bootstrapTabbedPanel.getTabs()) {
                   if (tab instanceof CategoryTab && ((CategoryTab) tab).getModelObject().getId() == ((Category) item.getDefaultModelObject()).getId()) {
                      bootstrapTabbedPanel.setSelectedTab(bootstrapTabbedPanel.getTabs().lastIndexOf(tab));
                   }
@@ -84,7 +80,7 @@ public class CategoryHomePanel extends Panel {
    @SpringBean(name = "CategoryDataProvider", required = true)
    private GenericTypeDataProvider<Category> categoryDataProvider;
 
-   private CategoryDataview categoryDataView = new CategoryDataview();
+   private final CategoryDataview categoryDataView = new CategoryDataview();
 
    public CategoryHomePanel(final String id, final IModel<Category> model) {
       super(id, model);

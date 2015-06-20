@@ -82,6 +82,11 @@ public abstract class BasePage extends WebPage implements IAjaxIndicatorAware {
       }
    }
 
+   @Override
+   public String getAjaxIndicatorMarkupId() {
+      return VEIL_HEX_LOADING;
+   }
+
    private void getShopperContractFromUserInfo(Shopper shopper) throws URISyntaxException {
       UserInfo userInfo = getUserInfo(shopper);
 
@@ -145,10 +150,5 @@ public abstract class BasePage extends WebPage implements IAjaxIndicatorAware {
       } else {
          shopper.setContract(contractDataProvider.persist(shopper.getContract()));
       }
-   }
-
-   @Override
-   public String getAjaxIndicatorMarkupId() {
-      return VEIL_HEX_LOADING;
    }
 }

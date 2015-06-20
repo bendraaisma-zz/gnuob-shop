@@ -34,21 +34,21 @@ public class HeaderPanel extends Panel {
 
    @Override
    protected void onInitialize() {
-      String site = getRequest().getClientUrl().getHost();
-      String title = site.replaceFirst("www.", "").split("\\.")[0];
-      String subTitle = site.replaceFirst("www.", "").replaceFirst(title, "");
+      final String site = getRequest().getClientUrl().getHost();
+      final String title = site.replaceFirst("www.", "").split("\\.")[0];
+      final String subTitle = site.replaceFirst("www.", "").replaceFirst(title, "");
 
       add(new Label(GNUOB_SITE_TITLE_PROPERTY, System.getProperty(GNUOB_SITE_TITLE_PROPERTY, WordUtils.capitalize(title))));
       add(new Label(GNUOB_SITE_SUBTITLE_PROPERTY, System.getProperty(GNUOB_SITE_SUBTITLE_PROPERTY, subTitle)));
 
-      add(new Label("chartSize", Model.of(shopperDataProvider.find(new Shopper()).getCart().size())).add(new BadgeBehavior()));
+      add(new Label("chartSize", Model.of(shopperDataProvider.find(new Shopper()).getCart().getRecords().size())).add(new BadgeBehavior()));
       add(new AjaxLink<String>("logout") {
 
          private static final long serialVersionUID = -3560695505363960953L;
 
          @Override
          public void onClick(AjaxRequestTarget target) {
-            Shopper shopper = shopperDataProvider.find(new Shopper());
+            final Shopper shopper = shopperDataProvider.find(new Shopper());
             shopper.logout();
             shopperDataProvider.merge(shopper);
             ((AppServletContainerAuthenticatedWebSession) getSession()).signOut();

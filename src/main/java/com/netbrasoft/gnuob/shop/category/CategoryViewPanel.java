@@ -69,10 +69,10 @@ public class CategoryViewPanel extends Panel {
 
       @Override
       public Iterator<? extends OfferRecord> iterator(long first, long count) {
-         List<OfferRecord> offerRecordIteratorList = new ArrayList<OfferRecord>();
+         final List<OfferRecord> offerRecordIteratorList = new ArrayList<OfferRecord>();
 
          for (int index = (int) first; index < first + count; index++) {
-            offerRecordIteratorList.add(shopperDataProvider.find(new Shopper()).getCart().get(index));
+            offerRecordIteratorList.add(shopperDataProvider.find(new Shopper()).getCart().getRecords().get(index));
          }
 
          return offerRecordIteratorList.iterator();
@@ -85,7 +85,7 @@ public class CategoryViewPanel extends Panel {
 
       @Override
       public long size() {
-         return shopperDataProvider.find(new Shopper()).getCart().size();
+         return shopperDataProvider.find(new Shopper()).getCart().getRecords().size();
       }
    }
 
@@ -106,7 +106,7 @@ public class CategoryViewPanel extends Panel {
 
       @Override
       public Iterator<? extends Product> iterator(long first, long count) {
-         List<Product> productIteratorList = new ArrayList<Product>();
+         final List<Product> productIteratorList = new ArrayList<Product>();
 
          for (int index = (int) first; index < first + count; index++) {
             productIteratorList.add(products.get(index));
@@ -142,9 +142,9 @@ public class CategoryViewPanel extends Panel {
 
       @Override
       protected void populateItem(Item<Product> item) {
-         List<ICarouselImage> carouselImages = new ArrayList<ICarouselImage>();
+         final List<ICarouselImage> carouselImages = new ArrayList<ICarouselImage>();
 
-         for (Content content : item.getModelObject().getContents()) {
+         for (final Content content : item.getModelObject().getContents()) {
             if (MediaType.HTML_UTF_8.is(MediaType.parse(content.getFormat()))) {
                carouselImages.add(new CarouselImage(new String(content.getContent())));
             }
@@ -172,18 +172,24 @@ public class CategoryViewPanel extends Panel {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-               OfferRecord offerRecord = new OfferRecord();
+               final OfferRecord offerRecord = new OfferRecord();
                offerRecord.setProduct(item.getModelObject());
                offerRecord.setName(item.getModelObject().getName());
-               for (Option option : item.getModelObject().getOptions()) {
+               offerRecord.setDescription(item.getModelObject().getDescription());
+               offerRecord.setDiscount(item.getModelObject().getDiscount());
+               offerRecord.setShippingCost(item.getModelObject().getShippingCost());
+               offerRecord.setTax(item.getModelObject().getTax());
+               offerRecord.setQuantity(BigInteger.ONE);
+               offerRecord.setNumber(item.getModelObject().getNumber());
+               offerRecord.setAmount(item.getModelObject().getAmount().subtract(item.getModelObject().getDiscount()));
+               for (final Option option : item.getModelObject().getOptions()) {
                   if (!option.isDisabled()) {
                      offerRecord.setOption(option.getValue());
                      break;
                   }
                }
-               offerRecord.setQuantity(BigInteger.ONE);
 
-               shopperDataProvider.find(new Shopper()).getCart().add(0, offerRecord);
+               shopperDataProvider.find(new Shopper()).getCart().getRecords().add(0, offerRecord);
                setResponsePage(new CartPage());
             }
          }.setSize(Buttons.Size.Small).setOutputMarkupId(true));
@@ -225,7 +231,7 @@ public class CategoryViewPanel extends Panel {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-               List<SubCategory> subCategories = new ArrayList<SubCategory>();
+               final List<SubCategory> subCategories = new ArrayList<SubCategory>();
                subCategories.add(((SubCategory) item.getDefaultModelObject()));
 
                subCategoryDataProvider.setSubCategories(subCategories.get(0).getSubCategories());
@@ -260,7 +266,7 @@ public class CategoryViewPanel extends Panel {
 
       @Override
       public Iterator<? extends SubCategory> iterator(long first, long count) {
-         List<SubCategory> subCategoryIteratorList = new ArrayList<SubCategory>();
+         final List<SubCategory> subCategoryIteratorList = new ArrayList<SubCategory>();
 
          for (int index = (int) first; index < first + count; index++) {
             subCategoryIteratorList.add(subCategories.get(index));
@@ -301,9 +307,9 @@ public class CategoryViewPanel extends Panel {
 
             @Override
             public String getObject() {
-               StringBuilder contentStringBuilder = new StringBuilder();
+               final StringBuilder contentStringBuilder = new StringBuilder();
 
-               for (Content content : item.getModelObject().getContents()) {
+               for (final Content content : item.getModelObject().getContents()) {
                   contentStringBuilder.append(new String(content.getContent()));
                }
 
@@ -316,7 +322,7 @@ public class CategoryViewPanel extends Panel {
 
             @Override
             protected void onEvent(AjaxRequestTarget target) {
-               List<SubCategory> subCategories = new ArrayList<SubCategory>();
+               final List<SubCategory> subCategories = new ArrayList<SubCategory>();
                subCategories.add(((SubCategory) item.getDefaultModelObject()));
 
                subCategoryDataProvider.setSubCategories(subCategories.get(0).getSubCategories());
@@ -367,7 +373,7 @@ public class CategoryViewPanel extends Panel {
 
    private static final long serialVersionUID = -9083340164646887954L;
 
-   private WebMarkupContainer subCategoryDataviewContainer = new WebMarkupContainer("subCategoryDataviewContainer") {
+   private final WebMarkupContainer subCategoryDataviewContainer = new WebMarkupContainer("subCategoryDataviewContainer") {
 
       private static final long serialVersionUID = -497527332092449028L;
 
@@ -378,15 +384,15 @@ public class CategoryViewPanel extends Panel {
       }
    };
 
-   private SubCategoryDataProvider subCategoryDataProvider = new SubCategoryDataProvider();
+   private final SubCategoryDataProvider subCategoryDataProvider = new SubCategoryDataProvider();
 
-   private SubCategoryMenuBootstrapListView subCategoryMenuBootstrapListView = new SubCategoryMenuBootstrapListView();
+   private final SubCategoryMenuBootstrapListView subCategoryMenuBootstrapListView = new SubCategoryMenuBootstrapListView();
 
-   private SubCategoryDataview subCategoryDataview = new SubCategoryDataview();
+   private final SubCategoryDataview subCategoryDataview = new SubCategoryDataview();
 
-   private ProductDataView productDataView = new ProductDataView();
+   private final ProductDataView productDataView = new ProductDataView();
 
-   private BootstrapPagingNavigator productPagingNavigator = new BootstrapPagingNavigator("productPagingNavigator", productDataView);
+   private final BootstrapPagingNavigator productPagingNavigator = new BootstrapPagingNavigator("productPagingNavigator", productDataView);
 
    @SpringBean(name = "ProductDataProvider", required = true)
    private GenericTypeDataProvider<Product> productDataProvider;
@@ -399,9 +405,9 @@ public class CategoryViewPanel extends Panel {
    }
 
    private List<SubCategory> createFlatSubCategoryList(List<SubCategory> subCategories) {
-      List<SubCategory> flatSubCategoryList = new ArrayList<SubCategory>();
+      final List<SubCategory> flatSubCategoryList = new ArrayList<SubCategory>();
 
-      for (SubCategory subCategory : subCategories) {
+      for (final SubCategory subCategory : subCategories) {
          flatSubCategoryList.addAll(subCategory.getSubCategories());
       }
 

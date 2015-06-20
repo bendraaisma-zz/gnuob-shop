@@ -22,7 +22,7 @@ public class WishListPanel extends Panel {
 
    @Override
    protected void onInitialize() {
-      add(wishListViewPanel.setOutputMarkupId(true));
+      add(wishListViewPanel.add(wishListViewPanel.new WishtListViewFragment()).setOutputMarkupId(true));
       super.onInitialize();
    }
 }

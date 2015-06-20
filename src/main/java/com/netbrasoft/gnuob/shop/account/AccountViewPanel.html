@@ -2,9 +2,6 @@
 	<wicket:container wicket:id="accountCustomerViewFragement"></wicket:container>
 	<wicket:fragment wicket:id="accountViewFragement">
 		<div class="row">
-			<hr>
-		</div>
-		<div class="row">
 			<form wicket:id="customerEditForm" class="form-horizontal">
 				<div class="col-md-6">
 					<table class="table" style="border-top: none;">
@@ -13,7 +10,7 @@
 								<td style="border-top: none;">
 									<div class="panel-heading">
 										<h3 class="panel-title">
-											<wicket:message key="enterYourDeliveryDetails"></wicket:message>
+											<wicket:message key="enterYourDeliveryDetailsMessage"></wicket:message>
 										</h3>
 									</div>
 									<div class="panel-body">
@@ -67,7 +64,7 @@
 
 									<div class="panel-heading">
 										<h3 class="panel-title">
-											<wicket:message key="enterYourPersonalDetails"></wicket:message>
+											<wicket:message key="enterYourPersonalDetailsMessage"></wicket:message>
 										</h3>
 									</div>
 									<div class="panel-body">
@@ -108,21 +105,12 @@
 				</div>
 			</form>
 		</div>
-		<div class="row">
-			<hr>
-		</div>
 	</wicket:fragment>
 	<wicket:fragment wicket:id="loginViewFragement">
-		<div class="row">
-			<hr>
-		</div>
 		<div class="row">
 			<div class="col-md-6">
 				<div wicket:id="authorizationPanel"></div>
 			</div>
-		</div>
-		<div class="row">
-			<hr>
 		</div>
 	</wicket:fragment>
 </wicket:panel>

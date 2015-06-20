@@ -2,17 +2,19 @@ package com.netbrasoft.gnuob.shop.confirmation;
 
 import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Fragment;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
 import com.netbrasoft.gnuob.shop.shopper.Shopper;
-import com.netbrasoft.gnuob.shop.specification.SpecificationViewPanel;
 
 @AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
-public class ConfirmationViewPanel extends SpecificationViewPanel {
+public class ConfirmationViewPanel extends Panel {
 
    class ConfirmationViewFragement extends Fragment {
 
@@ -24,9 +26,15 @@ public class ConfirmationViewPanel extends SpecificationViewPanel {
 
       @Override
       protected void onInitialize() {
-         add(offerRecordProductDataViewContainer.setOutputMarkupId(true));
-         add(offerRecordDataviewContainer.setOutputMarkupId(true));
-         add(offerRecordTotalDataviewContainer.setOutputMarkupId(true));
+         Shopper shopper = shopperDataProvider.find(new Shopper());
+
+         add(new Label("orderId", Model.of(shopper.getOrderId())));
+         add(new Label("buyerEmail", Model.of(shopper.getContract().getCustomer().getBuyerEmail())));
+
+         shopper.setOrderId(null);
+
+         shopperDataProvider.merge(shopper);
+
          super.onInitialize();
       }
    }

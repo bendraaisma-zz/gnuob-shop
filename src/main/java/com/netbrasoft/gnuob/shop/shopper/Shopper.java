@@ -1,8 +1,6 @@
 package com.netbrasoft.gnuob.shop.shopper;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -11,7 +9,9 @@ import org.springframework.cache.annotation.Cacheable;
 
 import com.netbrasoft.gnuob.api.Contract;
 import com.netbrasoft.gnuob.api.Customer;
+import com.netbrasoft.gnuob.api.Offer;
 import com.netbrasoft.gnuob.api.OfferRecord;
+import com.netbrasoft.gnuob.api.Order;
 
 @Cacheable()
 public class Shopper implements IClusterable {
@@ -24,40 +24,38 @@ public class Shopper implements IClusterable {
 
    private Contract contract = new Contract();
 
-   private List<OfferRecord> cart = new ArrayList<OfferRecord>();
+   private Offer cart = new Offer();
+
+   private Order checkout = new Order();
 
    public Shopper() {
       logout();
    }
 
-   public List<OfferRecord> getCart() {
+   public Offer getCart() {
       return cart;
    }
 
-   public BigDecimal getChartTotal() {
+   public BigDecimal getCartTotal() {
       BigDecimal total = BigDecimal.ZERO;
 
-      for (OfferRecord offerRecord : cart) {
-         if (offerRecord.getProduct() != null) {
-            total = total.add(offerRecord.getProduct().getAmount().multiply(BigDecimal.valueOf(offerRecord.getQuantity().longValue())));
-         } else {
-            total = total.add(offerRecord.getAmount().multiply(BigDecimal.valueOf(offerRecord.getQuantity().longValue())));
-         }
+      for (final OfferRecord offerRecord : cart.getRecords()) {
+         total = total.add(offerRecord.getAmount().multiply(BigDecimal.valueOf(offerRecord.getQuantity().longValue())));
       }
-      return total.add(getTaxTotal()).add(getShippingCostTotal()).subtract(getChartTotalDiscount());
+      return total.add(getTaxTotal()).add(getShippingCostTotal()).subtract(getCartTotalDiscount());
    }
 
-   public BigDecimal getChartTotalDiscount() {
+   public BigDecimal getCartTotalDiscount() {
       BigDecimal discountTotal = BigDecimal.ZERO;
 
-      for (OfferRecord offerRecord : cart) {
-         if (offerRecord.getProduct() != null) {
-            discountTotal = discountTotal.add(offerRecord.getProduct().getDiscount().multiply(BigDecimal.valueOf(offerRecord.getQuantity().longValue())));
-         } else {
-            discountTotal = discountTotal.add(offerRecord.getDiscount().multiply(BigDecimal.valueOf(offerRecord.getQuantity().longValue())));
-         }
+      for (final OfferRecord offerRecord : cart.getRecords()) {
+         discountTotal = discountTotal.add(offerRecord.getDiscount().multiply(BigDecimal.valueOf(offerRecord.getQuantity().longValue())));
       }
       return discountTotal;
+   }
+
+   public Order getCheckout() {
+      return checkout;
    }
 
    public Contract getContract() {
@@ -72,15 +70,15 @@ public class Shopper implements IClusterable {
       return issuer;
    }
 
+   public String getOrderId() {
+      return checkout.getOrderId();
+   }
+
    public BigDecimal getShippingCostTotal() {
       BigDecimal shippingCostTotal = BigDecimal.ZERO;
 
-      for (OfferRecord offerRecord : cart) {
-         if (offerRecord.getProduct() != null) {
-            shippingCostTotal = shippingCostTotal.add(offerRecord.getProduct().getShippingCost().multiply(BigDecimal.valueOf(offerRecord.getQuantity().longValue())));
-         } else {
-            shippingCostTotal = shippingCostTotal.add(offerRecord.getShippingCost().multiply(BigDecimal.valueOf(offerRecord.getQuantity().longValue())));
-         }
+      for (final OfferRecord offerRecord : cart.getRecords()) {
+         shippingCostTotal = shippingCostTotal.add(offerRecord.getShippingCost().multiply(BigDecimal.valueOf(offerRecord.getQuantity().longValue())));
       }
       return shippingCostTotal;
    }
@@ -88,12 +86,8 @@ public class Shopper implements IClusterable {
    public BigDecimal getTaxTotal() {
       BigDecimal taxTotal = BigDecimal.ZERO;
 
-      for (OfferRecord offerRecord : cart) {
-         if (offerRecord.getProduct() != null) {
-            taxTotal = taxTotal.add(offerRecord.getProduct().getTax().multiply(BigDecimal.valueOf(offerRecord.getQuantity().longValue())));
-         } else {
-            taxTotal = taxTotal.add(offerRecord.getTax().multiply(BigDecimal.valueOf(offerRecord.getQuantity().longValue())));
-         }
+      for (final OfferRecord offerRecord : cart.getRecords()) {
+         taxTotal = taxTotal.add(offerRecord.getTax().multiply(BigDecimal.valueOf(offerRecord.getQuantity().longValue())));
       }
       return taxTotal;
    }
@@ -113,6 +107,14 @@ public class Shopper implements IClusterable {
       contract.getCustomer().setActive(true);
    }
 
+   public void setCart(Offer cart) {
+      this.cart = cart;
+   }
+
+   public void setCheckout(Order checkout) {
+      this.checkout = checkout;
+   }
+
    public void setContract(Contract contract) {
       this.contract = contract;
    }
@@ -123,5 +125,9 @@ public class Shopper implements IClusterable {
 
    public void setIssuer(String issuer) {
       this.issuer = issuer;
+   }
+
+   public void setOrderId(String orderId) {
+      this.checkout.setOrderId(orderId);
    }
 }

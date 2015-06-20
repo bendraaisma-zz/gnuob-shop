@@ -4,6 +4,7 @@ import org.apache.wicket.Page;
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.devutils.inspector.InspectorPage;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.pages.PageExpiredErrorPage;
 import org.apache.wicket.settings.SecuritySettings;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.apache.wicket.util.crypt.CachingSunJceCryptFactory;
@@ -15,6 +16,8 @@ import org.wicketstuff.wicket.servlet3.auth.ServletContainerAuthenticatedWebSess
 import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
 import com.netbrasoft.gnuob.shop.page.MainPage;
 import com.netbrasoft.gnuob.shop.page.SignInPage;
+import com.netbrasoft.gnuob.shop.page.error.AccessDeniedPage;
+import com.netbrasoft.gnuob.shop.page.error.InternalErrorPage;
 
 import de.agilecoders.wicket.core.Bootstrap;
 import de.agilecoders.wicket.core.settings.BootstrapSettings;
@@ -58,6 +61,9 @@ public class NetbrasoftShop extends ServletContainerAuthenticatedWebApplication 
 
       getComponentInstantiationListeners().add(new SpringComponentInjector(this));
       getApplicationSettings().setUploadProgressUpdatesEnabled(true);
+      getApplicationSettings().setInternalErrorPage(InternalErrorPage.class);
+      getApplicationSettings().setAccessDeniedPage(AccessDeniedPage.class);
+      getApplicationSettings().setPageExpiredErrorPage(PageExpiredErrorPage.class);
       getSecuritySettings().setCryptFactory(new CachingSunJceCryptFactory(System.getProperty("gnuob.site.encryption.key", SecuritySettings.DEFAULT_ENCRYPTION_KEY)));
 
       if (getConfigurationType() == RuntimeConfigurationType.DEVELOPMENT) {
