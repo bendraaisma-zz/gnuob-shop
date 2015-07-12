@@ -110,6 +110,8 @@
 			<description />
 			<url-pattern>/json/facebook/openid-configuration</url-pattern>
 			<url-pattern>/json/google/openid-configuration</url-pattern>
+			<url-pattern>/images/glyphicons_social/png/*</url-pattern>
+			<url-pattern>/images/glyphicons/png/*</url-pattern>
 		</web-resource-collection>
 	</security-constraint>
 

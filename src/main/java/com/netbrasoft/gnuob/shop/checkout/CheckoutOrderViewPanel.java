@@ -110,14 +110,11 @@ public class CheckoutOrderViewPanel extends Panel {
       protected void populateItem(Item<OrderRecord> item) {
          final BigDecimal amount = item.getModelObject().getAmount();
          final BigDecimal tax = item.getModelObject().getTax();
-         final BigDecimal discount = item.getModelObject().getDiscount();
          final BigDecimal quantity = BigDecimal.valueOf(item.getModelObject().getQuantity().intValue());
 
          item.setModel(new CompoundPropertyModel<OrderRecord>(item.getModelObject()));
          item.add(new Label("name"));
-         item.add(new Label("option"));
-         item.add(new Label("quantity"));
-         item.add(new Label("amount", Model.of(NumberFormat.getCurrencyInstance().format(amount.add(tax).add(discount).multiply(quantity)))));
+         item.add(new Label("deliveryDate"));
          item.add(new Label("amountWithDiscount", Model.of(NumberFormat.getCurrencyInstance().format(amount.add(tax).multiply(quantity)))));
          item.add(new AjaxEventBehavior("click") {
 
@@ -131,7 +128,6 @@ public class CheckoutOrderViewPanel extends Panel {
                orderRecordProductDataProvider.orderRecords.add(item.getModelObject());
                target.add(orderRecordProductDataViewContainer);
                target.add(orderRecordDataviewContainer);
-               target.add(orderRecordTotalDataviewContainer);
             }
          });
       }
@@ -231,25 +227,6 @@ public class CheckoutOrderViewPanel extends Panel {
       }
    };
 
-   private final WebMarkupContainer orderRecordTotalDataviewContainer = new WebMarkupContainer("orderRecordTotalDataviewContainer") {
-
-      private static final long serialVersionUID = -7304590918079257112L;
-
-      @Override
-      protected void onInitialize() {
-         add(totalDiscountLabel.setOutputMarkupId(true).setOutputMarkupPlaceholderTag(true));
-         add(totalLabel.setOutputMarkupId(true).setOutputMarkupPlaceholderTag(true));
-         add(totalShippingCost.setOutputMarkupId(true).setOutputMarkupPlaceholderTag(true));
-         super.onInitialize();
-      }
-   };
-
-   private final Label totalDiscountLabel = new Label("totalDiscount", Model.of(NumberFormat.getCurrencyInstance().format(((Order) getDefaultModelObject()).getDiscountTotal())));
-
-   private final Label totalLabel = new Label("total", Model.of(NumberFormat.getCurrencyInstance().format(((Order) getDefaultModelObject()).getOrderTotal())));
-
-   private final Label totalShippingCost = new Label("totalShippingCost", Model.of(NumberFormat.getCurrencyInstance().format(((Order) getDefaultModelObject()).getShippingTotal())));
-
    public CheckoutOrderViewPanel(final String id, final IModel<Order> model) {
       super(id, model);
    }
@@ -268,7 +245,6 @@ public class CheckoutOrderViewPanel extends Panel {
 
       add(orderRecordProductDataViewContainer.setOutputMarkupId(true));
       add(orderRecordDataviewContainer.setOutputMarkupId(true));
-      add(orderRecordTotalDataviewContainer.setOutputMarkupId(true));
 
       super.onInitialize();
    }
