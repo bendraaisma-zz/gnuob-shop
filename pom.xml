@@ -22,15 +22,15 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<version.war.plugin>2.1.1</version.war.plugin>
 		<version.jboss.maven.plugin>7.4.Final</version.jboss.maven.plugin>
-		<version.wicket.plugin>7.0.0-SNAPSHOT</version.wicket.plugin>
-		<version.wicketstuff.plugin>7.0-SNAPSHOT</version.wicketstuff.plugin>
+		<version.wicket.plugin>7.0.0-M6</version.wicket.plugin>
+		<version.wicketstuff.plugin>7.0.0-M6</version.wicketstuff.plugin>
 		<version.wicket-source.plugin>7.0.0</version.wicket-source.plugin>
 		<version.springframework.plugin>4.1.0.RELEASE</version.springframework.plugin>
 		<version.surefire.plugin>2.10</version.surefire.plugin>
 		<version.netbrasoft.gnuob>0.0.2-SNAPSHOT</version.netbrasoft.gnuob>
 		<version.javasimon>4.0.1</version.javasimon>
 		<version.wicket-dnd>0.6.0</version.wicket-dnd>
-		<version.wicket-bootstrap>0.10.2-SNAPSHOT</version.wicket-bootstrap>
+		<version.wicket-bootstrap>0.10.2</version.wicket-bootstrap>
 		<version.bootstrap-validator>0.8.1</version.bootstrap-validator>
 		<version.jquery.cookie>1.4.1</version.jquery.cookie>
 		<version.bootstrap-3-datepicker>1.4.0</version.bootstrap-3-datepicker>
@@ -45,7 +45,7 @@
 			<dependency>
 				<groupId>org.wildfly.bom</groupId>
 				<artifactId>jboss-javaee-7.0-wildfly-with-tools</artifactId>
-				<version>9.0.0.CR2</version>
+				<version>9.0.0.Final</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>

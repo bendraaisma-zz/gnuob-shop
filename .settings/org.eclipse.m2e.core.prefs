@@ -1,4 +1,4 @@
-activeProfiles=default, arq-jbossas-managed, sonar, jboss-public-repository
+activeProfiles=default, sonar, jboss-public-repository, wicketstuff-core-snapshots, securecentral
 eclipse.preferences.version=1
 resolveWorkspaceProjects=true
 version=1

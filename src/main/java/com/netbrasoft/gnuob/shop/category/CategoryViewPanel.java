@@ -218,7 +218,7 @@ public class CategoryViewPanel extends Panel {
 
       private static final long serialVersionUID = 2148940232228759419L;
 
-      private SubCategoryBootstrapListView(final List<? extends SubCategory> listData) {
+      private SubCategoryBootstrapListView(final List<SubCategory> listData) {
          super("subCategoryBootstrapListView", listData);
       }
 
