@@ -14,6 +14,7 @@
             timeToLiveSeconds="120"
             diskSpoolBufferSizeMB="30"
             diskExpiryThreadIntervalSeconds="120"
+            maxEntriesLocalHeap="1000"
             memoryStoreEvictionPolicy="LRU">
         <terracotta>
 	        <nonstop immediateTimeout="false" timeoutMillis="30000">

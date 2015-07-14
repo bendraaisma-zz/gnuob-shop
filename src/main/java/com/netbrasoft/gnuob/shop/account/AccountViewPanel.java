@@ -1,10 +1,7 @@
 package com.netbrasoft.gnuob.shop.account;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.authorization.Action;
@@ -21,6 +18,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.flow.RedirectToUrlException;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.slf4j.Logger;
@@ -47,27 +45,50 @@ public class AccountViewPanel extends Panel {
 
    class AccountViewFragement extends Fragment {
 
+      class State implements IClusterable {
+
+         private static final long serialVersionUID = -318735320199663283L;
+
+         private final String code;
+         private final String name;
+
+         public State(String code, String name) {
+            this.code = code;
+            this.name = name;
+         }
+
+         public String getName() {
+            return name;
+         }
+
+         @Override
+         public String toString() {
+            return code;
+         }
+      }
+
       private static final long serialVersionUID = 1948798072333311170L;
 
       public AccountViewFragement() {
          super("accountCustomerViewFragement", "accountViewFragement", AccountViewPanel.this, AccountViewPanel.this.getDefaultModel());
       }
 
-      private List<Locale> getSortedISOCountries() {
-         SortedMap<String, Locale> sortedISOCountries = new TreeMap<String, Locale>();
-         String[] locales = Locale.getISOCountries();
+      public List<State> getStatesOfBrazil() {
+         final ArrayList<State> states = new ArrayList<>();
+         final String[][] statesOfBrazil = new String[][] { { "AC", "Acre" }, { "AL", "Alagoas" }, { "AP", "Amapá" }, { "AM", "Amazonas" }, { "BA", "Bahia" }, { "CE", "Ceará" }, { "ES", "Espírito Santo" }, { "GO", "Goiás" }, { "MA", "Maranhão" },
+            { "MT", "Mato Grosso" }, { "MS", "Mato Grosso do Sul" }, { "MG", "Minas Gerais" }, { "PA", "Pará" }, { "PB", "Paraíba" }, { "PR", "Paraná" }, { "PE", "Pernambuco" }, { "PI", "Piauí" }, { "RJ", "Rio de Janeiro" },
+            { "RN", "Rio Grande do Norte" }, { "RS", "Rio Grande do Sul" }, { "RO", "Rondônia" }, { "RR", "Roraima" }, { "SC", "Santa Catarina" }, { "SP", "São Paulo" }, { "SE", "Sergipe" }, { "TO", "Tocantins" } };
 
-         for (String countryCode : locales) {
-            Locale locale = new Locale("", countryCode);
-            sortedISOCountries.put(locale.getDisplayCountry(), locale);
+         for (final String[] state : statesOfBrazil) {
+            states.add(new State(state[0], state[1]));
          }
 
-         return Arrays.asList(sortedISOCountries.values().toArray(new Locale[sortedISOCountries.size()]));
+         return states;
       }
 
       @Override
       protected void onInitialize() {
-         BootstrapForm<Contract> customerEditForm = new BootstrapForm<Contract>("customerEditForm");
+         final BootstrapForm<Contract> customerEditForm = new BootstrapForm<Contract>("customerEditForm");
          customerEditForm.setModel(new CompoundPropertyModel<Contract>(Model.of(shopperDataProvider.find(new Shopper()).getContract())));
          customerEditForm.add(new RequiredTextField<String>("customer.buyerEmail").setLabel(Model.of(getString("buyerEmailMessage"))).add(EmailAddressValidator.getInstance()).add(StringValidator.maximumLength(60)));
          customerEditForm.add(new RequiredTextField<String>("customer.firstName").setLabel(Model.of(getString("firstNameMessage"))).add(StringValidator.maximumLength(40)));
@@ -75,10 +96,9 @@ public class AccountViewPanel extends Panel {
          customerEditForm.add(new TextField<String>("customer.address.phone").add(StringValidator.maximumLength(40)));
          customerEditForm.add(new RequiredTextField<String>("customer.address.street1").setLabel(Model.of(getString("street1Message"))).add(StringValidator.maximumLength(40)));
          customerEditForm.add(new TextField<String>("customer.address.street2").add(StringValidator.maximumLength(40)));
-         customerEditForm.add(new DropDownChoice<Locale>("customer.address.country", getSortedISOCountries(), new ChoiceRenderer<Locale>("displayCountry", "")).setRequired(true).setLabel(Model.of(getString("countryNameMessage"))));
-         customerEditForm.add(new RequiredTextField<String>("customer.address.cityName").setLabel(Model.of(getString("cityNameMessage"))).add(StringValidator.maximumLength(40)));
+         customerEditForm.add(new TextField<String>("customer.address.country", Model.of("Brasil")).setLabel(Model.of(getString("countryNameMessage"))).setEnabled(false));customerEditForm.add(new RequiredTextField<String>("customer.address.cityName").setLabel(Model.of(getString("cityNameMessage"))).add(StringValidator.maximumLength(40)));
          customerEditForm.add(new RequiredTextField<String>("customer.address.postalCode").setLabel(Model.of(getString("postalCodeMessage"))).add(StringValidator.maximumLength(15)));
-         customerEditForm.add(new RequiredTextField<String>("customer.address.stateOrProvince").setLabel(Model.of(getString("stateOrProvinceMessage"))).add(StringValidator.maximumLength(2)));
+         customerEditForm.add(new DropDownChoice<State>("customer.address.stateOrProvince", getStatesOfBrazil(), new ChoiceRenderer<State>("name", "")).setRequired(true).setLabel(Model.of(getString("stateOrProvinceMessage"))));
 
          customerEditForm.add(new SaveAjaxButton(customerEditForm).setOutputMarkupId(true));
          add(customerEditForm.setOutputMarkupId(true));
@@ -95,7 +115,7 @@ public class AccountViewPanel extends Panel {
 
       @Override
       protected void onInitialize() {
-         AuthorizationPanel authorizationPanel = new AuthorizationPanel("authorizationPanel", (IModel<Shopper>) AccountViewPanel.this.getDefaultModel());
+         final AuthorizationPanel authorizationPanel = new AuthorizationPanel("authorizationPanel", (IModel<Shopper>) AccountViewPanel.this.getDefaultModel());
          add(authorizationPanel);
          super.onInitialize();
       }
@@ -124,14 +144,15 @@ public class AccountViewPanel extends Panel {
          try {
             saveContract((Contract) form.getDefaultModelObject());
             target.add(SaveAjaxButton.this.add(new LoadingBehavior(Model.of(AccountViewPanel.this.getString("savingMessage")))));
-         } catch (RuntimeException e) {
+         } catch (final RuntimeException e) {
             LOGGER.warn(e.getMessage(), e);
          }
          throw new RedirectToUrlException("account.html");
       }
 
       private void saveContract(Contract contract) {
-         Shopper shopper = shopperDataProvider.find(new Shopper());
+         final Shopper shopper = shopperDataProvider.find(new Shopper());
+         contract.getCustomer().getAddress().setCountry("BR");
          contract = contractDataProvider.merge(contract);
          shopper.setContract(contractDataProvider.findById(contract));
 

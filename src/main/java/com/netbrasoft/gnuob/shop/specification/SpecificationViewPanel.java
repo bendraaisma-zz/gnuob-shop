@@ -3,12 +3,8 @@ package com.netbrasoft.gnuob.shop.specification;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxEventBehavior;
@@ -38,6 +34,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.flow.RedirectToUrlException;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.apache.wicket.validation.validator.StringValidator;
 
@@ -225,7 +222,8 @@ public class SpecificationViewPanel extends Panel {
          }
 
          item.setModel(new CompoundPropertyModel<OfferRecord>(item.getModelObject()));
-         item.add(new ProductCarousel("productCarousel", carouselImages).add(new PopoverBehavior(Model.of(getString("descriptionMessage")), Model.of(item.getModelObject().getProduct().getDescription()), new PopoverConfig().withHoverTrigger().withPlacement(Placement.left))));
+         item.add(new ProductCarousel("productCarousel", carouselImages)
+               .add(new PopoverBehavior(Model.of(getString("descriptionMessage")), Model.of(item.getModelObject().getProduct().getDescription()), new PopoverConfig().withHoverTrigger().withPlacement(Placement.left))));
          item.add(new Label("name"));
          item.add(new Label("product.stock.quantity"));
          item.add(new Label("amountWithDiscount", Model.of(NumberFormat.getCurrencyInstance().format(item.getModelObject().getProduct().getAmount().subtract(item.getModelObject().getProduct().getDiscount())))));
@@ -305,14 +303,14 @@ public class SpecificationViewPanel extends Panel {
          order.getInvoice().setAddress(new Address());
          order.getShipment().getAddress().setStreet1(shopper.getContract().getCustomer().getAddress().getStreet1());
          order.getShipment().getAddress().setStreet2(shopper.getContract().getCustomer().getAddress().getStreet2());
-         order.getShipment().getAddress().setCountry(shopper.getContract().getCustomer().getAddress().getCountry());
+         order.getShipment().getAddress().setCountry("BR");
          order.getShipment().getAddress().setCityName(shopper.getContract().getCustomer().getAddress().getCityName());
          order.getShipment().getAddress().setPostalCode(shopper.getContract().getCustomer().getAddress().getPostalCode());
          order.getShipment().getAddress().setStateOrProvince(shopper.getContract().getCustomer().getAddress().getStateOrProvince());
          order.getShipment().getAddress().setPhone(shopper.getContract().getCustomer().getAddress().getPhone());
          order.getInvoice().getAddress().setStreet1(shopper.getContract().getCustomer().getAddress().getStreet1());
          order.getInvoice().getAddress().setStreet2(shopper.getContract().getCustomer().getAddress().getStreet2());
-         order.getInvoice().getAddress().setCountry(shopper.getContract().getCustomer().getAddress().getCountry());
+         order.getInvoice().getAddress().setCountry("BR");
          order.getInvoice().getAddress().setCityName(shopper.getContract().getCustomer().getAddress().getCityName());
          order.getInvoice().getAddress().setPostalCode(shopper.getContract().getCustomer().getAddress().getPostalCode());
          order.getInvoice().getAddress().setStateOrProvince(shopper.getContract().getCustomer().getAddress().getStateOrProvince());
@@ -354,22 +352,45 @@ public class SpecificationViewPanel extends Panel {
 
    class SpecificationViewFragement extends Fragment {
 
+      class State implements IClusterable {
+
+         private static final long serialVersionUID = 537050311855603864L;
+
+         private final String code;
+         private final String name;
+
+         public State(String code, String name) {
+            this.code = code;
+            this.name = name;
+         }
+
+         public String getName() {
+            return name;
+         }
+
+         @Override
+         public String toString() {
+            return code;
+         }
+      }
+
       private static final long serialVersionUID = 9159244637681177882L;
 
       public SpecificationViewFragement() {
          super("specificationCustomerViewFragement", "specificationViewFragement", SpecificationViewPanel.this, SpecificationViewPanel.this.getDefaultModel());
       }
 
-      private List<Locale> getSortedISOCountries() {
-         final SortedMap<String, Locale> sortedISOCountries = new TreeMap<String, Locale>();
-         final String[] locales = Locale.getISOCountries();
+      public List<State> getStatesOfBrazil() {
+         final ArrayList<State> states = new ArrayList<>();
+         final String[][] statesOfBrazil = new String[][] { { "AC", "Acre" }, { "AL", "Alagoas" }, { "AP", "Amapá" }, { "AM", "Amazonas" }, { "BA", "Bahia" }, { "CE", "Ceará" }, { "ES", "Espírito Santo" }, { "GO", "Goiás" }, { "MA", "Maranhão" },
+            { "MT", "Mato Grosso" }, { "MS", "Mato Grosso do Sul" }, { "MG", "Minas Gerais" }, { "PA", "Pará" }, { "PB", "Paraíba" }, { "PR", "Paraná" }, { "PE", "Pernambuco" }, { "PI", "Piauí" }, { "RJ", "Rio de Janeiro" },
+            { "RN", "Rio Grande do Norte" }, { "RS", "Rio Grande do Sul" }, { "RO", "Rondônia" }, { "RR", "Roraima" }, { "SC", "Santa Catarina" }, { "SP", "São Paulo" }, { "SE", "Sergipe" }, { "TO", "Tocantins" } };
 
-         for (final String countryCode : locales) {
-            final Locale locale = new Locale("", countryCode);
-            sortedISOCountries.put(locale.getDisplayCountry(), locale);
+         for (final String[] state : statesOfBrazil) {
+            states.add(new State(state[0], state[1]));
          }
 
-         return Arrays.asList(sortedISOCountries.values().toArray(new Locale[sortedISOCountries.size()]));
+         return states;
       }
 
       @Override
@@ -382,10 +403,10 @@ public class SpecificationViewPanel extends Panel {
          customerEditForm.add(new RequiredTextField<String>("customer.lastName").setLabel(Model.of(getString("lastNameMessage"))).add(StringValidator.maximumLength(40)));
          customerEditForm.add(new RequiredTextField<String>("customer.address.street1").setLabel(Model.of(getString("street1Message"))).add(StringValidator.maximumLength(40)));
          customerEditForm.add(new TextField<String>("customer.address.street2").add(StringValidator.maximumLength(40)));
-         customerEditForm.add(new DropDownChoice<Locale>("customer.address.country", getSortedISOCountries(), new ChoiceRenderer<Locale>("displayCountry", "")).setRequired(true).setLabel(Model.of(getString("countryNameMessage"))));
+         customerEditForm.add(new TextField<String>("customer.address.country", Model.of("Brasil")).setLabel(Model.of(getString("countryNameMessage"))).setEnabled(false));
          customerEditForm.add(new RequiredTextField<String>("customer.address.cityName").setLabel(Model.of(getString("cityNameMessage"))).add(StringValidator.maximumLength(40)));
          customerEditForm.add(new RequiredTextField<String>("customer.address.postalCode").setLabel(Model.of(getString("postalCodeMessage"))).add(StringValidator.maximumLength(15)));
-         customerEditForm.add(new RequiredTextField<String>("customer.address.stateOrProvince").setLabel(Model.of(getString("stateOrProvinceMessage"))).add(StringValidator.maximumLength(2)));
+         customerEditForm.add(new DropDownChoice<State>("customer.address.stateOrProvince", getStatesOfBrazil(), new ChoiceRenderer<State>("name", "")).setRequired(true).setLabel(Model.of(getString("stateOrProvinceMessage"))));
 
          final RadioGroup<CheckOut> paymentOptions = new RadioGroup<CheckOut>("paymentOption", new Model<CheckOut>(orderDataProvider.getCheckOut()));
          paymentOptions.add(new Radio<CheckOut>("pagseguro", new Model<CheckOut>(CheckOut.PAGSEGURO)));
