@@ -12,11 +12,12 @@ public class SignInPage extends BasePage {
 
    @Override
    protected void onConfigure() {
+      super.onConfigure();
+
       if (!isSignedIn()) {
          signIn(System.getProperty("gnuob.site.username", "guest"), System.getProperty("gnuob.site.password", "guest"));
       }
 
-      super.onConfigure();
       setResponsePage(getApplication().getHomePage());
    }
 

@@ -50,11 +50,11 @@ public class NetbrasoftShop extends ServletContainerAuthenticatedWebApplication 
    protected void init() {
       super.init();
 
-      BootstrapSettings bootstrapSettings = new BootstrapSettings();
+      final BootstrapSettings bootstrapSettings = new BootstrapSettings();
       bootstrapSettings.useCdnResources(true);
       Bootstrap.install(this, bootstrapSettings);
 
-      WebjarsSettings webjarsSettings = new WebjarsSettings();
+      final WebjarsSettings webjarsSettings = new WebjarsSettings();
       webjarsSettings.cdnUrl(System.getProperty("gnuob.site.cdn.url", "//cdnjs.cloudflare.com:80"));
       webjarsSettings.useCdnResources(true);
       WicketWebjars.install(this, webjarsSettings);
