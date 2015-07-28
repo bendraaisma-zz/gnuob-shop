@@ -36,6 +36,7 @@ import org.apache.wicket.request.flow.RedirectToUrlException;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.validation.validator.EmailAddressValidator;
+import org.apache.wicket.validation.validator.PatternValidator;
 import org.apache.wicket.validation.validator.StringValidator;
 
 import com.google.common.net.MediaType;
@@ -383,8 +384,8 @@ public class SpecificationViewPanel extends Panel {
       public List<State> getStatesOfBrazil() {
          final ArrayList<State> states = new ArrayList<>();
          final String[][] statesOfBrazil = new String[][] { { "AC", "Acre" }, { "AL", "Alagoas" }, { "AP", "Amapá" }, { "AM", "Amazonas" }, { "BA", "Bahia" }, { "CE", "Ceará" }, { "ES", "Espírito Santo" }, { "GO", "Goiás" }, { "MA", "Maranhão" },
-            { "MT", "Mato Grosso" }, { "MS", "Mato Grosso do Sul" }, { "MG", "Minas Gerais" }, { "PA", "Pará" }, { "PB", "Paraíba" }, { "PR", "Paraná" }, { "PE", "Pernambuco" }, { "PI", "Piauí" }, { "RJ", "Rio de Janeiro" },
-            { "RN", "Rio Grande do Norte" }, { "RS", "Rio Grande do Sul" }, { "RO", "Rondônia" }, { "RR", "Roraima" }, { "SC", "Santa Catarina" }, { "SP", "São Paulo" }, { "SE", "Sergipe" }, { "TO", "Tocantins" } };
+               { "MT", "Mato Grosso" }, { "MS", "Mato Grosso do Sul" }, { "MG", "Minas Gerais" }, { "PA", "Pará" }, { "PB", "Paraíba" }, { "PR", "Paraná" }, { "PE", "Pernambuco" }, { "PI", "Piauí" }, { "RJ", "Rio de Janeiro" },
+               { "RN", "Rio Grande do Norte" }, { "RS", "Rio Grande do Sul" }, { "RO", "Rondônia" }, { "RR", "Roraima" }, { "SC", "Santa Catarina" }, { "SP", "São Paulo" }, { "SE", "Sergipe" }, { "TO", "Tocantins" } };
 
          for (final String[] state : statesOfBrazil) {
             states.add(new State(state[0], state[1]));
@@ -405,7 +406,7 @@ public class SpecificationViewPanel extends Panel {
          customerEditForm.add(new TextField<String>("customer.address.street2").add(StringValidator.maximumLength(40)));
          customerEditForm.add(new TextField<String>("customer.address.country", Model.of("Brasil")).setLabel(Model.of(getString("countryNameMessage"))).setEnabled(false));
          customerEditForm.add(new RequiredTextField<String>("customer.address.cityName").setLabel(Model.of(getString("cityNameMessage"))).add(StringValidator.maximumLength(40)));
-         customerEditForm.add(new RequiredTextField<String>("customer.address.postalCode").setLabel(Model.of(getString("postalCodeMessage"))).add(StringValidator.maximumLength(15)));
+         customerEditForm.add(new RequiredTextField<String>("customer.address.postalCode").setLabel(Model.of(getString("postalCodeMessage"))).add(new PatternValidator("([0-9]){5}([-])([0-9]){3}")));
          customerEditForm.add(new DropDownChoice<State>("customer.address.stateOrProvince", getStatesOfBrazil(), new ChoiceRenderer<State>("name", "")).setRequired(true).setLabel(Model.of(getString("stateOrProvinceMessage"))));
 
          final RadioGroup<CheckOut> paymentOptions = new RadioGroup<CheckOut>("paymentOption", new Model<CheckOut>(orderDataProvider.getCheckOut()));

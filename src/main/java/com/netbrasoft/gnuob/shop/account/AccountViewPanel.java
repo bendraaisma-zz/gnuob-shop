@@ -20,6 +20,7 @@ import org.apache.wicket.request.flow.RedirectToUrlException;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.validation.validator.EmailAddressValidator;
+import org.apache.wicket.validation.validator.PatternValidator;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,7 +98,7 @@ public class AccountViewPanel extends Panel {
          customerEditForm.add(new RequiredTextField<String>("customer.address.street1").setLabel(Model.of(getString("street1Message"))).add(StringValidator.maximumLength(40)));
          customerEditForm.add(new TextField<String>("customer.address.street2").add(StringValidator.maximumLength(40)));
          customerEditForm.add(new TextField<String>("customer.address.country", Model.of("Brasil")).setLabel(Model.of(getString("countryNameMessage"))).setEnabled(false));customerEditForm.add(new RequiredTextField<String>("customer.address.cityName").setLabel(Model.of(getString("cityNameMessage"))).add(StringValidator.maximumLength(40)));
-         customerEditForm.add(new RequiredTextField<String>("customer.address.postalCode").setLabel(Model.of(getString("postalCodeMessage"))).add(StringValidator.maximumLength(15)));
+         customerEditForm.add(new RequiredTextField<String>("customer.address.postalCode").setLabel(Model.of(getString("postalCodeMessage"))).add(new PatternValidator("([0-9]){5}([-])([0-9]){3}")));
          customerEditForm.add(new DropDownChoice<State>("customer.address.stateOrProvince", getStatesOfBrazil(), new ChoiceRenderer<State>("name", "")).setRequired(true).setLabel(Model.of(getString("stateOrProvinceMessage"))));
 
          customerEditForm.add(new SaveAjaxButton(customerEditForm).setOutputMarkupId(true));

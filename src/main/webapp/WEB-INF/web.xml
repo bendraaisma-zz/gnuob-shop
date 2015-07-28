@@ -96,10 +96,10 @@
 		</web-resource-collection>
 		<auth-constraint>
 			<description>GNUOB Roles</description>
-			<role-name>Administrator</role-name>
-			<role-name>Manager</role-name>
-			<role-name>Employee</role-name>
-			<role-name>Guest</role-name>
+			<role-name>ADMINISTRATOR</role-name>
+			<role-name>MANAGER</role-name>
+			<role-name>EMPLOYEE</role-name>
+			<role-name>GUEST</role-name>
 		</auth-constraint>
 	</security-constraint>
 
@@ -126,15 +126,15 @@
 	</login-config>
 
 	<security-role>
-		<role-name>Administrator</role-name>
+		<role-name>ADMINISTRATOR</role-name>
 	</security-role>
 	<security-role>
-		<role-name>Manager</role-name>
+		<role-name>MANAGER</role-name>
 	</security-role>
 	<security-role>
-		<role-name>Employee</role-name>
+		<role-name>EMPLOYEE</role-name>
 	</security-role>
 	<security-role>
-		<role-name>Guest</role-name>
+		<role-name>GUEST</role-name>
 	</security-role>
 </web-app>

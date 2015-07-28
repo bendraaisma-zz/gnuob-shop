@@ -52,9 +52,10 @@ public class NotificationPage extends BasePage {
    private void doPagSeguroNotification() {
       final HttpServletRequest request = (HttpServletRequest) getRequest().getContainerRequest();
 
+      final String method = request.getMethod();
       final String notificationCode = request.getParameter("notificationCode");
 
-      if(notificationCode != null) {
+      if("POST".equalsIgnoreCase(method) && notificationCode != null) {
          LOGGER.debug("Retrieve notifcation request from PagSeguro with notificationCode parameter value = [{}]", notificationCode);
 
          Order order = new Order();
@@ -62,12 +63,26 @@ public class NotificationPage extends BasePage {
 
          order = orderDataProvider.doNotification(order);
       } else {
-         LOGGER.warn("Retrieve notifcation request from PagSeguro without a notificationCode parameter");
+         LOGGER.warn("Retrieve notifcation request from PagSeguro without a notificationCode parameter or not a POST method.");
       }
    }
 
    private void doPayPalNotification() {
+      final HttpServletRequest request = (HttpServletRequest) getRequest().getContainerRequest();
 
+      final String method = request.getMethod();
+      final String notificationCode = request.getParameter("txn_id");
+
+      if("POST".equalsIgnoreCase(method) && notificationCode != null) {
+         LOGGER.debug("Retrieve notifcation request from PayPal with notificationCode parameter value = [{}]", notificationCode);
+
+         Order order = new Order();
+         order.setNotificationId(notificationCode);
+
+         order = orderDataProvider.doNotification(order);
+      } else {
+         LOGGER.warn("Retrieve notifcation request from PayPal without a notificationCode parameter or not a POST method.");
+      }
    }
 
    private boolean isSignedIn() {
