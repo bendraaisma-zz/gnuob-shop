@@ -15,7 +15,8 @@ public class SignInPage extends BasePage {
       super.onConfigure();
 
       if (!isSignedIn()) {
-         signIn(System.getProperty("gnuob.site.username", "guest"), System.getProperty("gnuob.site.password", "guest"));
+         final String host =  getRequest().getClientUrl().getHost();
+         signIn(System.getProperty("gnuob." + host + ".username", "guest"), System.getProperty("gnuob." + host + ".password", "guest"));
       }
 
       setResponsePage(getApplication().getHomePage());
