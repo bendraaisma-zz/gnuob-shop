@@ -8,8 +8,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Map;
 
-import org.apache.wicket.request.cycle.RequestCycle;
-
 import com.netbrasoft.gnuob.api.generic.GNUOpenBusinessApplicationException;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.oauth2.sdk.AuthorizationCode;
@@ -51,9 +49,7 @@ public final class OAuthUtils {
       return new AuthenticationRequest(providerConfiguration.getAuthorizationEndpointURI(), new ResponseType(ResponseType.Value.CODE), scope, clientID, redirectURI, state, new Nonce());
    }
 
-   public static ClientID getClientID(URI issuerURI) {
-      final String host = RequestCycle.get().getRequest().getClientUrl().getHost();
-
+   public static ClientID getClientID(String host, URI issuerURI) {
       switch (issuerURI.toString()) {
       case ACCOUNTS_GOOGLE_COM:
          return new ClientID(System.getProperty("gnuob." + host + ".google.clientId"));
@@ -64,9 +60,7 @@ public final class OAuthUtils {
       return new ClientID();
    }
 
-   public static String getClientSecret(URI issuerURI) {
-      final String host = RequestCycle.get().getRequest().getClientUrl().getHost();
-
+   public static String getClientSecret(String host, URI issuerURI) {
       switch (issuerURI.toString()) {
       case ACCOUNTS_GOOGLE_COM:
          return System.getProperty("gnuob." + host + ".google.clientSecret");
@@ -94,9 +88,7 @@ public final class OAuthUtils {
       }
    }
 
-   public static Scope getScope(URI issuerURI) {
-      final String host = RequestCycle.get().getRequest().getClientUrl().getHost();
-
+   public static Scope getScope(String host, URI issuerURI) {
       switch (issuerURI.toString()) {
       case ACCOUNTS_GOOGLE_COM:
          return Scope.parse(System.getProperty("gnuob." + host + ".google.scope"));

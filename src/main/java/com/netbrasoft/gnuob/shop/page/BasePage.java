@@ -66,7 +66,7 @@ public abstract class BasePage extends WebPage implements IAjaxIndicatorAware {
    private GenericTypeDataProvider<Contract> contractDataProvider;
 
    private void authenticateShopper() {
-      Shopper shopper = shopperDataProvider.find(new Shopper());
+      final Shopper shopper = shopperDataProvider.find(new Shopper());
 
       if (shopper.login()) {
          try {
@@ -77,7 +77,7 @@ public abstract class BasePage extends WebPage implements IAjaxIndicatorAware {
             LOGGER.warn(e.getMessage(), e);
          }
 
-         URI redirectURI = URI.create(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getClientUrl()).split("\\?")[0]);
+         final URI redirectURI = URI.create(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getClientUrl()).split("\\?")[0]);
          throw new RedirectToUrlException(redirectURI.toString());
       }
    }
@@ -88,7 +88,7 @@ public abstract class BasePage extends WebPage implements IAjaxIndicatorAware {
    }
 
    private void getShopperContractFromUserInfo(Shopper shopper) throws URISyntaxException {
-      UserInfo userInfo = getUserInfo(shopper);
+      final UserInfo userInfo = getUserInfo(shopper);
 
       shopper.logout();
       shopper.getContract().setContractId(userInfo.getEmail().toString());
@@ -101,13 +101,14 @@ public abstract class BasePage extends WebPage implements IAjaxIndicatorAware {
    }
 
    private UserInfo getUserInfo(Shopper shopper) throws URISyntaxException {
-      URI issuerURI = new URI(shopper.getIssuer());
-      ClientID clientID = OAuthUtils.getClientID(issuerURI);
-      State state = new State(shopper.getId());
-      URI requestURI = URI.create(getRequest().getClientUrl().toString());
-      URI redirectURI = URI.create(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getClientUrl()).split("\\?")[0]);
-      OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
-      return OAuthUtils.getUserInfo(providerConfiguration, issuerURI, clientID, state, requestURI, redirectURI, OAuthUtils.getClientSecret(issuerURI));
+      final String host = getRequest().getClientUrl().getHost();
+      final URI issuerURI = new URI(shopper.getIssuer());
+      final ClientID clientID = OAuthUtils.getClientID(host, issuerURI);
+      final State state = new State(shopper.getId());
+      final URI requestURI = URI.create(getRequest().getClientUrl().toString());
+      final URI redirectURI = URI.create(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getClientUrl()).split("\\?")[0]);
+      final OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
+      return OAuthUtils.getUserInfo(providerConfiguration, issuerURI, clientID, state, requestURI, redirectURI, OAuthUtils.getClientSecret(host, issuerURI));
    }
 
    @Override
@@ -119,8 +120,8 @@ public abstract class BasePage extends WebPage implements IAjaxIndicatorAware {
       contractDataProvider.getType().setActive(true);
       contractDataProvider.setOrderBy(OrderBy.NONE);
 
-      String site = getRequest().getClientUrl().getHost();
-      String title = site.replaceFirst("www.", "").split("\\.")[0];
+      final String site = getRequest().getClientUrl().getHost();
+      final String title = site.replaceFirst("www.", "").split("\\.")[0];
 
       add(new Label(GNUOB_SITE_TITLE_PROPERTY, System.getProperty(GNUOB_SITE_TITLE_PROPERTY, WordUtils.capitalize(title))));
 
@@ -143,6 +144,7 @@ public abstract class BasePage extends WebPage implements IAjaxIndicatorAware {
       contractDataProvider.setType(shopper.getContract());
 
       @SuppressWarnings("unchecked")
+      final
       Iterator<Contract> iterator = (Iterator<Contract>) contractDataProvider.iterator(0, 1);
 
       if (iterator.hasNext()) {

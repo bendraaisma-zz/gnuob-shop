@@ -37,15 +37,16 @@ public class AuthorizationPanel extends Panel {
       @Override
       public void onClick(AjaxRequestTarget target) {
          try {
-            Shopper shopper = shopperDataProvider.find(new Shopper());
+            final Shopper shopper = shopperDataProvider.find(new Shopper());
             shopper.setIssuer(OAuthUtils.ACCOUNTS_FACEBOOK_COM);
 
-            URI issuerURI = new URI(shopper.getIssuer());
-            ClientID clientID = OAuthUtils.getClientID(issuerURI);
-            State state = new State(shopper.getId());
-            URI redirectURI = URI.create(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getClientUrl()).split("\\?")[0]);
-            Scope scope = OAuthUtils.getScope(issuerURI);
-            OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
+            final String host = getRequest().getClientUrl().getHost();
+            final URI issuerURI = new URI(shopper.getIssuer());
+            final ClientID clientID = OAuthUtils.getClientID(host, issuerURI);
+            final State state = new State(shopper.getId());
+            final URI redirectURI = URI.create(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getClientUrl()).split("\\?")[0]);
+            final Scope scope = OAuthUtils.getScope(host, issuerURI);
+            final OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
 
             shopperDataProvider.merge(shopper);
 
@@ -68,15 +69,16 @@ public class AuthorizationPanel extends Panel {
       @Override
       public void onClick(AjaxRequestTarget target) {
          try {
-            Shopper shopper = shopperDataProvider.find(new Shopper());
+            final Shopper shopper = shopperDataProvider.find(new Shopper());
             shopper.setIssuer(OAuthUtils.ACCOUNTS_GOOGLE_COM);
 
-            URI issuerURI = new URI(shopper.getIssuer());
-            ClientID clientID = OAuthUtils.getClientID(issuerURI);
-            State state = new State(shopper.getId());
-            URI redirectURI = URI.create(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getClientUrl()).split("\\?")[0]);
-            Scope scope = OAuthUtils.getScope(issuerURI);
-            OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
+            final String host = getRequest().getClientUrl().getHost();
+            final URI issuerURI = new URI(shopper.getIssuer());
+            final ClientID clientID = OAuthUtils.getClientID(host, issuerURI);
+            final State state = new State(shopper.getId());
+            final URI redirectURI = URI.create(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getClientUrl()).split("\\?")[0]);
+            final Scope scope = OAuthUtils.getScope(host, issuerURI);
+            final OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
 
             shopperDataProvider.merge(shopper);
 
