@@ -108,7 +108,8 @@
 		<web-resource-collection>
 			<web-resource-name>UnRestricted</web-resource-name>
 			<description />
-			<url-pattern>/notification.html</url-pattern>
+			<url-pattern>/pagseguro_notifications</url-pattern>
+			<url-pattern>/paypal_notifications</url-pattern>
 			<url-pattern>/json/facebook/openid-configuration</url-pattern>
 			<url-pattern>/json/google/openid-configuration</url-pattern>
 			<url-pattern>/images/glyphicons_social/png/*</url-pattern>
