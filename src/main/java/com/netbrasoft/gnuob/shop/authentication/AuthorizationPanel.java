@@ -50,7 +50,7 @@ public class AuthorizationPanel extends Panel {
 
             shopperDataProvider.merge(shopper);
 
-            throw new RedirectToUrlException(OAuthUtils.getAuthenticationRequest(providerConfiguration, issuerURI, clientID, redirectURI, scope, state).toURI().toString());
+            throw new RedirectToUrlException(OAuthUtils.getFacebookAuthenticationRequest(providerConfiguration, issuerURI, clientID, redirectURI, scope, state).toURI().toString());
          } catch (GNUOpenBusinessApplicationException | URISyntaxException | SerializeException e) {
 
          }

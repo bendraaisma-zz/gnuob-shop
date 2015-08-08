@@ -45,6 +45,7 @@ public final class OAuthUtils {
    public static final String ACCOUNTS_GOOGLE_COM = "http://localhost:8080/json/google/openid-configuration";
    private static final String ISSUER_FACEBOOK = "https://www.facebook.com";
    public static final String ACCOUNTS_FACEBOOK_COM = "http://localhost:8080/json/facebook/openid-configuration";
+
    public static AuthenticationRequest getAuthenticationRequest(final OIDCProviderMetadata providerConfiguration, final URI issuerURI, final ClientID clientID, final URI redirectURI, Scope scope, State state) {
       return new AuthenticationRequest(providerConfiguration.getAuthorizationEndpointURI(), new ResponseType(ResponseType.Value.CODE), scope, clientID, redirectURI, state, new Nonce());
    }
@@ -69,6 +70,10 @@ public final class OAuthUtils {
       }
 
       return "";
+   }
+
+   public static FacebookAuthenticationRequest getFacebookAuthenticationRequest(final OIDCProviderMetadata providerConfiguration, final URI issuerURI, final ClientID clientID, final URI redirectURI, Scope scope, State state) {
+      return new FacebookAuthenticationRequest(providerConfiguration.getAuthorizationEndpointURI(), new ResponseType(ResponseType.Value.CODE), scope, clientID, redirectURI, state, new Nonce());
    }
 
    public static OIDCProviderMetadata getProviderConfigurationURL(final URI issuerURI) {

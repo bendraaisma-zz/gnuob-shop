@@ -1,9 +1,9 @@
 {
  "issuer": "https://www.facebook.com",
- "authorization_endpoint": "https://www.facebook.com/dialog/oauth",
+ "authorization_endpoint": "https://www.facebook.com/v2.4/dialog/oauth",
  "token_endpoint": "https://graph.facebook.com/v2.4/oauth/access_token",
- "userinfo_endpoint": "https://graph.facebook.com/me",
- "jwks_uri": "https://www.facebook.com/dialog/oauth",
+ "userinfo_endpoint": "https://graph.facebook.com/v2.4/me?fields=id,name,email,last_name,first_name",
+ "jwks_uri": "https://www.facebook.com/v2.4/dialog/oauth",
  "response_types_supported": [
   "code",
   "token",
