@@ -112,6 +112,8 @@
 			<url-pattern>/paypal_notifications</url-pattern>
 			<url-pattern>/json/facebook/openid-configuration</url-pattern>
 			<url-pattern>/json/google/openid-configuration</url-pattern>
+			<url-pattern>/json/paypal/openid-configuration</url-pattern>
+			<url-pattern>/json/microsoft/openid-configuration</url-pattern>
 			<url-pattern>/images/glyphicons_social/png/*</url-pattern>
 			<url-pattern>/images/glyphicons/png/*</url-pattern>
 		</web-resource-collection>

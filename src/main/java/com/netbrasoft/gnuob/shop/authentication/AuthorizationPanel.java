@@ -89,6 +89,70 @@ public class AuthorizationPanel extends Panel {
       }
    }
 
+   @AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
+   class MicrosoftAjaxLink extends AjaxLink<String> {
+
+      private static final long serialVersionUID = -8317730269644885290L;
+
+      public MicrosoftAjaxLink() {
+         super("microsoft");
+      }
+
+      @Override
+      public void onClick(AjaxRequestTarget target) {
+         try {
+            final Shopper shopper = shopperDataProvider.find(new Shopper());
+            shopper.setIssuer(OAuthUtils.ACCOUNTS_MICROSOFT_COM);
+
+            final String host = getRequest().getClientUrl().getHost();
+            final URI issuerURI = new URI(shopper.getIssuer());
+            final ClientID clientID = OAuthUtils.getClientID(host, issuerURI);
+            final State state = new State(shopper.getId());
+            final URI redirectURI = URI.create(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getClientUrl()).split("\\?")[0]);
+            final Scope scope = OAuthUtils.getScope(host, issuerURI);
+            final OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
+
+            shopperDataProvider.merge(shopper);
+
+            throw new RedirectToUrlException(OAuthUtils.getAuthenticationRequest(providerConfiguration, issuerURI, clientID, redirectURI, scope, state).toURI().toString());
+         } catch (GNUOpenBusinessApplicationException | URISyntaxException | SerializeException e) {
+
+         }
+      }
+   }
+
+   @AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
+   class PayPalAjaxLink extends AjaxLink<String> {
+
+      private static final long serialVersionUID = -8317730269644885290L;
+
+      public PayPalAjaxLink() {
+         super("paypal");
+      }
+
+      @Override
+      public void onClick(AjaxRequestTarget target) {
+         try {
+            final Shopper shopper = shopperDataProvider.find(new Shopper());
+            shopper.setIssuer(OAuthUtils.ACCOUNTS_PAY_PAL_COM);
+
+            final String host = getRequest().getClientUrl().getHost();
+            final URI issuerURI = new URI(shopper.getIssuer());
+            final ClientID clientID = OAuthUtils.getClientID(host, issuerURI);
+            final State state = new State(shopper.getId());
+            final URI redirectURI = URI.create(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getClientUrl()).split("\\?")[0]);
+            final Scope scope = OAuthUtils.getScope(host, issuerURI);
+            final OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
+
+            shopperDataProvider.merge(shopper);
+
+            throw new RedirectToUrlException(OAuthUtils.getAuthenticationRequest(providerConfiguration, issuerURI, clientID, redirectURI, scope, state).toURI().toString());
+         } catch (GNUOpenBusinessApplicationException | URISyntaxException | SerializeException e) {
+
+         }
+      }
+   }
+
    private static final long serialVersionUID = -7007737558968816459L;
 
    @SpringBean(name = "ShopperDataProvider", required = true)
@@ -102,6 +166,8 @@ public class AuthorizationPanel extends Panel {
    protected void onInitialize() {
       add(new GoogleAjaxLink());
       add(new FacebookAjaxLink());
+      add(new PayPalAjaxLink());
+      add(new MicrosoftAjaxLink());
       super.onInitialize();
    }
 }
