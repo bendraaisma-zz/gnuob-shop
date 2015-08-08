@@ -41,6 +41,7 @@ public final class OAuthUtils {
 
    private static final String ISSUER_FACEBOOK = "https://www.facebook.com";
    private static final String ISSUER_PAY_PAL = "https://www.paypal.com";
+   private static final String ISSUER_MICROSOFT = "https://www.microsoft.com";
 
    public static final String ACCOUNTS_GOOGLE_COM = "http://localhost:8080/json/google/openid-configuration";
    public static final String ACCOUNTS_PAY_PAL_COM = "http://localhost:8080/json/paypal/openid-configuration";
@@ -83,6 +84,10 @@ public final class OAuthUtils {
 
    public static FacebookAuthenticationRequest getFacebookAuthenticationRequest(final OIDCProviderMetadata providerConfiguration, final URI issuerURI, final ClientID clientID, final URI redirectURI, Scope scope, State state) {
       return new FacebookAuthenticationRequest(providerConfiguration.getAuthorizationEndpointURI(), new ResponseType(ResponseType.Value.CODE), scope, clientID, redirectURI, state, new Nonce());
+   }
+
+   public static MicrosoftAuthenticationRequest getMicrosoftAuthenticationRequest(final OIDCProviderMetadata providerConfiguration, final URI issuerURI, final ClientID clientID, final URI redirectURI, Scope scope, State state) {
+      return new MicrosoftAuthenticationRequest(providerConfiguration.getAuthorizationEndpointURI(), new ResponseType(ResponseType.Value.CODE), scope, clientID, redirectURI, state, new Nonce());
    }
 
    public static OIDCProviderMetadata getProviderConfigurationURL(final URI issuerURI) {
@@ -144,7 +149,10 @@ public final class OAuthUtils {
       case ISSUER_PAY_PAL:
          userInfoResponse = PayPalUserInfoResponse.parse(userInfoRequest.toHTTPRequest().send());
          break;
-      default: // Google or Microsoft.
+      case ISSUER_MICROSOFT:
+         userInfoResponse = MicrosoftUserInfoResponse.parse(userInfoRequest.toHTTPRequest().send());
+         break;
+      default: // Google.
          userInfoResponse = UserInfoResponse.parse(userInfoRequest.toHTTPRequest().send());
          break;
       }

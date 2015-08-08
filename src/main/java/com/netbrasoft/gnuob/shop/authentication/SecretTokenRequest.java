@@ -13,14 +13,10 @@ import com.nimbusds.oauth2.sdk.util.URLUtils;
 
 public class SecretTokenRequest extends TokenRequest {
 
-   /**
-    * The Secret or password..
-    */
    private final Secret secret;
 
    public SecretTokenRequest(URI uri, ClientID clientID, Secret secret, AuthorizationGrant authzGrant) {
       super(uri, clientID, authzGrant);
-
       this.secret = secret;
    }
 
@@ -35,8 +31,6 @@ public class SecretTokenRequest extends TokenRequest {
       }
 
       httpRequest.setQuery(URLUtils.serializeParameters(params));
-
       return httpRequest;
    }
-
 }
