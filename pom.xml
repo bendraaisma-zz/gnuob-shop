@@ -17,7 +17,7 @@
 			<url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
 		</license>
 	</licenses>
-	
+
 	<repositories>
 		<repository>
 			<id>jitpack.io</id>
@@ -241,6 +241,7 @@
 			<artifactId>oauth2-oidc-sdk</artifactId>
 			<version>${version.com.nimbusds}</version>
 		</dependency>
+
 	</dependencies>
 
 	<build>

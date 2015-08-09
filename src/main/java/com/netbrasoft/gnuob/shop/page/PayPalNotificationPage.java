@@ -1,5 +1,13 @@
 package com.netbrasoft.gnuob.shop.page;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.Map;
+
+import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
@@ -28,15 +36,48 @@ public class PayPalNotificationPage extends BasePage {
       final HttpServletRequest request = (HttpServletRequest) getRequest().getContainerRequest();
 
       final String method = request.getMethod();
-      final String notificationCode = request.getParameter("notificationCode");
+      final Map<String, String[]> parameterMap = request.getParameterMap();
 
-      if("POST".equalsIgnoreCase(method) && notificationCode != null) {
-         LOGGER.debug("Retrieve notifcation request from PayPal with notificationCode parameter value = [{}]", notificationCode);
+      if ("POST".equalsIgnoreCase(method) && !parameterMap.isEmpty()) {
+         try {
+            LOGGER.debug("Retrieve notifcation request from PayPal with parameters = [{}]", parameterMap.size());
 
-         Order order = new Order();
-         order.setNotificationId(notificationCode);
+            final HttpsURLConnection connection = (HttpsURLConnection) new URL("https://www.paypal.com/cgi-bin/webscr").openConnection();
 
-         order = orderDataProvider.doNotification(order);
+            connection.setRequestMethod(method);
+            connection.setRequestProperty("Content-Type", request.getContentType());
+            connection.setDoOutput(true);
+
+            final DataOutputStream writer = new DataOutputStream(connection.getOutputStream());
+
+            writer.writeBytes("cmd=_notify-validate");
+
+            for (final Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
+               writer.writeBytes("&" + entry.getKey() + "=" + entry.getValue()[0]);
+            }
+
+            writer.flush();
+            writer.close();
+
+            if (connection.getResponseCode() == 200) {
+               final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+               final String response = reader.readLine();
+
+               if ("VERIFIED".equals(response)) {
+                  Order order = new Order();
+                  order.setNotificationId(parameterMap.get("txn_id")[0]);
+
+                  order = orderDataProvider.doNotification(order);
+               } else {
+                  LOGGER.warn("Retrieve notifcation request from PayPal but isn't a valid request ");
+               }
+
+               reader.close();
+            }
+         } catch (final IOException e) {
+            LOGGER.warn("Retrieve notifcation request from PayPal but can't send a validation request ", e);
+         }
       } else {
          LOGGER.warn("Retrieve notifcation request from PayPal without a notificationCode parameter or not a POST method.");
       }
@@ -49,7 +90,7 @@ public class PayPalNotificationPage extends BasePage {
    @Override
    protected void onInitialize() {
       if (!isSignedIn()) {
-         final String host =  getRequest().getClientUrl().getHost();
+         final String host = getRequest().getClientUrl().getHost();
          signIn(System.getProperty("gnuob." + host + ".username", "guest"), System.getProperty("gnuob." + host + ".password", "guest"));
       }
 
