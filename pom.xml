@@ -4,7 +4,7 @@
 
 	<groupId>com.netbrasoft.gnuob</groupId>
 	<artifactId>gnuob-shop</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>GNU Open Business Platform</name>
 	<description>GNU Open Business Platform is a open source business framework</description>
@@ -17,17 +17,33 @@
 			<url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
 		</license>
 	</licenses>
+	
+	<repositories>
+		<repository>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
+		</repository>
+	</repositories>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<version.war.plugin>2.1.1</version.war.plugin>
 		<version.jboss.maven.plugin>7.4.Final</version.jboss.maven.plugin>
-		<version.wicket.plugin>7.0.0-M5</version.wicket.plugin>
+		<version.wicket.plugin>7.0.0</version.wicket.plugin>
+		<version.wicketstuff.plugin>7.0.0-M6</version.wicketstuff.plugin>
 		<version.wicket-source.plugin>7.0.0</version.wicket-source.plugin>
-		<version.springframework.plugin>4.1.0.RELEASE</version.springframework.plugin>
-		<version.surefire.plugin>2.10</version.surefire.plugin>
-		<version.netbrasoft.gnuob>0.0.1-SNAPSHOT</version.netbrasoft.gnuob>
-		<javasimon.version>4.0.1</javasimon.version>
+		<version.springframework.plugin>4.1.7.RELEASE</version.springframework.plugin>
+		<version.surefire.plugin>2.17</version.surefire.plugin>
+		<version.netbrasoft.gnuob>0.0.2-SNAPSHOT</version.netbrasoft.gnuob>
+		<version.javasimon>4.0.1</version.javasimon>
+		<version.wicket-dnd>0.6.0</version.wicket-dnd>
+		<version.wicket-bootstrap>0.10.2</version.wicket-bootstrap>
+		<version.bootstrap-validator>0.8.1</version.bootstrap-validator>
+		<version.jquery.cookie>1.4.1</version.jquery.cookie>
+		<version.bootstrap-3-datepicker>1.4.0</version.bootstrap-3-datepicker>
+		<version.com.nimbusds>4.14.2</version.com.nimbusds>
+		<version.mockito-all>1.9.5</version.mockito-all>
+		<version.graphene-webdriver>2.0.3.Final</version.graphene-webdriver>
 
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.source>1.8</maven.compiler.source>
@@ -37,8 +53,21 @@
 		<dependencies>
 			<dependency>
 				<groupId>org.wildfly.bom</groupId>
-				<artifactId>jboss-javaee-7.0-with-all</artifactId>
-				<version>8.1.0.Final</version>
+				<artifactId>jboss-javaee-7.0-wildfly-with-tools</artifactId>
+				<version>9.0.1.Final</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.arquillian</groupId>
+				<artifactId>arquillian-bom</artifactId>
+				<version>1.1.8.Final</version>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.arquillian.extension</groupId>
+				<artifactId>arquillian-drone-bom</artifactId>
+				<version>1.3.0.Final</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -46,32 +75,36 @@
 	</dependencyManagement>
 
 	<dependencies>
+
+		<!-- JBOSS ETC. -->
+
+		<dependency>
+			<groupId>org.jboss.spec.javax.servlet</groupId>
+			<artifactId>jboss-servlet-api_3.1_spec</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.arquillian.graphene</groupId>
+			<artifactId>graphene-webdriver</artifactId>
+			<type>pom</type>
+			<scope>test</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>1.9.5</version>
-			<scope>test</scope>
-		</dependency>
+
 		<dependency>
 			<groupId>org.jboss.arquillian.junit</groupId>
 			<artifactId>arquillian-junit-container</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.jboss.arquillian.protocol</groupId>
-			<artifactId>arquillian-protocol-servlet</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>net.ftlines.wicket-source</groupId>
-			<artifactId>wicket-source</artifactId>
-			<version>${version.wicket-source.plugin}</version>
-		</dependency>
+
+		<!-- WICKET -->
+
 		<dependency>
 			<groupId>org.apache.wicket</groupId>
 			<artifactId>wicket-core</artifactId>
@@ -98,6 +131,42 @@
 			<version>${version.wicket.plugin}</version>
 		</dependency>
 		<dependency>
+			<groupId>net.ftlines.wicket-source</groupId>
+			<artifactId>wicket-source</artifactId>
+			<version>${version.wicket-source.plugin}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.wicketstuff</groupId>
+			<artifactId>wicketstuff-servlet3-auth</artifactId>
+			<version>${version.wicketstuff.plugin}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.svenmeier.wicket-dnd</groupId>
+			<artifactId>wicket-dnd</artifactId>
+			<version>${version.wicket-dnd}</version>
+		</dependency>
+
+		<!-- WICKET BOOTSTRAP -->
+
+		<dependency>
+			<groupId>de.agilecoders.wicket</groupId>
+			<artifactId>wicket-bootstrap-core</artifactId>
+			<version>${version.wicket-bootstrap}</version>
+		</dependency>
+		<dependency>
+			<groupId>de.agilecoders.wicket</groupId>
+			<artifactId>wicket-bootstrap-extensions</artifactId>
+			<version>${version.wicket-bootstrap}</version>
+		</dependency>
+		<dependency>
+			<groupId>de.agilecoders.wicket</groupId>
+			<artifactId>wicket-bootstrap-themes</artifactId>
+			<version>${version.wicket-bootstrap}</version>
+		</dependency>
+
+		<!-- SPRING -->
+
+		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
 			<version>${version.springframework.plugin}</version>
@@ -118,45 +187,59 @@
 			<version>${version.springframework.plugin}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.netbrasoft.gnuob</groupId>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<version>${version.springframework.plugin}</version>
+		</dependency>
+
+		<!-- GNUOB -->
+
+		<dependency>
+			<groupId>com.github.bendraaisma</groupId>
 			<artifactId>gnuob-api</artifactId>
 			<version>${version.netbrasoft.gnuob}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.netbrasoft.gnuob</groupId>
-			<artifactId>gnuob-wicket-bootstrap</artifactId>
-			<version>${version.netbrasoft.gnuob}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.netbrasoft.gnuob</groupId>
+			<groupId>com.github.bendraaisma</groupId>
 			<artifactId>gnuob-login</artifactId>
 			<version>${version.netbrasoft.gnuob}</version>
 			<scope>provided</scope>
 		</dependency>
+
+		<!-- SIMON -->
+
 		<dependency>
 			<groupId>org.javasimon</groupId>
 			<artifactId>javasimon-core</artifactId>
-			<version>${javasimon.version}</version>
+			<version>${version.javasimon}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.javasimon</groupId>
 			<artifactId>javasimon-jdbc41</artifactId>
-			<version>${javasimon.version}</version>
+			<version>${version.javasimon}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.javasimon</groupId>
 			<artifactId>javasimon-javaee</artifactId>
-			<version>${javasimon.version}</version>
+			<version>${version.javasimon}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.javasimon</groupId>
 			<artifactId>javasimon-spring</artifactId>
-			<version>${javasimon.version}</version>
+			<version>${version.javasimon}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.javasimon</groupId>
 			<artifactId>javasimon-console-embed</artifactId>
-			<version>${javasimon.version}</version>
+			<version>${version.javasimon}</version>
+		</dependency>
+
+		<!-- OPENID -->
+
+		<dependency>
+			<groupId>com.nimbusds</groupId>
+			<artifactId>oauth2-oidc-sdk</artifactId>
+			<version>${version.com.nimbusds}</version>
 		</dependency>
 	</dependencies>
 
@@ -167,6 +250,16 @@
 			<resource>
 				<filtering>false</filtering>
 				<directory>src/main/java</directory>
+				<includes>
+					<include>**/*</include>
+				</includes>
+				<excludes>
+					<exclude>**/*.java</exclude>
+				</excludes>
+			</resource>
+			<resource>
+				<filtering>false</filtering>
+				<directory>src/main/resources</directory>
 				<includes>
 					<include>**/*</include>
 				</includes>
@@ -186,7 +279,7 @@
 						<manifestEntries>
 							<mode>development</mode>
 							<url>${project.url}</url>
-							<dependencies>org.apache.cxf services,org.apache.cxf.impl</dependencies>
+							<dependencies>org.apache.cxf services,org.apache.cxf.impl, net.sf.ehcache</dependencies>
 						</manifestEntries>
 						<manifest>
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
@@ -232,8 +325,8 @@
 			<id>arq-jbossas-managed</id>
 			<dependencies>
 				<dependency>
-					<groupId>org.wildfly</groupId>
-					<artifactId>wildfly-arquillian-container-managed</artifactId>
+					<groupId>org.wildfly.arquillian</groupId>
+					<artifactId>wildfly-arquillian-container-remote</artifactId>
 					<scope>test</scope>
 				</dependency>
 			</dependencies>

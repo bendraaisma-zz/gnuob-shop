@@ -2,6 +2,10 @@
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
 	<display-name>gnuob-shop</display-name>
 
+	<session-config>
+		<session-timeout>30</session-timeout>
+	</session-config>
+
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>/WEB-INF/applicationContext.xml</param-value>
@@ -55,7 +59,15 @@
 	<filter-mapping>
 		<filter-name>wicket</filter-name>
 		<url-pattern>/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>ERROR</dispatcher>
 	</filter-mapping>
+
+	<error-page>
+		<error-code>404</error-code>
+		<location>/notFound.html</location>
+	</error-page>
 
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
@@ -74,4 +86,56 @@
 		<servlet-name>SimonConsoleServlet</servlet-name>
 		<url-pattern>/console-servlet/*</url-pattern>
 	</servlet-mapping>
+
+	<security-constraint>
+		<display-name>GNUOBConstraint</display-name>
+		<web-resource-collection>
+			<web-resource-name>Restricted</web-resource-name>
+			<description />
+			<url-pattern>/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<description>GNUOB Roles</description>
+			<role-name>ADMINISTRATOR</role-name>
+			<role-name>MANAGER</role-name>
+			<role-name>EMPLOYEE</role-name>
+			<role-name>GUEST</role-name>
+		</auth-constraint>
+	</security-constraint>
+
+	<security-constraint>
+		<display-name>GNUOBConstraint</display-name>
+		<web-resource-collection>
+			<web-resource-name>UnRestricted</web-resource-name>
+			<description />
+			<url-pattern>/pagseguro_notifications</url-pattern>
+			<url-pattern>/paypal_notifications</url-pattern>
+			<url-pattern>/json/facebook/openid-configuration</url-pattern>
+			<url-pattern>/json/google/openid-configuration</url-pattern>
+			<url-pattern>/images/glyphicons_social/png/*</url-pattern>
+			<url-pattern>/images/glyphicons/png/*</url-pattern>
+		</web-resource-collection>
+	</security-constraint>
+
+	<login-config>
+		<auth-method>FORM</auth-method>
+		<realm-name>GNUOBRealm</realm-name>
+		<form-login-config>
+			<form-login-page>/login.html</form-login-page>
+			<form-error-page>/index.html</form-error-page>
+		</form-login-config>
+	</login-config>
+
+	<security-role>
+		<role-name>ADMINISTRATOR</role-name>
+	</security-role>
+	<security-role>
+		<role-name>MANAGER</role-name>
+	</security-role>
+	<security-role>
+		<role-name>EMPLOYEE</role-name>
+	</security-role>
+	<security-role>
+		<role-name>GUEST</role-name>
+	</security-role>
 </web-app>

@@ -1,0 +1,36 @@
+<wicket:panel xmlns:wicket="http://wicket.apache.org">
+	<wicket:container wicket:id="wishListOffersViewFragement"></wicket:container>
+	<wicket:fragment wicket:id="wishListViewFragement">
+		<div class="row">
+			<div class="col-md-12">
+				<table class="table">
+					<thead>
+						<tr>
+							<td>
+								<div class="panel-heading">
+									<h3 class="panel-title">
+										<wicket:message key="offerStatusDetailsMessage"></wicket:message>
+									</h3>
+								</div>
+							</td>
+						</tr>
+					</thead>
+					<tbody wicket:id="offerDataviewContainer">
+						<tr wicket:id="offerDataview">
+							<td style="border: none;">
+								<div class="row">
+									<div class="col-md-12">
+										<h5>
+											ID: <strong><span wicket:id="offerId"></span></strong>
+										</h5>
+									</div>
+								</div>
+								<div wicket:id="offerViewPanel"></div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</wicket:fragment>
+</wicket:panel>

@@ -1,0 +1,35 @@
+<wicket:panel xmlns:wicket="http://wicket.apache.org">
+	<wicket:container wicket:id="confirmationCustomerViewFragement"></wicket:container>
+	<wicket:fragment wicket:id="confirmationViewFragement">
+		<div class="row">
+			<hr>
+		</div>
+		<div class="row"></div>
+		<div class="row">
+			<div class="col-md-12">
+				<table class="table" style="border-top: none;">
+					<tbody>
+						<tr>
+							<td style="border-top: none;">
+								<form class="form-horizontal">
+									<div class="panel-heading">
+										<h3><wicket:message key="thankYouForPlacingYourOrderWithUsMessage"></wicket:message></h3>
+										<h5>
+											<wicket:message key="theOrderNumberIsMessage"></wicket:message>&nbsp;<strong><span wicket:id="orderId"></span></strong>.
+										</h5>
+										<h5>
+											<wicket:message key="youWillReceiveAnEmailConfirmationShortlyAtMessage"></wicket:message>&nbsp;<strong><span wicket:id="buyerEmail"></span></strong>.
+										</h5>
+									</div>
+								</form>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="row">
+			<hr>
+		</div>
+	</wicket:fragment>
+</wicket:panel>

@@ -1,0 +1,10 @@
+language: java
+jdk: oraclejdk8
+deploy:
+  provider: releases
+  api_key:
+    secure: V/FX1kY4ZgDXwqsZPy/zXytFbl0uburWfvNueAZy4kFPLU2NUs9oWXNG8DgirOxcwq2f6mcsWHL0otk/vPkpO6Dn4eBwDF6ocINk79eqY3UrzENQWJ3WbK1us3HU+QsjxXPB/AOTcPU+Dl0lkXt4KiuQobbKVYpyyQe8VTBS//04P4E2X7XVsnhP0Fto4fXLpGRRc0LFs7EGIzUjjt46hHcpuQAh3PsAKe96PNDmmy2wd1a6vBjo+AFwOsSwuAsAPqU3ihF7Tl/wk8ts9tjGfU1wQaRntNpvRgL/jO4yxpbJyNIpVjLxm4jz/xgpwIW/0vRZZWtVzUf0qjUcATHmbobakZW7UFydKJRlTtGsMCFZFIg41h42Sp0pm+GScOe3So19Bh/cONjkA9s5cB8RbY7Zlc3ckbJx+RJoR74GUXO3GFWMpXbqQ/jnj77gTcNn7MWCCWT9K9ahRlggd/bZoV6WtZFIiyVHQORFEtk9sPEqqDLHpP7KoKj59TUr+5B1pjb/5lTVp1k2uVI/MVdYOW3DSuwatDYK4XL0W8Bo6hlO0kNW5EspAtbNDGre7/tw7VcilLCjqngGRN0KLi3JK++tedVxATIuUU2IwgdvoWdHnLoL7cR031yI4vIeG86AyzVEhgfMKCZxpM2HFdkaN9sDyaYFfMvZROo5ZgIKER0=
+  file: target/gnuob-shop.war
+  skip_cleanup: true
+  on:
+    tags: true

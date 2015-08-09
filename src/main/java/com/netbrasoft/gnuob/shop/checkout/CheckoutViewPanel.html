@@ -1,0 +1,41 @@
+<wicket:panel xmlns:wicket="http://wicket.apache.org">
+	<wicket:container wicket:id="checkoutOrdersViewFragement"></wicket:container>
+	<wicket:fragment wicket:id="checkoutViewFragement">
+		<style type="text/css">
+.orderRecordDataviewContainer tr {
+	cursor: pointer;
+}
+</style>
+		<div class="row">
+			<div class="col-md-12">
+				<table class="table">
+					<thead>
+						<tr>
+							<td>
+								<div class="panel-heading">
+									<h3 class="panel-title">
+										<wicket:message key="orderStatusDetailsMessage"></wicket:message>
+									</h3>
+								</div>
+							</td>
+						</tr>
+					</thead>
+					<tbody wicket:id="orderDataviewContainer" class="orderDataviewContainer">
+						<tr wicket:id="orderDataview">
+							<td style="border: none;">
+								<div class="row">
+									<div class="col-md-12">
+										<h5>
+											ID: <strong><span wicket:id="orderId"></span></strong>
+										</h5>
+									</div>
+								</div>
+								<div wicket:id="orderViewPanel"></div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</wicket:fragment>
+</wicket:panel>

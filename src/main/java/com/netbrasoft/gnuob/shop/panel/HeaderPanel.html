@@ -1,30 +1,12 @@
 <wicket:panel xmlns:wicket="http://wicket.apache.org">
 	<div class="row">
 		<div class="col-md-offset-8">
-			<wicket:link>
-				<small><a href="myAccount.html"><wicket:message key="myAccountMessage">My Account</wicket:message></a></small>
-			</wicket:link>
-			<small>&nbsp;|&nbsp;</small>
-			<wicket:link>
-				<small><a href="myWishlist.html"><wicket:message key="myWishlistMessage">My Wishlist</wicket:message></a></small>
-			</wicket:link>
-			<small>&nbsp;|&nbsp;</small>
-			<wicket:link>
-				<small><a href="myCart.html"><wicket:message key="myCartMessage">My Cart</wicket:message></a></small>
-			</wicket:link>
-			<small>&nbsp;|&nbsp;</small>
-			<wicket:link>
-				<small><a href="checkout.html"><wicket:message key="checkoutMessage">Checkout</wicket:message></a></small>
-			</wicket:link>
-			<small>&nbsp;|&nbsp;</small>
-			<wicket:link>
-				<small><a href="login.html"><wicket:message key="loginMessage">Login</wicket:message></a></small>
-			</wicket:link>
+			<small><a href="cart.html"><wicket:message key="myCartMessage">My Cart</wicket:message>&nbsp;<span wicket:id="chartSize">0</span></a></small><small>&nbsp;|&nbsp;</small> <small><a href="account.html"><wicket:message key="myAccountMessage">My Account</wicket:message></a></small> <small>&nbsp;|&nbsp;</small> <small><a href="wishlist.html"><wicket:message key="myWishlistMessage">My Wishlist</wicket:message></a></small> <small>&nbsp;|&nbsp;</small>  <small><a href="checkout.html"><wicket:message key="checkoutMessage">Checkout</wicket:message></a></small> <small>&nbsp;|&nbsp;</small> <small><a wicket:id="logout" href="#"><wicket:message key="logoutMessage"></wicket:message></a></small> <small><a wicket:id="login" href="#"><wicket:message key="loginMessage"></wicket:message></a></small>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col-md-offset-1">
-			<h1 style="font-family: ballw; color: #f40d8e; font-size: 50px;">
+			<h1 style="color: #f40d8e; font-size: 50px;">
 				<span wicket:id="gnuob.shop.site.title"></span><small><span wicket:id="gnuob.shop.site.subtitle"></span></small>
 			</h1>
 		</div>
