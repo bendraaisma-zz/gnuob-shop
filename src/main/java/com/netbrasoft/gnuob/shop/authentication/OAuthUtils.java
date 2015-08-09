@@ -118,6 +118,7 @@ public final class OAuthUtils {
       case ACCOUNTS_MICROSOFT_COM:
          return Scope.parse(System.getProperty("gnuob." + host + ".microsoft.scope"));
       }
+
       return new Scope();
    }
 
@@ -131,9 +132,7 @@ public final class OAuthUtils {
          throw new GNUOpenBusinessApplicationException(error.getDescription());
       }
 
-      final OIDCAccessTokenResponse oidcAccessTokenResponse = ((OIDCAccessTokenResponse) tokenResponse);
-
-      return oidcAccessTokenResponse.getBearerAccessToken();
+      return ((OIDCAccessTokenResponse) tokenResponse).getBearerAccessToken();
    }
 
    private static UserInfo getUserInfo(final OIDCProviderMetadata providerConfiguration, final BearerAccessToken bearerAccessToken) throws ParseException, SerializeException, IOException {

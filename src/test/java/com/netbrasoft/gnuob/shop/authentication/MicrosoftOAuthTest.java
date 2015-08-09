@@ -27,7 +27,7 @@ import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
 
 @RunWith(Arquillian.class)
-public class FacebookOAuthTest {
+public class MicrosoftOAuthTest {
 
    @Deployment(testable = false)
    public static Archive<?> createDeployment() {
@@ -46,11 +46,11 @@ public class FacebookOAuthTest {
 
    @Before
    public void testBefore() throws URISyntaxException {
-      System.setProperty("gnuob.localhost.facebook.clientId", "1629794503933891");
-      System.setProperty("gnuob.localhost.facebook.clientSecret", "115bb80745066faa447340be468fa7fd");
-      System.setProperty("gnuob.localhost.facebook.scope", "email");
+      System.setProperty("gnuob.localhost.microsoft.clientId", "000000004C15C1C8");
+      System.setProperty("gnuob.localhost.microsoft.clientSecret", "GI2fXbaRJpkliLflfnY-lwm56b18wu2c");
+      System.setProperty("gnuob.localhost.microsoft.scope", "wl.emails wl.basic");
 
-      issuerURI = new URI(OAuthUtils.ACCOUNTS_FACEBOOK_COM);
+      issuerURI = new URI(OAuthUtils.ACCOUNTS_MICROSOFT_COM);
       clientID = OAuthUtils.getClientID("localhost", issuerURI);
       state = new State(UUID.randomUUID().toString());
       redirectURI = URI.create("http://localhost:8080/account.html");
@@ -60,7 +60,7 @@ public class FacebookOAuthTest {
 
    @Test
    public void testFaceBookOAuthLoginVersionV2_4Login() throws SerializeException {
-      final FacebookAuthenticationRequest authenticationRequest = OAuthUtils.getFacebookAuthenticationRequest(providerConfiguration, issuerURI, clientID, redirectURI, scope, state);
+      final MicrosoftAuthenticationRequest authenticationRequest = OAuthUtils.getMicrosoftAuthenticationRequest(providerConfiguration, issuerURI, clientID, redirectURI, scope, state);
 
       final WebDriverWait webDriverWait = new WebDriverWait(driver, 60);
 
@@ -72,7 +72,7 @@ public class FacebookOAuthTest {
       final UserInfo userInfo = OAuthUtils.getUserInfo(providerConfiguration, issuerURI, clientID, state, URI.create(driver.getCurrentUrl()), redirectURI, OAuthUtils.getClientSecret("localhost", issuerURI));
 
       assertEquals("Bernard Arjan Draaisma", userInfo.getName());
-      assertEquals("bendraaisma@gmail.com", userInfo.getEmail().getAddress());
+      assertEquals("badraaisma@msn.com", userInfo.getEmail().getAddress());
       assertEquals("Bernard Arjan", userInfo.getGivenName());
       assertEquals("Draaisma", userInfo.getFamilyName());
    }

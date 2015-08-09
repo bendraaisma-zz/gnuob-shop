@@ -23,11 +23,12 @@ import com.nimbusds.oauth2.sdk.Scope;
 import com.nimbusds.oauth2.sdk.SerializeException;
 import com.nimbusds.oauth2.sdk.id.ClientID;
 import com.nimbusds.oauth2.sdk.id.State;
+import com.nimbusds.openid.connect.sdk.AuthenticationRequest;
 import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
 
 @RunWith(Arquillian.class)
-public class FacebookOAuthTest {
+public class PayPalOAuthTest {
 
    @Deployment(testable = false)
    public static Archive<?> createDeployment() {
@@ -46,11 +47,11 @@ public class FacebookOAuthTest {
 
    @Before
    public void testBefore() throws URISyntaxException {
-      System.setProperty("gnuob.localhost.facebook.clientId", "1629794503933891");
-      System.setProperty("gnuob.localhost.facebook.clientSecret", "115bb80745066faa447340be468fa7fd");
-      System.setProperty("gnuob.localhost.facebook.scope", "email");
+      System.setProperty("gnuob.localhost.paypal.clientId", "Ad0Qqt8C8GTgsW6V0PrwuE49MiRUxNanQbmptFIxKH_VjovYNZrfl8MTg3mmaENIG1PlfOozj_r-1Ek4");
+      System.setProperty("gnuob.localhost.paypal.clientSecret", "ENGboXWLXQnpLbauwIL0xzLOSLCnIDOxjWpBPmzArUXBTm_V5kN5f68gnjK24ceCU9QWQ-uYGeyExgaI");
+      System.setProperty("gnuob.localhost.paypal.scope", "openid profile email");
 
-      issuerURI = new URI(OAuthUtils.ACCOUNTS_FACEBOOK_COM);
+      issuerURI = new URI(OAuthUtils.ACCOUNTS_PAY_PAL_COM);
       clientID = OAuthUtils.getClientID("localhost", issuerURI);
       state = new State(UUID.randomUUID().toString());
       redirectURI = URI.create("http://localhost:8080/account.html");
@@ -60,7 +61,7 @@ public class FacebookOAuthTest {
 
    @Test
    public void testFaceBookOAuthLoginVersionV2_4Login() throws SerializeException {
-      final FacebookAuthenticationRequest authenticationRequest = OAuthUtils.getFacebookAuthenticationRequest(providerConfiguration, issuerURI, clientID, redirectURI, scope, state);
+      final AuthenticationRequest authenticationRequest = OAuthUtils.getAuthenticationRequest(providerConfiguration, issuerURI, clientID, redirectURI, scope, state);
 
       final WebDriverWait webDriverWait = new WebDriverWait(driver, 60);
 
@@ -71,9 +72,9 @@ public class FacebookOAuthTest {
 
       final UserInfo userInfo = OAuthUtils.getUserInfo(providerConfiguration, issuerURI, clientID, state, URI.create(driver.getCurrentUrl()), redirectURI, OAuthUtils.getClientSecret("localhost", issuerURI));
 
-      assertEquals("Bernard Arjan Draaisma", userInfo.getName());
-      assertEquals("bendraaisma@gmail.com", userInfo.getEmail().getAddress());
-      assertEquals("Bernard Arjan", userInfo.getGivenName());
+      assertEquals("Bernard Draaisma", userInfo.getName());
+      assertEquals("badraaisma@msn.com", userInfo.getEmail().getAddress());
+      assertEquals("Bernard", userInfo.getGivenName());
       assertEquals("Draaisma", userInfo.getFamilyName());
    }
 }
