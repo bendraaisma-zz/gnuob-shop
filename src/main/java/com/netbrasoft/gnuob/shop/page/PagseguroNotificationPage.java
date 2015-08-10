@@ -27,11 +27,10 @@ public class PagseguroNotificationPage extends BasePage {
    private void doPagSeguroNotification() {
       final HttpServletRequest request = (HttpServletRequest) getRequest().getContainerRequest();
 
-      final String method = request.getMethod();
       final String notificationCode = request.getParameter("notificationCode");
 
-      if("POST".equalsIgnoreCase(method) && notificationCode != null) {
-         LOGGER.debug("Retrieve notifcation request from PagSeguro with notificationCode parameter value = [{}]", notificationCode);
+      if("POST".equalsIgnoreCase(request.getMethod()) && notificationCode != null) {
+         LOGGER.info("Retrieve notifcation request from PagSeguro.");
 
          Order order = new Order();
          order.setNotificationId(notificationCode);

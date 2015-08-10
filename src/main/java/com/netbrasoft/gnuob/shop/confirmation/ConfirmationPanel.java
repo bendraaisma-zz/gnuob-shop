@@ -18,7 +18,7 @@ public class ConfirmationPanel extends Panel {
 
    private static final long serialVersionUID = -305453593387396902L;
 
-   private ConfirmationViewPanel confirmationViewPanel = new ConfirmationViewPanel("confirmationViewPanel", (IModel<Shopper>) getDefaultModel());
+   private final ConfirmationViewPanel confirmationViewPanel = new ConfirmationViewPanel("confirmationViewPanel", (IModel<Shopper>) getDefaultModel());
 
    @SpringBean(name = "ShopperDataProvider", required = true)
    private GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
@@ -29,11 +29,11 @@ public class ConfirmationPanel extends Panel {
 
    @Override
    protected void onInitialize() {
-      QueryParameter payerId = getRequest().getClientUrl().getQueryParameter("PayerID");
-      QueryParameter transactionId = getRequest().getClientUrl().getQueryParameter("transaction_id");
-      String orderId = shopperDataProvider.find(new Shopper()).getOrderId();
+      final QueryParameter payerId = getRequest().getClientUrl().getQueryParameter("PayerID");
+      final QueryParameter transactionId = getRequest().getClientUrl().getQueryParameter("transaction_id");
+      final Shopper shopper = shopperDataProvider.find(new Shopper());
 
-      if ((payerId != null || transactionId != null) && orderId != null) {
+      if ((payerId != null || transactionId != null) && shopper.getCheckout().getOrderId() != null) {
          add(confirmationViewPanel.add(confirmationViewPanel.new ConfirmationViewFragement()).setOutputMarkupId(true));
          super.onInitialize();
       } else {

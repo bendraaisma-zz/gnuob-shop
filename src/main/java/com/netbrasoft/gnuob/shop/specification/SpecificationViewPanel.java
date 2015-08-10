@@ -295,6 +295,7 @@ public class SpecificationViewPanel extends Panel {
          Order order = new Order();
 
          order.setActive(true);
+         order.setCheckout(orderDataProvider.getCheckOut().toString());
          order.setInsuranceTotal(BigDecimal.ZERO);
          order.setHandlingTotal(BigDecimal.ZERO);
          order.setShippingDiscount(BigDecimal.ZERO);
@@ -325,6 +326,7 @@ public class SpecificationViewPanel extends Panel {
             order.getRecords().add(orderRecord);
          }
 
+
          order = orderDataProvider.persist(order);
          order.setContract(shopper.getContract());
          order = orderDataProvider.merge(order);
@@ -339,7 +341,7 @@ public class SpecificationViewPanel extends Panel {
          final Shopper shopper = shopperDataProvider.find(new Shopper());
          final Order order = saveOrder(shopper);
          shopper.getCart().getRecords().clear();
-         shopper.setOrderId(order.getOrderId());
+         shopper.setCheckout(order);
          shopperDataProvider.merge(shopper);
 
          switch (orderDataProvider.getCheckOut()) {

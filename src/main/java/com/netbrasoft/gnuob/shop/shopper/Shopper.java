@@ -3,6 +3,8 @@ package com.netbrasoft.gnuob.shop.shopper;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+import javax.validation.constraints.NotNull;
+
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.io.IClusterable;
 import org.springframework.cache.annotation.Cacheable;
@@ -70,10 +72,6 @@ public class Shopper implements IClusterable {
       return issuer;
    }
 
-   public String getOrderId() {
-      return checkout.getOrderId();
-   }
-
    public BigDecimal getShippingCostTotal() {
       BigDecimal shippingCostTotal = BigDecimal.ZERO;
 
@@ -107,15 +105,15 @@ public class Shopper implements IClusterable {
       contract.getCustomer().setActive(true);
    }
 
-   public void setCart(Offer cart) {
+   public void setCart(@NotNull Offer cart) {
       this.cart = cart;
    }
 
-   public void setCheckout(Order checkout) {
+   public void setCheckout(@NotNull Order checkout) {
       this.checkout = checkout;
    }
 
-   public void setContract(Contract contract) {
+   public void setContract(@NotNull Contract contract) {
       this.contract = contract;
    }
 
@@ -125,9 +123,5 @@ public class Shopper implements IClusterable {
 
    public void setIssuer(String issuer) {
       this.issuer = issuer;
-   }
-
-   public void setOrderId(String orderId) {
-      this.checkout.setOrderId(orderId);
    }
 }

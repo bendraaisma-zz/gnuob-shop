@@ -5,6 +5,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -25,6 +27,9 @@ import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedW
 @MountPath("paypal_notifications")
 public class PayPalNotificationPage extends BasePage {
 
+   private static final String PAYPAL_COM_CGI_BIN_WEBSCR_VALUE = "https://www.sandbox.paypal.com/cgi-bin/webscr";
+   private static final String PAYPAL_COM_CGI_BIN_WEBSCR_PROPERTY = "gnuob.site.paypal.cgi.bin.webscr";
+
    private static final long serialVersionUID = -2980296583669048069L;
 
    private static Logger LOGGER = LoggerFactory.getLogger(PayPalNotificationPage.class);
@@ -35,51 +40,50 @@ public class PayPalNotificationPage extends BasePage {
    private void doPayPalNotification() {
       final HttpServletRequest request = (HttpServletRequest) getRequest().getContainerRequest();
 
-      final String method = request.getMethod();
       final Map<String, String[]> parameterMap = request.getParameterMap();
 
-      if ("POST".equalsIgnoreCase(method) && !parameterMap.isEmpty()) {
+      if ("POST".equalsIgnoreCase(request.getMethod()) && !parameterMap.isEmpty()) {
          try {
-            LOGGER.debug("Retrieve notifcation request from PayPal with parameters = [{}]", parameterMap.size());
+            LOGGER.info("Retrieve notifcation request from PayPal with parameters.");
 
-            final HttpsURLConnection connection = (HttpsURLConnection) new URL("https://www.paypal.com/cgi-bin/webscr").openConnection();
+            final StringBuilder payload = new StringBuilder();
+            payload.append("cmd=_notify-validate");
 
-            connection.setRequestMethod(method);
-            connection.setRequestProperty("Content-Type", request.getContentType());
+            for (final Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
+               payload.append("&").append(entry.getKey()).append("=").append(URLEncoder.encode(entry.getValue()[0], "windows-1252"));
+            }
+
+            final HttpsURLConnection connection = (HttpsURLConnection) new URL(System.getProperty(PAYPAL_COM_CGI_BIN_WEBSCR_PROPERTY, PAYPAL_COM_CGI_BIN_WEBSCR_VALUE)).openConnection();
+
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            connection.setRequestProperty("Content-Length", String.valueOf(payload.toString().trim().length()));
+            connection.setRequestProperty("Host", getRequest().getClientUrl().getHost());
             connection.setDoOutput(true);
 
             final DataOutputStream writer = new DataOutputStream(connection.getOutputStream());
-
-            writer.writeBytes("cmd=_notify-validate");
-
-            for (final Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
-               writer.writeBytes("&" + entry.getKey() + "=" + entry.getValue()[0]);
-            }
-
+            writer.writeUTF(payload.toString());
             writer.flush();
             writer.close();
 
-            if (connection.getResponseCode() == 200) {
-               final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 300) {
+               final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8.name()));
 
-               final String response = reader.readLine();
-
-               if ("VERIFIED".equals(response)) {
+               if ("VERIFIED".equals(reader.readLine())) {
                   Order order = new Order();
                   order.setNotificationId(parameterMap.get("txn_id")[0]);
-
                   order = orderDataProvider.doNotification(order);
                } else {
-                  LOGGER.warn("Retrieve notifcation request from PayPal but isn't a valid request ");
+                  LOGGER.warn("Retrieve notifcation request from PayPal but it isn't a valid request. ");
                }
 
                reader.close();
             }
          } catch (final IOException e) {
-            LOGGER.warn("Retrieve notifcation request from PayPal but can't send a validation request ", e);
+            LOGGER.warn("Retrieve notifcation request from PayPal but can't send a validation request. ", e);
          }
       } else {
-         LOGGER.warn("Retrieve notifcation request from PayPal without a notificationCode parameter or not a POST method.");
+         LOGGER.warn("Retrieve notifcation request from PayPal without a notification id parameter or not a POST method.");
       }
    }
 
