@@ -296,6 +296,7 @@ public class SpecificationViewPanel extends Panel {
 
          order.setActive(true);
          order.setCheckout(orderDataProvider.getCheckOut().toString());
+         order.setHost(getRequest().getClientUrl().getHost());
          order.setInsuranceTotal(BigDecimal.ZERO);
          order.setHandlingTotal(BigDecimal.ZERO);
          order.setShippingDiscount(BigDecimal.ZERO);

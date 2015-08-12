@@ -1,9 +1,9 @@
 package com.netbrasoft.gnuob.shop.page;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -55,21 +55,26 @@ public class PayPalNotificationPage extends BasePage {
 
             final HttpsURLConnection connection = (HttpsURLConnection) new URL(System.getProperty(PAYPAL_COM_CGI_BIN_WEBSCR_PROPERTY, PAYPAL_COM_CGI_BIN_WEBSCR_VALUE)).openConnection();
 
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            connection.setRequestProperty("Content-Length", String.valueOf(payload.toString().trim().length()));
-            connection.setRequestProperty("Host", getRequest().getClientUrl().getHost());
             connection.setDoOutput(true);
+            connection.setDoInput(true);
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(30000);
+            connection.setRequestMethod("POST");
+            //connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            //connection.setRequestProperty("Content-Length", String.valueOf(payload.toString().length()));
+            //connection.setRequestProperty("Host", new URL(System.getProperty(PAYPAL_COM_CGI_BIN_WEBSCR_PROPERTY, PAYPAL_COM_CGI_BIN_WEBSCR_VALUE)).getHost());
 
-            final DataOutputStream writer = new DataOutputStream(connection.getOutputStream());
-            writer.writeUTF(payload.toString());
+            final OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+            writer.write(payload.toString());
             writer.flush();
             writer.close();
 
             if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 300) {
                final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8.name()));
 
-               if ("VERIFIED".equals(reader.readLine())) {
+               final String response = reader.readLine();
+
+               if ("VERIFIED".equals(response)) {
                   Order order = new Order();
                   order.setNotificationId(parameterMap.get("txn_id")[0]);
                   order = orderDataProvider.doNotification(order);
