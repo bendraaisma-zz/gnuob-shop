@@ -43,40 +43,40 @@ public final class OAuthUtils {
    private static final String ISSUER_PAY_PAL = "https://www.paypal.com";
    private static final String ISSUER_MICROSOFT = "https://www.microsoft.com";
 
-   public static final String ACCOUNTS_GOOGLE_COM = "http://localhost:8080/json/google/openid-configuration";
-   public static final String ACCOUNTS_PAY_PAL_COM = "http://localhost:8080/json/paypal/openid-configuration";
-   public static final String ACCOUNTS_FACEBOOK_COM = "http://localhost:8080/json/facebook/openid-configuration";
-   public static final String ACCOUNTS_MICROSOFT_COM = "http://localhost:8080/json/microsoft/openid-configuration";
+   public static final String ACCOUNTS_GOOGLE_COM = "http://localsite:8080/json/google/openid-configuration";
+   public static final String ACCOUNTS_PAY_PAL_COM = "http://localsite:8080/json/paypal/openid-configuration";
+   public static final String ACCOUNTS_FACEBOOK_COM = "http://localsite:8080/json/facebook/openid-configuration";
+   public static final String ACCOUNTS_MICROSOFT_COM = "http://localsite:8080/json/microsoft/openid-configuration";
 
    public static AuthenticationRequest getAuthenticationRequest(final OIDCProviderMetadata providerConfiguration, final URI issuerURI, final ClientID clientID, final URI redirectURI, Scope scope, State state) {
       return new AuthenticationRequest(providerConfiguration.getAuthorizationEndpointURI(), new ResponseType(ResponseType.Value.CODE), scope, clientID, redirectURI, state, new Nonce());
    }
 
-   public static ClientID getClientID(String host, URI issuerURI) {
+   public static ClientID getClientID(String site, URI issuerURI) {
       switch (issuerURI.toString()) {
       case ACCOUNTS_GOOGLE_COM:
-         return new ClientID(System.getProperty("gnuob." + host + ".google.clientId"));
+         return new ClientID(System.getProperty("gnuob." + site + ".google.clientId"));
       case ACCOUNTS_FACEBOOK_COM:
-         return new ClientID(System.getProperty("gnuob." + host + ".facebook.clientId"));
+         return new ClientID(System.getProperty("gnuob." + site + ".facebook.clientId"));
       case ACCOUNTS_PAY_PAL_COM:
-         return new ClientID(System.getProperty("gnuob." + host + ".paypal.clientId"));
+         return new ClientID(System.getProperty("gnuob." + site + ".paypal.clientId"));
       case ACCOUNTS_MICROSOFT_COM:
-         return new ClientID(System.getProperty("gnuob." + host + ".microsoft.clientId"));
+         return new ClientID(System.getProperty("gnuob." + site + ".microsoft.clientId"));
       }
 
       return new ClientID();
    }
 
-   public static Secret getClientSecret(String host, URI issuerURI) {
+   public static Secret getClientSecret(String site, URI issuerURI) {
       switch (issuerURI.toString()) {
       case ACCOUNTS_GOOGLE_COM:
-         return new Secret(System.getProperty("gnuob." + host + ".google.clientSecret"));
+         return new Secret(System.getProperty("gnuob." + site + ".google.clientSecret"));
       case ACCOUNTS_FACEBOOK_COM:
-         return new Secret(System.getProperty("gnuob." + host + ".facebook.clientSecret"));
+         return new Secret(System.getProperty("gnuob." + site + ".facebook.clientSecret"));
       case ACCOUNTS_PAY_PAL_COM:
-         return new Secret(System.getProperty("gnuob." + host + ".paypal.clientSecret"));
+         return new Secret(System.getProperty("gnuob." + site + ".paypal.clientSecret"));
       case ACCOUNTS_MICROSOFT_COM:
-         return new Secret(System.getProperty("gnuob." + host + ".microsoft.clientSecret"));
+         return new Secret(System.getProperty("gnuob." + site + ".microsoft.clientSecret"));
       }
 
       return new Secret("");
@@ -107,16 +107,16 @@ public final class OAuthUtils {
       }
    }
 
-   public static Scope getScope(String host, URI issuerURI) {
+   public static Scope getScope(String site, URI issuerURI) {
       switch (issuerURI.toString()) {
       case ACCOUNTS_GOOGLE_COM:
-         return Scope.parse(System.getProperty("gnuob." + host + ".google.scope"));
+         return Scope.parse(System.getProperty("gnuob." + site + ".google.scope"));
       case ACCOUNTS_FACEBOOK_COM:
-         return Scope.parse(System.getProperty("gnuob." + host + ".facebook.scope"));
+         return Scope.parse(System.getProperty("gnuob." + site + ".facebook.scope"));
       case ACCOUNTS_PAY_PAL_COM:
-         return Scope.parse(System.getProperty("gnuob." + host + ".paypal.scope"));
+         return Scope.parse(System.getProperty("gnuob." + site + ".paypal.scope"));
       case ACCOUNTS_MICROSOFT_COM:
-         return Scope.parse(System.getProperty("gnuob." + host + ".microsoft.scope"));
+         return Scope.parse(System.getProperty("gnuob." + site + ".microsoft.scope"));
       }
 
       return new Scope();

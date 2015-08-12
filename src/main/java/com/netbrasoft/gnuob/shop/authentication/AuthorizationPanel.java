@@ -13,6 +13,7 @@ import org.apache.wicket.request.flow.RedirectToUrlException;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import com.netbrasoft.gnuob.api.generic.GNUOpenBusinessApplicationException;
+import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
 import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
 import com.netbrasoft.gnuob.shop.shopper.Shopper;
@@ -40,12 +41,11 @@ public class AuthorizationPanel extends Panel {
             final Shopper shopper = shopperDataProvider.find(new Shopper());
             shopper.setIssuer(OAuthUtils.ACCOUNTS_FACEBOOK_COM);
 
-            final String host = getRequest().getClientUrl().getHost();
             final URI issuerURI = new URI(shopper.getIssuer());
-            final ClientID clientID = OAuthUtils.getClientID(host, issuerURI);
+            final ClientID clientID = OAuthUtils.getClientID(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
             final State state = new State(shopper.getId());
             final URI redirectURI = URI.create(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getClientUrl()).split("\\?")[0]);
-            final Scope scope = OAuthUtils.getScope(host, issuerURI);
+            final Scope scope = OAuthUtils.getScope(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
             final OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
 
             shopperDataProvider.merge(shopper);
@@ -72,12 +72,11 @@ public class AuthorizationPanel extends Panel {
             final Shopper shopper = shopperDataProvider.find(new Shopper());
             shopper.setIssuer(OAuthUtils.ACCOUNTS_GOOGLE_COM);
 
-            final String host = getRequest().getClientUrl().getHost();
             final URI issuerURI = new URI(shopper.getIssuer());
-            final ClientID clientID = OAuthUtils.getClientID(host, issuerURI);
+            final ClientID clientID = OAuthUtils.getClientID(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
             final State state = new State(shopper.getId());
             final URI redirectURI = URI.create(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getClientUrl()).split("\\?")[0]);
-            final Scope scope = OAuthUtils.getScope(host, issuerURI);
+            final Scope scope = OAuthUtils.getScope(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
             final OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
 
             shopperDataProvider.merge(shopper);
@@ -104,12 +103,11 @@ public class AuthorizationPanel extends Panel {
             final Shopper shopper = shopperDataProvider.find(new Shopper());
             shopper.setIssuer(OAuthUtils.ACCOUNTS_MICROSOFT_COM);
 
-            final String host = getRequest().getClientUrl().getHost();
             final URI issuerURI = new URI(shopper.getIssuer());
-            final ClientID clientID = OAuthUtils.getClientID(host, issuerURI);
+            final ClientID clientID = OAuthUtils.getClientID(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
             final State state = new State(shopper.getId());
             final URI redirectURI = URI.create(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getClientUrl()).split("\\?")[0]);
-            final Scope scope = OAuthUtils.getScope(host, issuerURI);
+            final Scope scope = OAuthUtils.getScope(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
             final OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
 
             shopperDataProvider.merge(shopper);
@@ -136,12 +134,11 @@ public class AuthorizationPanel extends Panel {
             final Shopper shopper = shopperDataProvider.find(new Shopper());
             shopper.setIssuer(OAuthUtils.ACCOUNTS_PAY_PAL_COM);
 
-            final String host = getRequest().getClientUrl().getHost();
             final URI issuerURI = new URI(shopper.getIssuer());
-            final ClientID clientID = OAuthUtils.getClientID(host, issuerURI);
+            final ClientID clientID = OAuthUtils.getClientID(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
             final State state = new State(shopper.getId());
             final URI redirectURI = URI.create(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getClientUrl()).split("\\?")[0]);
-            final Scope scope = OAuthUtils.getScope(host, issuerURI);
+            final Scope scope = OAuthUtils.getScope(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
             final OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
 
             shopperDataProvider.merge(shopper);

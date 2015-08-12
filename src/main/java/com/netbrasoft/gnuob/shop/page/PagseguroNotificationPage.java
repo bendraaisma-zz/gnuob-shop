@@ -48,8 +48,8 @@ public class PagseguroNotificationPage extends BasePage {
    @Override
    protected void onInitialize() {
       if (!isSignedIn()) {
-         final String host =  getRequest().getClientUrl().getHost();
-         signIn(System.getProperty("gnuob." + host + ".username", "guest"), System.getProperty("gnuob." + host + ".password", "guest"));
+         final String site = getRequest().getClientUrl().getHost();
+         signIn(System.getProperty("gnuob." + site + ".username", "guest"), System.getProperty("gnuob." + site + ".password", "guest"));
       }
 
       orderDataProvider.setUser(AppServletContainerAuthenticatedWebSession.getUserName());
