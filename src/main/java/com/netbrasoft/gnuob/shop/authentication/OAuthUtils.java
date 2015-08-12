@@ -43,10 +43,10 @@ public final class OAuthUtils {
    private static final String ISSUER_PAY_PAL = "https://www.paypal.com";
    private static final String ISSUER_MICROSOFT = "https://www.microsoft.com";
 
-   public static final String ACCOUNTS_GOOGLE_COM = "http://localsite:8080/json/google/openid-configuration";
-   public static final String ACCOUNTS_PAY_PAL_COM = "http://localsite:8080/json/paypal/openid-configuration";
-   public static final String ACCOUNTS_FACEBOOK_COM = "http://localsite:8080/json/facebook/openid-configuration";
-   public static final String ACCOUNTS_MICROSOFT_COM = "http://localsite:8080/json/microsoft/openid-configuration";
+   public static final String ACCOUNTS_GOOGLE_COM = "http://localhost:8080/json/google/openid-configuration";
+   public static final String ACCOUNTS_PAY_PAL_COM = "http://localhost:8080/json/paypal/openid-configuration";
+   public static final String ACCOUNTS_FACEBOOK_COM = "http://localhost:8080/json/facebook/openid-configuration";
+   public static final String ACCOUNTS_MICROSOFT_COM = "http://localhost:8080/json/microsoft/openid-configuration";
 
    public static AuthenticationRequest getAuthenticationRequest(final OIDCProviderMetadata providerConfiguration, final URI issuerURI, final ClientID clientID, final URI redirectURI, Scope scope, State state) {
       return new AuthenticationRequest(providerConfiguration.getAuthorizationEndpointURI(), new ResponseType(ResponseType.Value.CODE), scope, clientID, redirectURI, state, new Nonce());

@@ -343,7 +343,7 @@ public class CartViewPanel extends Panel {
       private static final long serialVersionUID = 6184459006667863564L;
 
       public SaveAjaxButton() {
-         super("saveToWishList", Model.of(CartViewPanel.this.getString("addToWishListMessage")), Buttons.Type.Default);
+         super("saveToWishList", Model.of(CartViewPanel.this.getString("addToWishListMessage")), Buttons.Type.Default, Model.of(CartViewPanel.this.getString("addToWishListMessage")));
          setSize(Buttons.Size.Small);
          add(new LoadingBehavior(Model.of(CartViewPanel.this.getString("savingToWishListMessage"))));
       }

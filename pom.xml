@@ -44,7 +44,6 @@
 		<version.com.nimbusds>4.14.2</version.com.nimbusds>
 		<version.mockito-all>1.9.5</version.mockito-all>
 		<version.graphene-webdriver>2.0.3.Final</version.graphene-webdriver>
-		<version.paypal-core>1.6.9</version.paypal-core>
 
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.source>1.8</maven.compiler.source>
@@ -234,14 +233,6 @@
 			<groupId>com.nimbusds</groupId>
 			<artifactId>oauth2-oidc-sdk</artifactId>
 			<version>${version.com.nimbusds}</version>
-		</dependency>
-
-		<!-- PAYPAL -->
-		
-		<dependency>
-			<groupId>com.paypal.sdk</groupId>
-			<artifactId>paypal-core</artifactId>
-			<version>${version.paypal-core}</version>
 		</dependency>
 
 	</dependencies>

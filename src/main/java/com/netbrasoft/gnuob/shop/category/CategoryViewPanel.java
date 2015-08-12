@@ -166,7 +166,7 @@ public class CategoryViewPanel extends Panel {
                loopItem.add(new IconBehavior(loopItem.getIndex() < item.getModelObject().getRating() ? GlyphIconType.star : GlyphIconType.starempty));
             }
          });
-         item.add(new BootstrapAjaxLink<String>("purchase", Model.of(getString("purchaseMessage")), Buttons.Type.Primary) {
+         item.add(new BootstrapAjaxLink<String>("purchase", Model.of(getString("purchaseMessage")), Buttons.Type.Primary, Model.of(getString("purchaseMessage"))) {
 
             private static final long serialVersionUID = -2845735209719008615L;
 
@@ -225,7 +225,7 @@ public class CategoryViewPanel extends Panel {
       @Override
       protected void populateItem(ListItem<SubCategory> item) {
          item.setModel(new CompoundPropertyModel<SubCategory>(item.getModelObject()));
-         item.add(new BootstrapAjaxLink<String>("link", Model.of(item.getModel().getObject().getName()), Buttons.Type.Link) {
+         item.add(new BootstrapAjaxLink<String>("link", Model.of(item.getModel().getObject().getName()), Buttons.Type.Link, Model.of(item.getModel().getObject().getName())) {
 
             private static final long serialVersionUID = -1216788078532675590L;
 
