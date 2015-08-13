@@ -27,8 +27,10 @@ import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedW
 @MountPath("paypal_notifications")
 public class PayPalNotificationPage extends BasePage {
 
+   private static final String GNUOB_SITE_PAYPAL_NOTIFICATION_VALIDATION_DISABLED = "gnuob.site.paypal.notification.validation.disabled";
    private static final String PAYPAL_COM_CGI_BIN_WEBSCR_VALUE = "https://www.sandbox.paypal.com/cgi-bin/webscr";
    private static final String PAYPAL_COM_CGI_BIN_WEBSCR_PROPERTY = "gnuob.site.paypal.cgi.bin.webscr";
+
 
    private static final long serialVersionUID = -2980296583669048069L;
 
@@ -50,7 +52,7 @@ public class PayPalNotificationPage extends BasePage {
             payload.append("cmd=_notify-validate");
 
             for (final Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
-               payload.append("&").append(entry.getKey()).append("=").append(URLEncoder.encode(entry.getValue()[0], "windows-1252"));
+               payload.append("&").append(entry.getKey()).append("=").append(URLEncoder.encode(entry.getValue()[0], parameterMap.get("charset")[0]));
             }
 
             final HttpsURLConnection connection = (HttpsURLConnection) new URL(System.getProperty(PAYPAL_COM_CGI_BIN_WEBSCR_PROPERTY, PAYPAL_COM_CGI_BIN_WEBSCR_VALUE)).openConnection();
@@ -60,9 +62,9 @@ public class PayPalNotificationPage extends BasePage {
             connection.setConnectTimeout(5000);
             connection.setReadTimeout(30000);
             connection.setRequestMethod("POST");
-            //connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            //connection.setRequestProperty("Content-Length", String.valueOf(payload.toString().length()));
-            //connection.setRequestProperty("Host", new URL(System.getProperty(PAYPAL_COM_CGI_BIN_WEBSCR_PROPERTY, PAYPAL_COM_CGI_BIN_WEBSCR_VALUE)).getHost());
+            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            connection.setRequestProperty("Content-Length", String.valueOf(payload.toString().length()));
+            connection.setRequestProperty("Host", new URL(System.getProperty(PAYPAL_COM_CGI_BIN_WEBSCR_PROPERTY, PAYPAL_COM_CGI_BIN_WEBSCR_VALUE)).getHost());
 
             final OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
             writer.write(payload.toString());
@@ -73,6 +75,7 @@ public class PayPalNotificationPage extends BasePage {
                final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8.name()));
 
                final String response = reader.readLine();
+               reader.close();
 
                if ("VERIFIED".equals(response)) {
                   Order order = new Order();
@@ -80,15 +83,20 @@ public class PayPalNotificationPage extends BasePage {
                   order = orderDataProvider.doNotification(order);
                } else {
                   LOGGER.warn("Retrieve notifcation request from PayPal but it isn't a valid request. ");
+
+                  if("TRUE".equalsIgnoreCase(System.getProperty(GNUOB_SITE_PAYPAL_NOTIFICATION_VALIDATION_DISABLED, "false"))) {
+                     Order order = new Order();
+                     order.setNotificationId(parameterMap.get("txn_id")[0]);
+                     order = orderDataProvider.doNotification(order);
+                  }
                }
 
-               reader.close();
             }
          } catch (final IOException e) {
             LOGGER.warn("Retrieve notifcation request from PayPal but can't send a validation request. ", e);
          }
       } else {
-         LOGGER.warn("Retrieve notifcation request from PayPal without a notification id parameter or not a POST method.");
+         LOGGER.warn("Retrieve notifcation request from PayPal without a notification parameter or not a POST method.");
       }
    }
 

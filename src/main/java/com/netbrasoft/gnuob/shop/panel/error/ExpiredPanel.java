@@ -8,6 +8,5 @@ public class ExpiredPanel extends Panel {
 
    public ExpiredPanel(String id) {
       super(id);
-      // TODO Auto-generated constructor stub
    }
 }
