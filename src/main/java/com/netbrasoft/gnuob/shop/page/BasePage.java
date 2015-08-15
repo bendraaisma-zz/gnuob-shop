@@ -77,7 +77,7 @@ public abstract class BasePage extends WebPage implements IAjaxIndicatorAware {
             LOGGER.warn(e.getMessage(), e);
          }
 
-         final URI redirectURI = URI.create(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getClientUrl()).split("\\?")[0]);
+         final URI redirectURI = URI.create(System.getProperty("gnuob." + AppServletContainerAuthenticatedWebSession.getSite() + ".login.redirect"));
          throw new RedirectToUrlException(redirectURI.toString());
       }
    }
@@ -106,7 +106,7 @@ public abstract class BasePage extends WebPage implements IAjaxIndicatorAware {
       final ClientID clientID = OAuthUtils.getClientID(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
       final State state = new State(shopper.getId());
       final URI requestURI = URI.create(getRequest().getClientUrl().toString());
-      final URI redirectURI = URI.create(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getClientUrl()).split("\\?")[0]);
+      final URI redirectURI = URI.create(System.getProperty("gnuob." + AppServletContainerAuthenticatedWebSession.getSite() + ".login.redirect"));
       final OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
       return OAuthUtils.getUserInfo(providerConfiguration, issuerURI, clientID, state, requestURI, redirectURI, OAuthUtils.getClientSecret(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI));
    }
