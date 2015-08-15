@@ -44,7 +44,7 @@ public class AuthorizationPanel extends Panel {
             final URI issuerURI = new URI(shopper.getIssuer());
             final ClientID clientID = OAuthUtils.getClientID(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
             final State state = new State(shopper.getId());
-            final URI redirectURI = URI.create(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getClientUrl()).split("\\?")[0]);
+            final URI redirectURI = URI.create(System.getProperty("gnuob." + AppServletContainerAuthenticatedWebSession.getSite() + ".login.redirect"));
             final Scope scope = OAuthUtils.getScope(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
             final OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
 
@@ -75,7 +75,7 @@ public class AuthorizationPanel extends Panel {
             final URI issuerURI = new URI(shopper.getIssuer());
             final ClientID clientID = OAuthUtils.getClientID(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
             final State state = new State(shopper.getId());
-            final URI redirectURI = URI.create(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getClientUrl()).split("\\?")[0]);
+            final URI redirectURI = URI.create(System.getProperty("gnuob." + AppServletContainerAuthenticatedWebSession.getSite() + ".login.redirect"));
             final Scope scope = OAuthUtils.getScope(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
             final OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
 
@@ -106,7 +106,7 @@ public class AuthorizationPanel extends Panel {
             final URI issuerURI = new URI(shopper.getIssuer());
             final ClientID clientID = OAuthUtils.getClientID(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
             final State state = new State(shopper.getId());
-            final URI redirectURI = URI.create(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getClientUrl()).split("\\?")[0]);
+            final URI redirectURI = URI.create(System.getProperty("gnuob." + AppServletContainerAuthenticatedWebSession.getSite() + ".login.redirect"));
             final Scope scope = OAuthUtils.getScope(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
             final OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
 
@@ -137,7 +137,7 @@ public class AuthorizationPanel extends Panel {
             final URI issuerURI = new URI(shopper.getIssuer());
             final ClientID clientID = OAuthUtils.getClientID(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
             final State state = new State(shopper.getId());
-            final URI redirectURI = URI.create(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getClientUrl()).split("\\?")[0]);
+            final URI redirectURI = URI.create(System.getProperty("gnuob." + AppServletContainerAuthenticatedWebSession.getSite() + ".login.redirect"));
             final Scope scope = OAuthUtils.getScope(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
             final OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
 

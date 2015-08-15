@@ -39,9 +39,9 @@ import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
 
 public final class OAuthUtils {
 
-   private static final String ISSUER_FACEBOOK = "https://www.facebook.com";
-   private static final String ISSUER_PAY_PAL = "https://www.paypal.com";
-   private static final String ISSUER_MICROSOFT = "https://www.microsoft.com";
+   public static final String ISSUER_FACEBOOK = "https://www.facebook.com";
+   public static final String ISSUER_PAY_PAL = "https://www.paypal.com";
+   public static final String ISSUER_MICROSOFT = "https://www.microsoft.com";
 
    public static final String ACCOUNTS_GOOGLE_COM = "http://localhost:8080/json/google/openid-configuration";
    public static final String ACCOUNTS_PAY_PAL_COM = "http://localhost:8080/json/paypal/openid-configuration";
