@@ -28,7 +28,7 @@ public class CheckoutPage extends BasePage {
 
    @Override
    protected void onInitialize() {
-      if (!shopperDataProvider.find(new Shopper()).loggedIn()) {
+      if (!shopperDataProvider.find(new Shopper()).isLoggedIn()) {
          throw new RedirectToUrlException("account.html");
       }
 

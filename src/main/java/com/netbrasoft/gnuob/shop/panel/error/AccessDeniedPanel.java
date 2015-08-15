@@ -8,6 +8,5 @@ public class AccessDeniedPanel extends Panel {
 
    public AccessDeniedPanel(String id) {
       super(id);
-      // TODO Auto-generated constructor stub
    }
 }

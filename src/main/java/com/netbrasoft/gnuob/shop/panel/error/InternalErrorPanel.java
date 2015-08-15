@@ -8,6 +8,5 @@ public class InternalErrorPanel extends Panel {
 
    public InternalErrorPanel(String id) {
       super(id);
-      // TODO Auto-generated constructor stub
    }
 }

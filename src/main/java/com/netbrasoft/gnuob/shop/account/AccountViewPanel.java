@@ -177,7 +177,7 @@ public class AccountViewPanel extends Panel {
 
    @Override
    protected void onInitialize() {
-      if (!shopperDataProvider.find(new Shopper()).loggedIn()) {
+      if (!shopperDataProvider.find(new Shopper()).isLoggedIn()) {
          removeAll();
          add(new LoginViewFragement());
       }

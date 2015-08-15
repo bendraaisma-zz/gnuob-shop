@@ -8,6 +8,5 @@ public class NotFoundPanel extends Panel {
 
    public NotFoundPanel(String id) {
       super(id);
-      // TODO Auto-generated constructor stub
    }
 }

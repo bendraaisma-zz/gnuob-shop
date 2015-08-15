@@ -27,11 +27,10 @@ public class PagseguroNotificationPage extends BasePage {
    private void doPagSeguroNotification() {
       final HttpServletRequest request = (HttpServletRequest) getRequest().getContainerRequest();
 
-      final String method = request.getMethod();
       final String notificationCode = request.getParameter("notificationCode");
 
-      if("POST".equalsIgnoreCase(method) && notificationCode != null) {
-         LOGGER.debug("Retrieve notifcation request from PagSeguro with notificationCode parameter value = [{}]", notificationCode);
+      if("POST".equalsIgnoreCase(request.getMethod()) && notificationCode != null) {
+         LOGGER.info("Retrieve notifcation request from PagSeguro.");
 
          Order order = new Order();
          order.setNotificationId(notificationCode);
@@ -49,8 +48,8 @@ public class PagseguroNotificationPage extends BasePage {
    @Override
    protected void onInitialize() {
       if (!isSignedIn()) {
-         final String host =  getRequest().getClientUrl().getHost();
-         signIn(System.getProperty("gnuob." + host + ".username", "guest"), System.getProperty("gnuob." + host + ".password", "guest"));
+         final String site = getRequest().getClientUrl().getHost();
+         signIn(System.getProperty("gnuob." + site + ".username", "guest"), System.getProperty("gnuob." + site + ".password", "guest"));
       }
 
       orderDataProvider.setUser(AppServletContainerAuthenticatedWebSession.getUserName());

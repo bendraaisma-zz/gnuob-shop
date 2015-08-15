@@ -158,7 +158,7 @@ public class WishListOfferViewPanel extends Panel {
       @Override
       protected void populateItem(Item<OfferRecord> item) {
 
-         productDataProvider.getType().setNumber(item.getModelObject().getNumber());
+         productDataProvider.getType().setNumber(item.getModelObject().getProductNumber());
 
          @SuppressWarnings("unchecked")
          final Iterator<Product> iterator = (Iterator<Product>) productDataProvider.iterator(0, 1);
@@ -199,7 +199,7 @@ public class WishListOfferViewPanel extends Panel {
       private static final long serialVersionUID = 1090211687798345558L;
 
       public RemoveAjaxButton() {
-         super("remove", Model.of(WishListOfferViewPanel.this.getString("removeFromWishListMessage")), Buttons.Type.Default);
+         super("remove", Model.of(WishListOfferViewPanel.this.getString("removeFromWishListMessage")), Buttons.Type.Default,  Model.of(WishListOfferViewPanel.this.getString("removeFromWishListMessage")));
       }
 
       @Override
@@ -227,7 +227,7 @@ public class WishListOfferViewPanel extends Panel {
       private static final long serialVersionUID = 8687168415274819114L;
 
       public SaveAjaxButton() {
-         super("save", Model.of(WishListOfferViewPanel.this.getString("addToCartMessage")), Buttons.Type.Primary);
+         super("save", Model.of(WishListOfferViewPanel.this.getString("addToCartMessage")), Buttons.Type.Primary, Model.of(WishListOfferViewPanel.this.getString("addToCartMessage")));
       }
 
       @Override
@@ -242,7 +242,7 @@ public class WishListOfferViewPanel extends Panel {
             final OfferRecord targetOfferRecord = new OfferRecord();
 
             if(sourceOfferRecord.getProduct() == null) {
-               productDataProvider.getType().setNumber(sourceOfferRecord.getNumber());
+               productDataProvider.getType().setNumber(sourceOfferRecord.getProductNumber());
 
                @SuppressWarnings("unchecked")
                final Iterator<Product> iterator = (Iterator<Product>) productDataProvider.iterator(0, 1);

@@ -9,6 +9,11 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
+import com.netbrasoft.gnuob.api.Order;
+import com.netbrasoft.gnuob.api.OrderBy;
+import com.netbrasoft.gnuob.api.order.GenericOrderCheckoutDataProvider;
+import com.netbrasoft.gnuob.api.order.OrderDataProvider.CheckOut;
+import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
 import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
 import com.netbrasoft.gnuob.shop.shopper.Shopper;
@@ -26,13 +31,19 @@ public class ConfirmationViewPanel extends Panel {
 
       @Override
       protected void onInitialize() {
-         Shopper shopper = shopperDataProvider.find(new Shopper());
+         final Shopper shopper = shopperDataProvider.find(new Shopper());
+         Order order = orderDataProvider.findById(shopper.getCheckout());
 
-         add(new Label("orderId", Model.of(shopper.getOrderId())));
-         add(new Label("buyerEmail", Model.of(shopper.getContract().getCustomer().getBuyerEmail())));
+         orderDataProvider.setCheckOut(CheckOut.valueOf(order.getCheckout()));
 
-         shopper.setOrderId(null);
+         order.setTransactionId(getRequest().getQueryParameters().getParameterValue("transaction_id").toString());
+         order = orderDataProvider.findById(orderDataProvider.doCheckoutPayment(orderDataProvider.findById(orderDataProvider.doCheckoutDetails(order))));
 
+         add(new Label("orderId", Model.of(order.getOrderId())));
+         add(new Label("buyerEmail", Model.of(order.getContract().getCustomer().getBuyerEmail())));
+
+         shopper.setContract(order.getContract());
+         shopper.setCheckout(new Order());
          shopperDataProvider.merge(shopper);
 
          super.onInitialize();
@@ -41,10 +52,25 @@ public class ConfirmationViewPanel extends Panel {
 
    private static final long serialVersionUID = 4629799686885772339L;
 
+   @SpringBean(name = "OrderDataProvider", required = true)
+   private GenericOrderCheckoutDataProvider<Order> orderDataProvider;
+
    @SpringBean(name = "ShopperDataProvider", required = true)
    private GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
    public ConfirmationViewPanel(final String id, final IModel<Shopper> model) {
       super(id, model);
+   }
+
+   @Override
+   protected void onInitialize() {
+      orderDataProvider.setUser(AppServletContainerAuthenticatedWebSession.getUserName());
+      orderDataProvider.setPassword(AppServletContainerAuthenticatedWebSession.getPassword());
+      orderDataProvider.setSite(AppServletContainerAuthenticatedWebSession.getSite());
+      orderDataProvider.setType(new Order());
+      orderDataProvider.getType().setActive(true);
+      orderDataProvider.setOrderBy(OrderBy.NONE);
+      orderDataProvider.setCheckOut(CheckOut.PAGSEGURO);
+      super.onInitialize();
    }
 }

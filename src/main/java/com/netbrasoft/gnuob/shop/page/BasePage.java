@@ -91,6 +91,7 @@ public abstract class BasePage extends WebPage implements IAjaxIndicatorAware {
       final UserInfo userInfo = getUserInfo(shopper);
 
       shopper.logout();
+      shopper.setIsLoggedIn(true);
       shopper.getContract().setContractId(userInfo.getEmail().toString());
       shopper.getContract().getCustomer().setBuyerEmail(userInfo.getEmail().toString());
       shopper.getContract().getCustomer().setFirstName(userInfo.getGivenName());
@@ -101,14 +102,13 @@ public abstract class BasePage extends WebPage implements IAjaxIndicatorAware {
    }
 
    private UserInfo getUserInfo(Shopper shopper) throws URISyntaxException {
-      final String host = getRequest().getClientUrl().getHost();
       final URI issuerURI = new URI(shopper.getIssuer());
-      final ClientID clientID = OAuthUtils.getClientID(host, issuerURI);
+      final ClientID clientID = OAuthUtils.getClientID(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
       final State state = new State(shopper.getId());
       final URI requestURI = URI.create(getRequest().getClientUrl().toString());
       final URI redirectURI = URI.create(getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getClientUrl()).split("\\?")[0]);
       final OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
-      return OAuthUtils.getUserInfo(providerConfiguration, issuerURI, clientID, state, requestURI, redirectURI, OAuthUtils.getClientSecret(host, issuerURI));
+      return OAuthUtils.getUserInfo(providerConfiguration, issuerURI, clientID, state, requestURI, redirectURI, OAuthUtils.getClientSecret(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI));
    }
 
    @Override
