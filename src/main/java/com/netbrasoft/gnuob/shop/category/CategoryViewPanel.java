@@ -180,7 +180,7 @@ public class CategoryViewPanel extends Panel {
                offerRecord.setShippingCost(item.getModelObject().getShippingCost());
                offerRecord.setTax(item.getModelObject().getTax());
                offerRecord.setQuantity(BigInteger.ONE);
-               offerRecord.setNumber(item.getModelObject().getNumber());
+               offerRecord.setProductNumber(item.getModelObject().getNumber());
                offerRecord.setAmount(item.getModelObject().getAmount().subtract(item.getModelObject().getDiscount()));
                for (final Option option : item.getModelObject().getOptions()) {
                   if (!option.isDisabled()) {

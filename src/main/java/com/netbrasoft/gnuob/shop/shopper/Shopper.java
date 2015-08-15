@@ -30,6 +30,8 @@ public class Shopper implements IClusterable {
 
    private Order checkout = new Order();
 
+   private boolean loggedIn = false;
+
    public Shopper() {
       logout();
    }
@@ -44,7 +46,7 @@ public class Shopper implements IClusterable {
       for (final OfferRecord offerRecord : cart.getRecords()) {
          total = total.add(offerRecord.getAmount().multiply(BigDecimal.valueOf(offerRecord.getQuantity().longValue())));
       }
-      return total.add(getTaxTotal()).add(getShippingCostTotal()).subtract(getCartTotalDiscount());
+      return total.add(getTaxTotal()).add(getShippingCostTotal());
    }
 
    public BigDecimal getCartTotalDiscount() {
@@ -90,8 +92,8 @@ public class Shopper implements IClusterable {
       return taxTotal;
    }
 
-   public boolean loggedIn() {
-      return contract.getContractId() != null && !"".equals(contract.getContractId()) && contract.getId() != 0;
+   public boolean isLoggedIn() {
+      return loggedIn;
    }
 
    public boolean login() {
@@ -99,6 +101,7 @@ public class Shopper implements IClusterable {
    }
 
    public void logout() {
+      loggedIn = false;
       contract = new Contract();
       contract.setActive(true);
       contract.setCustomer(new Customer());
@@ -119,6 +122,10 @@ public class Shopper implements IClusterable {
 
    public void setId(String id) {
       this.id = id;
+   }
+
+   public void setIsLoggedIn(boolean loggedIn) {
+      this.loggedIn = loggedIn;
    }
 
    public void setIssuer(String issuer) {

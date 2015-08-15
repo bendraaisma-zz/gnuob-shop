@@ -278,6 +278,7 @@ public class SpecificationViewPanel extends Panel {
 
       private void saveContract(Contract contract) {
          final Shopper shopper = shopperDataProvider.find(new Shopper());
+         contract.getCustomer().getAddress().setCountry("BR");
 
          if (contract.getId() == 0) {
             contract = contractDataProvider.persist(contract);

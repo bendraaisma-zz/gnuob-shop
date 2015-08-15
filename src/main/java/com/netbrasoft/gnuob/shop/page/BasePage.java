@@ -91,6 +91,7 @@ public abstract class BasePage extends WebPage implements IAjaxIndicatorAware {
       final UserInfo userInfo = getUserInfo(shopper);
 
       shopper.logout();
+      shopper.setIsLoggedIn(true);
       shopper.getContract().setContractId(userInfo.getEmail().toString());
       shopper.getContract().getCustomer().setBuyerEmail(userInfo.getEmail().toString());
       shopper.getContract().getCustomer().setFirstName(userInfo.getGivenName());

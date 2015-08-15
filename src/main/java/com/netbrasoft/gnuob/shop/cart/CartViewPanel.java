@@ -420,7 +420,7 @@ public class CartViewPanel extends Panel {
          add(totalDiscountLabel.setOutputMarkupId(true).setOutputMarkupPlaceholderTag(true));
          add(totalLabel.setOutputMarkupId(true).setOutputMarkupPlaceholderTag(true));
          add(totalShippingCost.setOutputMarkupId(true).setOutputMarkupPlaceholderTag(true));
-         add(new SaveAjaxButton().setVisible(shopperDataProvider.find(new Shopper()).loggedIn()).setOutputMarkupId(true));
+         add(new SaveAjaxButton().setVisible(shopperDataProvider.find(new Shopper()).isLoggedIn()).setOutputMarkupId(true));
          super.onInitialize();
       }
    };

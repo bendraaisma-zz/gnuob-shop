@@ -146,7 +146,7 @@ public class CheckoutOrderViewPanel extends Panel {
       @Override
       protected void populateItem(Item<OrderRecord> item) {
 
-         productDataProvider.getType().setNumber(item.getModelObject().getNumber());
+         productDataProvider.getType().setNumber(item.getModelObject().getProductNumber());
 
          @SuppressWarnings("unchecked")
          final

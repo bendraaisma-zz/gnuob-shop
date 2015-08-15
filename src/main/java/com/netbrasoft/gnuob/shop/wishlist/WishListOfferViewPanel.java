@@ -158,7 +158,7 @@ public class WishListOfferViewPanel extends Panel {
       @Override
       protected void populateItem(Item<OfferRecord> item) {
 
-         productDataProvider.getType().setNumber(item.getModelObject().getNumber());
+         productDataProvider.getType().setNumber(item.getModelObject().getProductNumber());
 
          @SuppressWarnings("unchecked")
          final Iterator<Product> iterator = (Iterator<Product>) productDataProvider.iterator(0, 1);
@@ -242,7 +242,7 @@ public class WishListOfferViewPanel extends Panel {
             final OfferRecord targetOfferRecord = new OfferRecord();
 
             if(sourceOfferRecord.getProduct() == null) {
-               productDataProvider.getType().setNumber(sourceOfferRecord.getNumber());
+               productDataProvider.getType().setNumber(sourceOfferRecord.getProductNumber());
 
                @SuppressWarnings("unchecked")
                final Iterator<Product> iterator = (Iterator<Product>) productDataProvider.iterator(0, 1);

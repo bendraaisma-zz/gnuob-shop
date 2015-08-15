@@ -55,7 +55,7 @@ public class HeaderPanel extends Panel {
             ((AppServletContainerAuthenticatedWebSession) getSession()).invalidate();
             throw new RedirectToUrlException("account.html");
          }
-      }.setVisible(shopperDataProvider.find(new Shopper()).loggedIn()));
+      }.setVisible(shopperDataProvider.find(new Shopper()).isLoggedIn()));
       add(new AjaxLink<String>("login") {
 
          private static final long serialVersionUID = -3560695505363960953L;
@@ -64,7 +64,7 @@ public class HeaderPanel extends Panel {
          public void onClick(AjaxRequestTarget target) {
             throw new RedirectToUrlException("account.html");
          }
-      }.setVisible(!shopperDataProvider.find(new Shopper()).loggedIn()));
+      }.setVisible(!shopperDataProvider.find(new Shopper()).isLoggedIn()));
       super.onInitialize();
    }
 }
