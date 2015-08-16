@@ -93,7 +93,7 @@ public class CategoryViewPanel extends Panel {
 
       private static final long serialVersionUID = 9170940545796805775L;
 
-      private List<Product> products = new ArrayList<Product>();
+      private transient List<Product> products = new ArrayList<Product>();
 
       @Override
       public void detach() {
@@ -232,7 +232,7 @@ public class CategoryViewPanel extends Panel {
             @Override
             public void onClick(AjaxRequestTarget target) {
                final List<SubCategory> subCategories = new ArrayList<SubCategory>();
-               subCategories.add(((SubCategory) item.getDefaultModelObject()));
+               subCategories.add((SubCategory) item.getDefaultModelObject());
 
                subCategoryDataProvider.setSubCategories(subCategories.get(0).getSubCategories());
                subCategoryMenuBootstrapListView.setModelObject(subCategories);
@@ -253,7 +253,7 @@ public class CategoryViewPanel extends Panel {
 
       private static final long serialVersionUID = -2600778565688301137L;
 
-      private List<SubCategory> subCategories = new ArrayList<SubCategory>();
+      private transient List<SubCategory> subCategories = new ArrayList<SubCategory>();
 
       @Override
       public void detach() {
@@ -323,7 +323,7 @@ public class CategoryViewPanel extends Panel {
             @Override
             protected void onEvent(AjaxRequestTarget target) {
                final List<SubCategory> subCategories = new ArrayList<SubCategory>();
-               subCategories.add(((SubCategory) item.getDefaultModelObject()));
+               subCategories.add((SubCategory) item.getDefaultModelObject());
 
                subCategoryDataProvider.setSubCategories(subCategories.get(0).getSubCategories());
                subCategoryMenuBootstrapListView.setModelObject(subCategories);
@@ -398,7 +398,7 @@ public class CategoryViewPanel extends Panel {
    private GenericTypeDataProvider<Product> productDataProvider;
 
    @SpringBean(name = "ShopperDataProvider", required = true)
-   private GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
+   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
    public CategoryViewPanel(final String id, final IModel<Category> model) {
       super(id, model);

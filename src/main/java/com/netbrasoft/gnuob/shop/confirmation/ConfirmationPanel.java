@@ -21,7 +21,7 @@ public class ConfirmationPanel extends Panel {
    private final ConfirmationViewPanel confirmationViewPanel = new ConfirmationViewPanel("confirmationViewPanel", (IModel<Shopper>) getDefaultModel());
 
    @SpringBean(name = "ShopperDataProvider", required = true)
-   private GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
+   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
    public ConfirmationPanel(final String id, final IModel<Shopper> model) {
       super(id, model);

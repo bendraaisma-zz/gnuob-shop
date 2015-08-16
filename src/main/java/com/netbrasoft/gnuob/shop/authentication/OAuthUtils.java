@@ -48,46 +48,42 @@ public final class OAuthUtils {
    public static final String ACCOUNTS_FACEBOOK_COM = "http://localhost:8080/json/facebook/openid-configuration";
    public static final String ACCOUNTS_MICROSOFT_COM = "http://localhost:8080/json/microsoft/openid-configuration";
 
-   public static AuthenticationRequest getAuthenticationRequest(final OIDCProviderMetadata providerConfiguration, final URI issuerURI, final ClientID clientID, final URI redirectURI, Scope scope, State state) {
+   public static AuthenticationRequest getAuthenticationRequest(final OIDCProviderMetadata providerConfiguration, final ClientID clientID, final URI redirectURI, Scope scope, State state) {
       return new AuthenticationRequest(providerConfiguration.getAuthorizationEndpointURI(), new ResponseType(ResponseType.Value.CODE), scope, clientID, redirectURI, state, new Nonce());
    }
 
    public static ClientID getClientID(String site, URI issuerURI) {
       switch (issuerURI.toString()) {
-      case ACCOUNTS_GOOGLE_COM:
-         return new ClientID(System.getProperty("gnuob." + site + ".google.clientId"));
       case ACCOUNTS_FACEBOOK_COM:
          return new ClientID(System.getProperty("gnuob." + site + ".facebook.clientId"));
       case ACCOUNTS_PAY_PAL_COM:
          return new ClientID(System.getProperty("gnuob." + site + ".paypal.clientId"));
       case ACCOUNTS_MICROSOFT_COM:
          return new ClientID(System.getProperty("gnuob." + site + ".microsoft.clientId"));
+      default: // Google.
+         return new ClientID(System.getProperty("gnuob." + site + ".google.clientId"));
       }
-
-      return new ClientID();
    }
 
    public static Secret getClientSecret(String site, URI issuerURI) {
       switch (issuerURI.toString()) {
-      case ACCOUNTS_GOOGLE_COM:
-         return new Secret(System.getProperty("gnuob." + site + ".google.clientSecret"));
       case ACCOUNTS_FACEBOOK_COM:
          return new Secret(System.getProperty("gnuob." + site + ".facebook.clientSecret"));
       case ACCOUNTS_PAY_PAL_COM:
          return new Secret(System.getProperty("gnuob." + site + ".paypal.clientSecret"));
       case ACCOUNTS_MICROSOFT_COM:
          return new Secret(System.getProperty("gnuob." + site + ".microsoft.clientSecret"));
+      default: // Google.
+         return new Secret(System.getProperty("gnuob." + site + ".google.clientSecret"));
       }
-
-      return new Secret("");
    }
 
-   public static FacebookAuthenticationRequest getFacebookAuthenticationRequest(final OIDCProviderMetadata providerConfiguration, final URI issuerURI, final ClientID clientID, final URI redirectURI, Scope scope, State state) {
-      return new FacebookAuthenticationRequest(providerConfiguration.getAuthorizationEndpointURI(), new ResponseType(ResponseType.Value.CODE), scope, clientID, redirectURI, state, new Nonce());
+   public static FacebookAuthenticationRequest getFacebookAuthenticationRequest(final OIDCProviderMetadata providerConfiguration, final ClientID clientID, final URI redirectURI, Scope scope, State state) {
+      return new FacebookAuthenticationRequest(providerConfiguration.getAuthorizationEndpointURI(), new ResponseType(ResponseType.Value.CODE), scope, clientID, redirectURI, state);
    }
 
-   public static MicrosoftAuthenticationRequest getMicrosoftAuthenticationRequest(final OIDCProviderMetadata providerConfiguration, final URI issuerURI, final ClientID clientID, final URI redirectURI, Scope scope, State state) {
-      return new MicrosoftAuthenticationRequest(providerConfiguration.getAuthorizationEndpointURI(), new ResponseType(ResponseType.Value.CODE), scope, clientID, redirectURI, state, new Nonce());
+   public static MicrosoftAuthenticationRequest getMicrosoftAuthenticationRequest(final OIDCProviderMetadata providerConfiguration, final ClientID clientID, final URI redirectURI, Scope scope, State state) {
+      return new MicrosoftAuthenticationRequest(providerConfiguration.getAuthorizationEndpointURI(), new ResponseType(ResponseType.Value.CODE), scope, clientID, redirectURI, state);
    }
 
    public static OIDCProviderMetadata getProviderConfigurationURL(final URI issuerURI) {
@@ -109,17 +105,15 @@ public final class OAuthUtils {
 
    public static Scope getScope(String site, URI issuerURI) {
       switch (issuerURI.toString()) {
-      case ACCOUNTS_GOOGLE_COM:
-         return Scope.parse(System.getProperty("gnuob." + site + ".google.scope"));
       case ACCOUNTS_FACEBOOK_COM:
          return Scope.parse(System.getProperty("gnuob." + site + ".facebook.scope"));
       case ACCOUNTS_PAY_PAL_COM:
          return Scope.parse(System.getProperty("gnuob." + site + ".paypal.scope"));
       case ACCOUNTS_MICROSOFT_COM:
          return Scope.parse(System.getProperty("gnuob." + site + ".microsoft.scope"));
+      default: // Google.
+         return Scope.parse(System.getProperty("gnuob." + site + ".google.scope"));
       }
-
-      return new Scope();
    }
 
    private static BearerAccessToken getTokenRequest(final OIDCProviderMetadata providerConfiguration, final ClientID clientID, final AuthorizationCode authorizationCode, final URI redirectURI, Secret clientSecret)
@@ -164,7 +158,7 @@ public final class OAuthUtils {
       return ((UserInfoSuccessResponse) userInfoResponse).getUserInfo();
    }
 
-   public static UserInfo getUserInfo(final OIDCProviderMetadata providerConfiguration, final URI issuerURI, final ClientID clientID, final State state, final URI requestURI, final URI redirectURI, Secret clientSecret) {
+   public static UserInfo getUserInfo(final OIDCProviderMetadata providerConfiguration, final ClientID clientID, final State state, final URI requestURI, final URI redirectURI, Secret clientSecret) {
       try {
          final AuthorizationCode authorizationCode = retrieveAuthenticationCode(requestURI, state);
          final BearerAccessToken bearerAccessToken = getTokenRequest(providerConfiguration, clientID, authorizationCode, redirectURI, clientSecret);

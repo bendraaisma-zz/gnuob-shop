@@ -60,7 +60,7 @@ public abstract class BasePage extends WebPage implements IAjaxIndicatorAware {
    private static final Logger LOGGER = LoggerFactory.getLogger(BasePage.class);
 
    @SpringBean(name = "ShopperDataProvider", required = true)
-   private GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
+   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
    @SpringBean(name = "ContractDataProvider", required = true)
    private GenericTypeDataProvider<Contract> contractDataProvider;
@@ -108,7 +108,7 @@ public abstract class BasePage extends WebPage implements IAjaxIndicatorAware {
       final URI requestURI = URI.create(getRequest().getClientUrl().toString());
       final URI redirectURI = URI.create(System.getProperty("gnuob." + AppServletContainerAuthenticatedWebSession.getSite() + ".login.redirect"));
       final OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
-      return OAuthUtils.getUserInfo(providerConfiguration, issuerURI, clientID, state, requestURI, redirectURI, OAuthUtils.getClientSecret(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI));
+      return OAuthUtils.getUserInfo(providerConfiguration, clientID, state, requestURI, redirectURI, OAuthUtils.getClientSecret(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI));
    }
 
    @Override

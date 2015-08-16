@@ -60,7 +60,7 @@ public class MicrosoftOAuthTest {
 
    @Test
    public void testFaceBookOAuthLoginVersionV2_4Login() throws SerializeException {
-      final MicrosoftAuthenticationRequest authenticationRequest = OAuthUtils.getMicrosoftAuthenticationRequest(providerConfiguration, issuerURI, clientID, redirectURI, scope, state);
+      final MicrosoftAuthenticationRequest authenticationRequest = OAuthUtils.getMicrosoftAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state);
 
       final WebDriverWait webDriverWait = new WebDriverWait(driver, 60);
 
@@ -69,7 +69,7 @@ public class MicrosoftOAuthTest {
 
       webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("google")));
 
-      final UserInfo userInfo = OAuthUtils.getUserInfo(providerConfiguration, issuerURI, clientID, state, URI.create(driver.getCurrentUrl()), redirectURI, OAuthUtils.getClientSecret("localhost", issuerURI));
+      final UserInfo userInfo = OAuthUtils.getUserInfo(providerConfiguration, clientID, state, URI.create(driver.getCurrentUrl()), redirectURI, OAuthUtils.getClientSecret("localhost", issuerURI));
 
       assertEquals("Bernard Arjan Draaisma", userInfo.getName());
       assertEquals("badraaisma@msn.com", userInfo.getEmail().getAddress());

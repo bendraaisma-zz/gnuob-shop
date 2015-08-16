@@ -27,14 +27,13 @@ import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedW
 @MountPath("paypal_notifications")
 public class PayPalNotificationPage extends BasePage {
 
-   private static final String GNUOB_SITE_PAYPAL_NOTIFICATION_VALIDATION_DISABLED = "gnuob.site.paypal.notification.validation.disabled";
    private static final String PAYPAL_COM_CGI_BIN_WEBSCR_VALUE = "https://www.sandbox.paypal.com/cgi-bin/webscr";
    private static final String PAYPAL_COM_CGI_BIN_WEBSCR_PROPERTY = "gnuob.site.paypal.cgi.bin.webscr";
 
 
    private static final long serialVersionUID = -2980296583669048069L;
 
-   private static Logger LOGGER = LoggerFactory.getLogger(PayPalNotificationPage.class);
+   private static final Logger LOGGER = LoggerFactory.getLogger(PayPalNotificationPage.class);
 
    @SpringBean(name = "OrderDataProvider", required = true)
    private GenericOrderCheckoutDataProvider<Order> orderDataProvider;
@@ -83,12 +82,6 @@ public class PayPalNotificationPage extends BasePage {
                   order = orderDataProvider.doNotification(order);
                } else {
                   LOGGER.warn("Retrieve notifcation request from PayPal but it isn't a valid request. ");
-
-                  if("TRUE".equalsIgnoreCase(System.getProperty(GNUOB_SITE_PAYPAL_NOTIFICATION_VALIDATION_DISABLED, "false"))) {
-                     Order order = new Order();
-                     order.setNotificationId(parameterMap.get("txn_id")[0]);
-                     order = orderDataProvider.doNotification(order);
-                  }
                }
 
             }

@@ -173,7 +173,7 @@ public class SpecificationViewPanel extends Panel {
 
       private static final long serialVersionUID = 9170940545796805775L;
 
-      private final List<OfferRecord> offerRecords = new ArrayList<OfferRecord>();
+      private transient final List<OfferRecord> offerRecords = new ArrayList<OfferRecord>();
 
       @Override
       public void detach() {
@@ -281,14 +281,11 @@ public class SpecificationViewPanel extends Panel {
          contract.getCustomer().getAddress().setCountry("BR");
 
          if (contract.getId() == 0) {
-            contract = contractDataProvider.persist(contract);
+            shopper.setContract(contractDataProvider.findById(contractDataProvider.persist(contract)));
          } else {
-            contract = contractDataProvider.merge(contract);
+            shopper.setContract(contractDataProvider.findById(contractDataProvider.merge(contract)));
          }
 
-         contract = contractDataProvider.findById(contract);
-
-         shopper.setContract(contract);
          shopperDataProvider.merge(shopper);
       }
 
@@ -327,7 +324,6 @@ public class SpecificationViewPanel extends Panel {
             order.getRecords().add(orderRecord);
          }
 
-
          order = orderDataProvider.persist(order);
          order.setContract(shopper.getContract());
          order = orderDataProvider.merge(order);
@@ -340,16 +336,15 @@ public class SpecificationViewPanel extends Panel {
 
       private void saveOrderAndDoCheckout() {
          final Shopper shopper = shopperDataProvider.find(new Shopper());
-         final Order order = saveOrder(shopper);
+         shopper.setCheckout(saveOrder(shopper));
          shopper.getCart().getRecords().clear();
-         shopper.setCheckout(order);
+
          shopperDataProvider.merge(shopper);
 
-         switch (orderDataProvider.getCheckOut()) {
-         case PAGSEGURO:
-            throw new RedirectToUrlException(System.getProperty(PAGSEGURO_CHECKOUT_URL_PROPERTY, PAGSEGURO_CHECKOUT_URL_PROPERTY_VALUE) + order.getToken());
-         case PAY_PAL:
-            throw new RedirectToUrlException(System.getProperty(PAYPAL_CHECKOUT_URL_PROPERTY, PAYPAL_CHECKOUT_URL_PROPERTY_VALUE) + order.getToken());
+         if (CheckOut.PAGSEGURO.equals(orderDataProvider.getCheckOut())) {
+            throw new RedirectToUrlException(System.getProperty(PAGSEGURO_CHECKOUT_URL_PROPERTY, PAGSEGURO_CHECKOUT_URL_PROPERTY_VALUE) + shopper.getCheckout().getToken());
+         } else { // PayPal
+            throw new RedirectToUrlException(System.getProperty(PAYPAL_CHECKOUT_URL_PROPERTY, PAYPAL_CHECKOUT_URL_PROPERTY_VALUE) + shopper.getCheckout().getToken());
          }
       }
    }
@@ -385,7 +380,7 @@ public class SpecificationViewPanel extends Panel {
       }
 
       public List<State> getStatesOfBrazil() {
-         final ArrayList<State> states = new ArrayList<>();
+         final List<State> states = new ArrayList<>();
          final String[][] statesOfBrazil = new String[][] { { "AC", "Acre" }, { "AL", "Alagoas" }, { "AP", "Amapá" }, { "AM", "Amazonas" }, { "BA", "Bahia" }, { "CE", "Ceará" }, { "ES", "Espírito Santo" }, { "GO", "Goiás" }, { "MA", "Maranhão" },
                { "MT", "Mato Grosso" }, { "MS", "Mato Grosso do Sul" }, { "MG", "Minas Gerais" }, { "PA", "Pará" }, { "PB", "Paraíba" }, { "PR", "Paraná" }, { "PE", "Pernambuco" }, { "PI", "Piauí" }, { "RJ", "Rio de Janeiro" },
                { "RN", "Rio Grande do Norte" }, { "RS", "Rio Grande do Sul" }, { "RO", "Rondônia" }, { "RR", "Roraima" }, { "SC", "Santa Catarina" }, { "SP", "São Paulo" }, { "SE", "Sergipe" }, { "TO", "Tocantins" } };
@@ -438,7 +433,7 @@ public class SpecificationViewPanel extends Panel {
    private static final long serialVersionUID = 293941244262646336L;
 
    @SpringBean(name = "ShopperDataProvider", required = true)
-   private GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
+   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
    @SpringBean(name = "ContractDataProvider", required = true)
    private GenericTypeDataProvider<Contract> contractDataProvider;

@@ -20,7 +20,7 @@ public class SpecificationPanel extends Panel {
    private final SpecificationViewPanel specificationViewPanel = new SpecificationViewPanel("specificationViewPanel", Model.of(new Shopper()));
 
    @SpringBean(name = "ShopperDataProvider", required = true)
-   private GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
+   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
    public SpecificationPanel(final String id, final IModel<Shopper> model) {
       super(id, model);

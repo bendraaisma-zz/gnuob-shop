@@ -4,7 +4,7 @@
 
 	<groupId>com.netbrasoft</groupId>
 	<artifactId>gnuob-shop</artifactId>
-	<version>0.0.3-SNAPSHOT</version>
+	<version>0.0.4-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>GNU Open Business Platform</name>
 	<description>GNU Open Business Platform is a open source business framework</description>
@@ -34,7 +34,7 @@
 		<version.wicket-source.plugin>7.0.0</version.wicket-source.plugin>
 		<version.springframework.plugin>4.1.7.RELEASE</version.springframework.plugin>
 		<version.surefire.plugin>2.17</version.surefire.plugin>
-		<version.netbrasoft.gnuob>0.0.3-SNAPSHOT</version.netbrasoft.gnuob>
+		<version.netbrasoft.gnuob>0.0.4-SNAPSHOT</version.netbrasoft.gnuob>
 		<version.javasimon>4.0.1</version.javasimon>
 		<version.wicket-dnd>0.6.0</version.wicket-dnd>
 		<version.wicket-bootstrap>0.10.3</version.wicket-bootstrap>
@@ -324,24 +324,6 @@
 					<scope>test</scope>
 				</dependency>
 			</dependencies>
-		</profile>
-		<profile>
-			<id>sonar</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<properties>
-				<sonar.jdbc.url>
-					jdbc:mysql://localhost:3306/sonar?useUnicode=true&amp;characterEncoding=utf8
-				</sonar.jdbc.url>
-				<sonar.jdbc.username>sonar</sonar.jdbc.username>
-				<sonar.jdbc.password>sonar</sonar.jdbc.password>
-
-				<!-- Optional URL to server. Default value is http://localhost:9000 -->
-				<sonar.host.url>
-					http://localhost:9000
-				</sonar.host.url>
-			</properties>
 		</profile>
 	</profiles>
 

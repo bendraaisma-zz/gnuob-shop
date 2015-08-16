@@ -11,6 +11,8 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.flow.RedirectToUrlException;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.netbrasoft.gnuob.api.generic.GNUOpenBusinessApplicationException;
 import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
@@ -50,9 +52,9 @@ public class AuthorizationPanel extends Panel {
 
             shopperDataProvider.merge(shopper);
 
-            throw new RedirectToUrlException(OAuthUtils.getFacebookAuthenticationRequest(providerConfiguration, issuerURI, clientID, redirectURI, scope, state).toURI().toString());
+            throw new RedirectToUrlException(OAuthUtils.getFacebookAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state).toURI().toString());
          } catch (GNUOpenBusinessApplicationException | URISyntaxException | SerializeException e) {
-
+            LOGGER.warn("OAuth Exception with Facebook.",e);
          }
       }
    }
@@ -81,9 +83,9 @@ public class AuthorizationPanel extends Panel {
 
             shopperDataProvider.merge(shopper);
 
-            throw new RedirectToUrlException(OAuthUtils.getAuthenticationRequest(providerConfiguration, issuerURI, clientID, redirectURI, scope, state).toURI().toString());
+            throw new RedirectToUrlException(OAuthUtils.getAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state).toURI().toString());
          } catch (GNUOpenBusinessApplicationException | URISyntaxException | SerializeException e) {
-
+            LOGGER.warn("OAuth Exception with Google.",e);
          }
       }
    }
@@ -112,9 +114,9 @@ public class AuthorizationPanel extends Panel {
 
             shopperDataProvider.merge(shopper);
 
-            throw new RedirectToUrlException(OAuthUtils.getMicrosoftAuthenticationRequest(providerConfiguration, issuerURI, clientID, redirectURI, scope, state).toURI().toString());
+            throw new RedirectToUrlException(OAuthUtils.getMicrosoftAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state).toURI().toString());
          } catch (GNUOpenBusinessApplicationException | URISyntaxException | SerializeException e) {
-
+            LOGGER.warn("OAuth Exception with Microsoft.",e);
          }
       }
    }
@@ -143,17 +145,19 @@ public class AuthorizationPanel extends Panel {
 
             shopperDataProvider.merge(shopper);
 
-            throw new RedirectToUrlException(OAuthUtils.getAuthenticationRequest(providerConfiguration, issuerURI, clientID, redirectURI, scope, state).toURI().toString());
+            throw new RedirectToUrlException(OAuthUtils.getAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state).toURI().toString());
          } catch (GNUOpenBusinessApplicationException | URISyntaxException | SerializeException e) {
-
+            LOGGER.warn("OAuth Exception with PayPal.",e);
          }
       }
    }
 
+   private static final Logger LOGGER = LoggerFactory.getLogger(AuthorizationPanel.class);
+
    private static final long serialVersionUID = -7007737558968816459L;
 
    @SpringBean(name = "ShopperDataProvider", required = true)
-   private GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
+   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
    public AuthorizationPanel(final String id, final IModel<Shopper> model) {
       super(id, model);

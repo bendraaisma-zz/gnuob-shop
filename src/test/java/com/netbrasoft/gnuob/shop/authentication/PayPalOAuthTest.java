@@ -35,7 +35,7 @@ public class PayPalOAuthTest {
       return Utils.createDeployment();
    }
 
-   private URI issuerURI = null;
+   private final URI issuerURI = null;
    private ClientID clientID = null;
    private State state = null;
    private URI redirectURI = null;
@@ -51,7 +51,6 @@ public class PayPalOAuthTest {
       System.setProperty("gnuob.localhost.paypal.clientSecret", "ENGboXWLXQnpLbauwIL0xzLOSLCnIDOxjWpBPmzArUXBTm_V5kN5f68gnjK24ceCU9QWQ-uYGeyExgaI");
       System.setProperty("gnuob.localhost.paypal.scope", "openid profile email");
 
-      issuerURI = new URI(OAuthUtils.ACCOUNTS_PAY_PAL_COM);
       clientID = OAuthUtils.getClientID("localhost", issuerURI);
       state = new State(UUID.randomUUID().toString());
       redirectURI = URI.create("http://localhost:8080/account.html");
@@ -61,7 +60,7 @@ public class PayPalOAuthTest {
 
    @Test
    public void testFaceBookOAuthLoginVersionV2_4Login() throws SerializeException {
-      final AuthenticationRequest authenticationRequest = OAuthUtils.getAuthenticationRequest(providerConfiguration, issuerURI, clientID, redirectURI, scope, state);
+      final AuthenticationRequest authenticationRequest = OAuthUtils.getAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state);
 
       final WebDriverWait webDriverWait = new WebDriverWait(driver, 60);
 
@@ -70,7 +69,7 @@ public class PayPalOAuthTest {
 
       webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("google")));
 
-      final UserInfo userInfo = OAuthUtils.getUserInfo(providerConfiguration, issuerURI, clientID, state, URI.create(driver.getCurrentUrl()), redirectURI, OAuthUtils.getClientSecret("localhost", issuerURI));
+      final UserInfo userInfo = OAuthUtils.getUserInfo(providerConfiguration, clientID, state, URI.create(driver.getCurrentUrl()), redirectURI, OAuthUtils.getClientSecret("localhost", issuerURI));
 
       assertEquals("Bernard Draaisma", userInfo.getName());
       assertEquals("badraaisma@msn.com", userInfo.getEmail().getAddress());

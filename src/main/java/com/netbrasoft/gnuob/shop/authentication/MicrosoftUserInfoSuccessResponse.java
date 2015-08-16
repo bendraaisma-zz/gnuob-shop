@@ -29,7 +29,7 @@ public class MicrosoftUserInfoSuccessResponse extends UserInfoSuccessResponse {
 
          try {
             final JSONObject jsonObject = httpResponse.getContentAsJSONObject();
-            jsonObject.put(MicrosoftUserInfo.SUB_CLAIM_NAME, JSONObjectUtils.getString(jsonObject, "id"));
+            jsonObject.put(UserInfo.SUB_CLAIM_NAME, JSONObjectUtils.getString(jsonObject, "id"));
             claimsSet = new MicrosoftUserInfo(jsonObject);
 
          } catch (final Exception e) {

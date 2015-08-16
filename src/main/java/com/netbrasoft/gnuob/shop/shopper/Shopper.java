@@ -97,7 +97,7 @@ public class Shopper implements IClusterable {
    }
 
    public boolean login() {
-      return issuer != null && !issuer.equals("") && RequestCycle.get().getRequest().getClientUrl().getQueryParameter("state") != null;
+      return issuer != null && !"".equals(issuer) && RequestCycle.get().getRequest().getClientUrl().getQueryParameter("state") != null;
    }
 
    public void logout() {

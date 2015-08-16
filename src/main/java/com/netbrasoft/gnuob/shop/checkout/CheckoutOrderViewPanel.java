@@ -32,10 +32,8 @@ import com.netbrasoft.gnuob.api.OrderRecord;
 import com.netbrasoft.gnuob.api.Product;
 import com.netbrasoft.gnuob.api.generic.GenericTypeDataProvider;
 import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
-import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import com.netbrasoft.gnuob.shop.product.ProductCarousel;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
-import com.netbrasoft.gnuob.shop.shopper.Shopper;
 
 import de.agilecoders.wicket.core.markup.html.bootstrap.carousel.CarouselImage;
 import de.agilecoders.wicket.core.markup.html.bootstrap.carousel.ICarouselImage;
@@ -52,7 +50,7 @@ public class CheckoutOrderViewPanel extends Panel {
 
       private static final long serialVersionUID = -7558540790400984298L;
 
-      private List<OrderRecord> orderRecords = new ArrayList<OrderRecord>();
+      private transient List<OrderRecord> orderRecords = new ArrayList<OrderRecord>();
 
       @Override
       public void detach() {
@@ -184,9 +182,6 @@ public class CheckoutOrderViewPanel extends Panel {
    }
 
    private static final long serialVersionUID = 7944947444790944275L;
-
-   @SpringBean(name = "ShopperDataProvider", required = true)
-   private GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
    @SpringBean(name = "ProductDataProvider", required = true)
    private GenericTypeDataProvider<Product> productDataProvider;

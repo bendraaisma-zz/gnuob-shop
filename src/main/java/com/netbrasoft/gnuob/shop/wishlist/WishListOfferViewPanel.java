@@ -56,7 +56,7 @@ public class WishListOfferViewPanel extends Panel {
 
       private static final long serialVersionUID = -7558540790400984298L;
 
-      private List<OfferRecord> offerRecords = new ArrayList<OfferRecord>();
+      private transient List<OfferRecord> offerRecords = new ArrayList<OfferRecord>();
 
       @Override
       public void detach() {
@@ -267,7 +267,7 @@ public class WishListOfferViewPanel extends Panel {
    private static final long serialVersionUID = 7944947444790944275L;
 
    @SpringBean(name = "ShopperDataProvider", required = true)
-   private GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
+   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
    @SpringBean(name = "ProductDataProvider", required = true)
    private GenericTypeDataProvider<Product> productDataProvider;

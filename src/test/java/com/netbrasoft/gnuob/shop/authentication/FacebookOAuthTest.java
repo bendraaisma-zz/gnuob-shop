@@ -60,7 +60,7 @@ public class FacebookOAuthTest {
 
    @Test
    public void testFaceBookOAuthLoginVersionV2_4Login() throws SerializeException {
-      final FacebookAuthenticationRequest authenticationRequest = OAuthUtils.getFacebookAuthenticationRequest(providerConfiguration, issuerURI, clientID, redirectURI, scope, state);
+      final FacebookAuthenticationRequest authenticationRequest = OAuthUtils.getFacebookAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state);
 
       final WebDriverWait webDriverWait = new WebDriverWait(driver, 60);
 
@@ -69,7 +69,7 @@ public class FacebookOAuthTest {
 
       webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("google")));
 
-      final UserInfo userInfo = OAuthUtils.getUserInfo(providerConfiguration, issuerURI, clientID, state, URI.create(driver.getCurrentUrl()), redirectURI, OAuthUtils.getClientSecret("localhost", issuerURI));
+      final UserInfo userInfo = OAuthUtils.getUserInfo(providerConfiguration, clientID, state, URI.create(driver.getCurrentUrl()), redirectURI, OAuthUtils.getClientSecret("localhost", issuerURI));
 
       assertEquals("Bernard Arjan Draaisma", userInfo.getName());
       assertEquals("bendraaisma@gmail.com", userInfo.getEmail().getAddress());

@@ -167,7 +167,7 @@ public class CartViewPanel extends Panel {
 
       private static final long serialVersionUID = 9170940545796805775L;
 
-      private final List<OfferRecord> offerRecords = new ArrayList<OfferRecord>();
+      private transient final List<OfferRecord> offerRecords = new ArrayList<OfferRecord>();
 
       @Override
       public void detach() {
@@ -221,7 +221,7 @@ public class CartViewPanel extends Panel {
             @Override
             protected boolean isDisabled(Option object, int index, String selected) {
                return object.isDisabled();
-            };
+            }
          };
 
          for (final Content content : item.getModelObject().getProduct().getContents()) {
@@ -440,7 +440,7 @@ public class CartViewPanel extends Panel {
    private final Label totalShippingCost = new Label("totalShippingCost", Model.of(NumberFormat.getCurrencyInstance().format(offerRecordDataProvider.getShippingCostTotal())));
 
    @SpringBean(name = "ShopperDataProvider", required = true)
-   private GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
+   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
    @SpringBean(name = "OfferDataProvider", required = true)
    private GenericTypeDataProvider<Offer> offerDataProvider;

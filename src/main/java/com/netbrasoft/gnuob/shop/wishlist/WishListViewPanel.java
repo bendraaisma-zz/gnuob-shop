@@ -70,7 +70,7 @@ public class WishListViewPanel extends Panel {
    private final OfferDataview offerDataview = new OfferDataview();
 
    @SpringBean(name = "ShopperDataProvider", required = true)
-   private GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
+   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
    @SpringBean(name = "OfferDataProvider", required = true)
    private GenericTypeDataProvider<Offer> offerDataProvider;

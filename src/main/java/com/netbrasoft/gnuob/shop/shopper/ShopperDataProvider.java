@@ -21,7 +21,7 @@ public class ShopperDataProvider<S extends Shopper> implements GenericTypeCacheD
    private static final String SHOPPER_ID = "SHOPPER_ID";
 
    @Resource(name = "ShopperCacheRepository")
-   private transient GenericTypeCacheRepository<S> shopperCacheRepository;
+   private GenericTypeCacheRepository<S> shopperCacheRepository;
 
    @Override
    public S find(S type) {
@@ -39,13 +39,16 @@ public class ShopperDataProvider<S extends Shopper> implements GenericTypeCacheD
    }
 
    private S setShopperId(S type) {
-      List<Cookie> cookies = ((WebRequest) RequestCycle.get().getRequest()).getCookies();
-      Cookie shopperId = new Cookie(SHOPPER_ID, type.getId());
+      final List<Cookie> cookies = ((WebRequest) RequestCycle.get().getRequest()).getCookies();
+      final Cookie shopperId = new Cookie(SHOPPER_ID, type.getId());
 
       if (cookies != null) {
-         for (Cookie cookie : cookies) {
+         for (final Cookie cookie : cookies) {
             if (SHOPPER_ID.equals(cookie.getName())) {
                shopperId.setValue(cookie.getValue());
+               //TODO BD: Enable this option when using HTTPS.
+               //shopperId.setSecure(true);
+               shopperId.setMaxAge(3600);
                type.setId(cookie.getValue());
                break;
             }

@@ -19,7 +19,7 @@ public class CartPanel extends Panel {
    private final CartViewPanel cartViewPanel = new CartViewPanel("cartViewPanel", (IModel<Shopper>) getDefaultModel());
 
    @SpringBean(name = "ShopperDataProvider", required = true)
-   private GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
+   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
    public CartPanel(final String id, final IModel<Shopper> model) {
       super(id, model);

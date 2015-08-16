@@ -14,6 +14,14 @@ import net.minidev.json.JSONObject;
 
 public class FacebookUserInfoSuccessResponse extends UserInfoSuccessResponse {
 
+   public FacebookUserInfoSuccessResponse(JWT jwt) {
+      super(jwt);
+   }
+   
+   public FacebookUserInfoSuccessResponse(UserInfo claimsSet) {
+      super(claimsSet);
+   }
+
    public static FacebookUserInfoSuccessResponse parse(final HTTPResponse httpResponse) throws ParseException {
       httpResponse.ensureStatusCode(HTTPResponse.SC_OK);
 
@@ -29,7 +37,7 @@ public class FacebookUserInfoSuccessResponse extends UserInfoSuccessResponse {
 
          try {
             JSONObject jsonObject = httpResponse.getContentAsJSONObject();
-            jsonObject.put(FacebookUserInfo.SUB_CLAIM_NAME, JSONObjectUtils.getString(jsonObject, "id"));
+            jsonObject.put(UserInfo.SUB_CLAIM_NAME, JSONObjectUtils.getString(jsonObject, "id"));
             claimsSet = new FacebookUserInfo(jsonObject);
 
          } catch (Exception e) {
@@ -58,11 +66,4 @@ public class FacebookUserInfoSuccessResponse extends UserInfoSuccessResponse {
       return response;
    }
 
-   public FacebookUserInfoSuccessResponse(JWT jwt) {
-      super(jwt);
-   }
-
-   public FacebookUserInfoSuccessResponse(UserInfo claimsSet) {
-      super(claimsSet);
-   }
 }

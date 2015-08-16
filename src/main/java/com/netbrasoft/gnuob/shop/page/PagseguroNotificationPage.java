@@ -19,7 +19,7 @@ public class PagseguroNotificationPage extends BasePage {
 
    private static final long serialVersionUID = -2980296583669048069L;
 
-   private static Logger LOGGER = LoggerFactory.getLogger(PagseguroNotificationPage.class);
+   private static final Logger LOGGER = LoggerFactory.getLogger(PagseguroNotificationPage.class);
 
    @SpringBean(name = "OrderDataProvider", required = true)
    private GenericOrderCheckoutDataProvider<Order> orderDataProvider;

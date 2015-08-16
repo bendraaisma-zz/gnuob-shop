@@ -61,7 +61,7 @@ public class GoogleOAuthTest {
 
    @Test
    public void testGoogleOAuthLoginVersionLogin() throws SerializeException {
-      final AuthenticationRequest authenticationRequest = OAuthUtils.getAuthenticationRequest(providerConfiguration, issuerURI, clientID, redirectURI, scope, state);
+      final AuthenticationRequest authenticationRequest = OAuthUtils.getAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state);
 
       final WebDriverWait webDriverWait = new WebDriverWait(driver, 60);
 
@@ -70,7 +70,7 @@ public class GoogleOAuthTest {
 
       webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("facebook")));
 
-      final UserInfo userInfo = OAuthUtils.getUserInfo(providerConfiguration, issuerURI, clientID, state, URI.create(driver.getCurrentUrl()), redirectURI, OAuthUtils.getClientSecret("localhost", issuerURI));
+      final UserInfo userInfo = OAuthUtils.getUserInfo(providerConfiguration, clientID, state, URI.create(driver.getCurrentUrl()), redirectURI, OAuthUtils.getClientSecret("localhost", issuerURI));
 
       assertEquals("Bernard Arjan Draaisma", userInfo.getName());
       assertEquals("bendraaisma@gmail.com", userInfo.getEmail().toString());

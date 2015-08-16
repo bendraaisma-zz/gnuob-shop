@@ -75,10 +75,10 @@ public class AccountViewPanel extends Panel {
       }
 
       public List<State> getStatesOfBrazil() {
-         final ArrayList<State> states = new ArrayList<>();
+         final List<State> states = new ArrayList<>();
          final String[][] statesOfBrazil = new String[][] { { "AC", "Acre" }, { "AL", "Alagoas" }, { "AP", "Amapá" }, { "AM", "Amazonas" }, { "BA", "Bahia" }, { "CE", "Ceará" }, { "ES", "Espírito Santo" }, { "GO", "Goiás" }, { "MA", "Maranhão" },
-            { "MT", "Mato Grosso" }, { "MS", "Mato Grosso do Sul" }, { "MG", "Minas Gerais" }, { "PA", "Pará" }, { "PB", "Paraíba" }, { "PR", "Paraná" }, { "PE", "Pernambuco" }, { "PI", "Piauí" }, { "RJ", "Rio de Janeiro" },
-            { "RN", "Rio Grande do Norte" }, { "RS", "Rio Grande do Sul" }, { "RO", "Rondônia" }, { "RR", "Roraima" }, { "SC", "Santa Catarina" }, { "SP", "São Paulo" }, { "SE", "Sergipe" }, { "TO", "Tocantins" } };
+               { "MT", "Mato Grosso" }, { "MS", "Mato Grosso do Sul" }, { "MG", "Minas Gerais" }, { "PA", "Pará" }, { "PB", "Paraíba" }, { "PR", "Paraná" }, { "PE", "Pernambuco" }, { "PI", "Piauí" }, { "RJ", "Rio de Janeiro" },
+               { "RN", "Rio Grande do Norte" }, { "RS", "Rio Grande do Sul" }, { "RO", "Rondônia" }, { "RR", "Roraima" }, { "SC", "Santa Catarina" }, { "SP", "São Paulo" }, { "SE", "Sergipe" }, { "TO", "Tocantins" } };
 
          for (final String[] state : statesOfBrazil) {
             states.add(new State(state[0], state[1]));
@@ -97,7 +97,8 @@ public class AccountViewPanel extends Panel {
          customerEditForm.add(new TextField<String>("customer.address.phone").add(StringValidator.maximumLength(40)));
          customerEditForm.add(new RequiredTextField<String>("customer.address.street1").setLabel(Model.of(getString("street1Message"))).add(StringValidator.maximumLength(40)));
          customerEditForm.add(new TextField<String>("customer.address.street2").add(StringValidator.maximumLength(40)));
-         customerEditForm.add(new TextField<String>("customer.address.country", Model.of("Brasil")).setLabel(Model.of(getString("countryNameMessage"))).setEnabled(false));customerEditForm.add(new RequiredTextField<String>("customer.address.cityName").setLabel(Model.of(getString("cityNameMessage"))).add(StringValidator.maximumLength(40)));
+         customerEditForm.add(new TextField<String>("customer.address.country", Model.of("Brasil")).setLabel(Model.of(getString("countryNameMessage"))).setEnabled(false));
+         customerEditForm.add(new RequiredTextField<String>("customer.address.cityName").setLabel(Model.of(getString("cityNameMessage"))).add(StringValidator.maximumLength(40)));
          customerEditForm.add(new RequiredTextField<String>("customer.address.postalCode").setLabel(Model.of(getString("postalCodeMessage"))).add(new PatternValidator("([0-9]){5}([-])([0-9]){3}")));
          customerEditForm.add(new DropDownChoice<State>("customer.address.stateOrProvince", getStatesOfBrazil(), new ChoiceRenderer<State>("name", "")).setRequired(true).setLabel(Model.of(getString("stateOrProvinceMessage"))));
 
@@ -125,19 +126,21 @@ public class AccountViewPanel extends Panel {
    @AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
    class SaveAjaxButton extends BootstrapAjaxButton {
 
+      private static final String SAVE_MESSAGE_PROPERTY = "saveMessage";
+
       private static final long serialVersionUID = 2695394292963384938L;
 
       public SaveAjaxButton(final Form<Contract> form) {
-         super("save", Model.of(AccountViewPanel.this.getString("saveMessage")), form, Buttons.Type.Primary);
+         super("save", Model.of(AccountViewPanel.this.getString(SAVE_MESSAGE_PROPERTY)), form, Buttons.Type.Primary);
          setSize(Buttons.Size.Small);
-         add(new LoadingBehavior(Model.of(AccountViewPanel.this.getString("savingMessage"))));
+         add(new LoadingBehavior(Model.of(AccountViewPanel.this.getString(SAVE_MESSAGE_PROPERTY))));
       }
 
       @Override
       protected void onError(AjaxRequestTarget target, Form<?> form) {
          form.add(new TooltipValidation());
          target.add(form);
-         target.add(SaveAjaxButton.this.add(new LoadingBehavior(Model.of(AccountViewPanel.this.getString("savingMessage")))));
+         target.add(SaveAjaxButton.this.add(new LoadingBehavior(Model.of(AccountViewPanel.this.getString(SAVE_MESSAGE_PROPERTY)))));
       }
 
       @Override
@@ -154,8 +157,7 @@ public class AccountViewPanel extends Panel {
       private void saveContract(Contract contract) {
          final Shopper shopper = shopperDataProvider.find(new Shopper());
          contract.getCustomer().getAddress().setCountry("BR");
-         contract = contractDataProvider.merge(contract);
-         shopper.setContract(contractDataProvider.findById(contract));
+         shopper.setContract(contractDataProvider.findById(contractDataProvider.merge(contract)));
 
          shopperDataProvider.merge(shopper);
       }
@@ -166,7 +168,7 @@ public class AccountViewPanel extends Panel {
    private static final long serialVersionUID = -4406441947235524118L;
 
    @SpringBean(name = "ShopperDataProvider", required = true)
-   private GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
+   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
    @SpringBean(name = "ContractDataProvider", required = true)
    private GenericTypeDataProvider<Contract> contractDataProvider;

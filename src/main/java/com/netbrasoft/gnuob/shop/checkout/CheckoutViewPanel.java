@@ -70,7 +70,7 @@ public class CheckoutViewPanel extends Panel {
    private final OrderDataview orderDataview = new OrderDataview();
 
    @SpringBean(name = "ShopperDataProvider", required = true)
-   private GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
+   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
    @SpringBean(name = "OrderDataProvider", required = true)
    private GenericTypeDataProvider<Order> orderDataProvider;

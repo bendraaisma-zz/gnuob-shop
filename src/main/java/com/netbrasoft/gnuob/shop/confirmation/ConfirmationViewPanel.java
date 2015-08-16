@@ -56,7 +56,7 @@ public class ConfirmationViewPanel extends Panel {
    private GenericOrderCheckoutDataProvider<Order> orderDataProvider;
 
    @SpringBean(name = "ShopperDataProvider", required = true)
-   private GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
+   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
    public ConfirmationViewPanel(final String id, final IModel<Shopper> model) {
       super(id, model);
