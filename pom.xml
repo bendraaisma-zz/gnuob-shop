@@ -6,7 +6,7 @@
 	<artifactId>gnuob-shop</artifactId>
 	<version>0.0.4-SNAPSHOT</version>
 	<packaging>war</packaging>
-	<name>GNU Open Business Platform</name>
+	<name>GNU Open Business Platform Shopping</name>
 	<description>GNU Open Business Platform is a open source business framework</description>
 
 	<url>https://github.com/bendraaisma/gnuob-shop</url>
