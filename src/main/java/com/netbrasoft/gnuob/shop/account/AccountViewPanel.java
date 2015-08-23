@@ -74,6 +74,8 @@ public class AccountViewPanel extends Panel {
          super("accountCustomerViewFragement", "accountViewFragement", AccountViewPanel.this, AccountViewPanel.this.getDefaultModel());
       }
 
+      // FIXME BD: get this information from http://www.geonames.org/ to support
+      // all counties and address formats etc.
       public List<State> getStatesOfBrazil() {
          final List<State> states = new ArrayList<>();
          final String[][] statesOfBrazil = new String[][] { { "AC", "Acre" }, { "AL", "Alagoas" }, { "AP", "Amapá" }, { "AM", "Amazonas" }, { "BA", "Bahia" }, { "CE", "Ceará" }, { "ES", "Espírito Santo" }, { "GO", "Goiás" }, { "MA", "Maranhão" },
@@ -99,10 +101,11 @@ public class AccountViewPanel extends Panel {
          customerEditForm.add(new TextField<String>("customer.address.street2").add(StringValidator.maximumLength(40)));
          customerEditForm.add(new TextField<String>("customer.address.country", Model.of("Brasil")).setLabel(Model.of(getString("countryNameMessage"))).setEnabled(false));
          customerEditForm.add(new RequiredTextField<String>("customer.address.cityName").setLabel(Model.of(getString("cityNameMessage"))).add(StringValidator.maximumLength(40)));
+         // FIXME: BD get this from geonames how to format ZIP code.
          customerEditForm.add(new RequiredTextField<String>("customer.address.postalCode").setLabel(Model.of(getString("postalCodeMessage"))).add(new PatternValidator("([0-9]){5}([-])([0-9]){3}")));
          customerEditForm.add(new DropDownChoice<State>("customer.address.stateOrProvince", getStatesOfBrazil(), new ChoiceRenderer<State>("name", "")).setRequired(true).setLabel(Model.of(getString("stateOrProvinceMessage"))));
-
          customerEditForm.add(new SaveAjaxButton(customerEditForm).setOutputMarkupId(true));
+
          add(customerEditForm.setOutputMarkupId(true));
          super.onInitialize();
       }
@@ -126,21 +129,19 @@ public class AccountViewPanel extends Panel {
    @AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
    class SaveAjaxButton extends BootstrapAjaxButton {
 
-      private static final String SAVE_MESSAGE_PROPERTY = "saveMessage";
-
       private static final long serialVersionUID = 2695394292963384938L;
 
       public SaveAjaxButton(final Form<Contract> form) {
-         super("save", Model.of(AccountViewPanel.this.getString(SAVE_MESSAGE_PROPERTY)), form, Buttons.Type.Primary);
+         super("save", Model.of(AccountViewPanel.this.getString("saveMessage")), form, Buttons.Type.Primary);
          setSize(Buttons.Size.Small);
-         add(new LoadingBehavior(Model.of(AccountViewPanel.this.getString(SAVE_MESSAGE_PROPERTY))));
+         add(new LoadingBehavior(Model.of(AccountViewPanel.this.getString("saveMessage"))));
       }
 
       @Override
       protected void onError(AjaxRequestTarget target, Form<?> form) {
          form.add(new TooltipValidation());
          target.add(form);
-         target.add(SaveAjaxButton.this.add(new LoadingBehavior(Model.of(AccountViewPanel.this.getString(SAVE_MESSAGE_PROPERTY)))));
+         target.add(SaveAjaxButton.this.add(new LoadingBehavior(Model.of(AccountViewPanel.this.getString("saveMessage")))));
       }
 
       @Override
@@ -156,6 +157,7 @@ public class AccountViewPanel extends Panel {
 
       private void saveContract(Contract contract) {
          final Shopper shopper = shopperDataProvider.find(new Shopper());
+         // FIXME: BD change this to configuration or geonames etc.
          contract.getCustomer().getAddress().setCountry("BR");
          shopper.setContract(contractDataProvider.findById(contractDataProvider.merge(contract)));
 

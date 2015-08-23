@@ -1,5 +1,9 @@
 package com.netbrasoft.gnuob.shop;
 
+import javax.xml.datatype.XMLGregorianCalendar;
+
+import org.apache.wicket.ConverterLocator;
+import org.apache.wicket.IConverterLocator;
 import org.apache.wicket.Page;
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.devutils.inspector.InspectorPage;
@@ -13,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.wicketstuff.wicket.servlet3.auth.ServletContainerAuthenticatedWebApplication;
 import org.wicketstuff.wicket.servlet3.auth.ServletContainerAuthenticatedWebSession;
 
+import com.netbrasoft.gnuob.api.generic.XMLGregorianCalendarConverter;
 import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
 import com.netbrasoft.gnuob.shop.page.MainPage;
 import com.netbrasoft.gnuob.shop.page.SignInPage;
@@ -20,6 +25,7 @@ import com.netbrasoft.gnuob.shop.page.error.AccessDeniedPage;
 import com.netbrasoft.gnuob.shop.page.error.InternalErrorPage;
 
 import de.agilecoders.wicket.core.Bootstrap;
+import de.agilecoders.wicket.core.markup.html.RenderJavaScriptToFooterHeaderResponseDecorator;
 import de.agilecoders.wicket.core.settings.BootstrapSettings;
 import de.agilecoders.wicket.webjars.WicketWebjars;
 import de.agilecoders.wicket.webjars.settings.WebjarsSettings;
@@ -51,14 +57,16 @@ public class NetbrasoftShop extends ServletContainerAuthenticatedWebApplication 
       super.init();
 
       final BootstrapSettings bootstrapSettings = new BootstrapSettings();
-      bootstrapSettings.useCdnResources(true);
+      bootstrapSettings.useCdnResources(Boolean.valueOf(System.getProperty("gnuob.site.cdn.enabled", "false")));
+      bootstrapSettings.setJsResourceFilterName("netbrasoft-shopping-javascript-container");
       Bootstrap.install(this, bootstrapSettings);
 
       final WebjarsSettings webjarsSettings = new WebjarsSettings();
       webjarsSettings.cdnUrl(System.getProperty("gnuob.site.cdn.url", "//cdnjs.cloudflare.com:80"));
-      webjarsSettings.useCdnResources(true);
+      webjarsSettings.useCdnResources(Boolean.valueOf(System.getProperty("gnuob.site.cdn.enabled", "false")));
       WicketWebjars.install(this, webjarsSettings);
 
+      setHeaderResponseDecorator(new RenderJavaScriptToFooterHeaderResponseDecorator());
       getComponentInstantiationListeners().add(new SpringComponentInjector(this));
       getApplicationSettings().setUploadProgressUpdatesEnabled(true);
       getApplicationSettings().setInternalErrorPage(InternalErrorPage.class);
@@ -75,5 +83,12 @@ public class NetbrasoftShop extends ServletContainerAuthenticatedWebApplication 
 
          WicketSource.configure(this);
       }
+   }
+
+   @Override
+   protected IConverterLocator newConverterLocator() {
+      final ConverterLocator locator = (ConverterLocator) super.newConverterLocator();
+      locator.set(XMLGregorianCalendar.class, new XMLGregorianCalendarConverter());
+      return locator;
    }
 }

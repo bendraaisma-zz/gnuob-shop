@@ -34,7 +34,7 @@
 		<version.wicket-source.plugin>7.0.0</version.wicket-source.plugin>
 		<version.springframework.plugin>4.1.7.RELEASE</version.springframework.plugin>
 		<version.surefire.plugin>2.17</version.surefire.plugin>
-		<version.netbrasoft.gnuob>0.0.4-SNAPSHOT</version.netbrasoft.gnuob>
+		<version.netbrasoft.gnuob>0.0.5-SNAPSHOT</version.netbrasoft.gnuob>
 		<version.javasimon>4.0.1</version.javasimon>
 		<version.wicket-dnd>0.6.0</version.wicket-dnd>
 		<version.wicket-bootstrap>0.10.3</version.wicket-bootstrap>
