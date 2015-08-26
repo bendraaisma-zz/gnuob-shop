@@ -1,5 +1,5 @@
 <wicket:panel xmlns:wicket="http://wicket.apache.org">
-	<wicket:container wicket:id="confirmationCustomerViewFragement"></wicket:container>
+	<wicket:container wicket:id="confirmationCustomerViewFragement" />
 	<wicket:fragment wicket:id="confirmationViewFragement">
 		<div class="row">
 			<hr>
@@ -11,14 +11,18 @@
 					<tbody>
 						<tr>
 							<td style="border-top: none;">
-								<form class="form-horizontal">
+								<form class="form-horizontal" action="">
 									<div class="panel-heading">
-										<h3><wicket:message key="thankYouForPlacingYourOrderWithUsMessage"></wicket:message></h3>
+										<h3>
+											<wicket:message key="thankYouForPlacingYourOrderWithUsMessage" />
+										</h3>
 										<h5>
-											<wicket:message key="theOrderNumberIsMessage"></wicket:message>&nbsp;<strong><span wicket:id="orderId"></span></strong>.
+											<wicket:message key="theOrderNumberIsMessage" />
+											&nbsp;<strong><span wicket:id="orderId"></span></strong>.
 										</h5>
 										<h5>
-											<wicket:message key="youWillReceiveAnEmailConfirmationShortlyAtMessage"></wicket:message>&nbsp;<strong><span wicket:id="buyerEmail"></span></strong>.
+											<wicket:message key="youWillReceiveAnEmailConfirmationShortlyAtMessage" />
+											&nbsp;<strong><span wicket:id="buyerEmail"></span></strong>.
 										</h5>
 									</div>
 								</form>

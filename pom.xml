@@ -41,7 +41,7 @@
 		<version.bootstrap-validator>0.8.1</version.bootstrap-validator>
 		<version.jquery.cookie>1.4.1</version.jquery.cookie>
 		<version.bootstrap-3-datepicker>1.4.0</version.bootstrap-3-datepicker>
-		<version.com.nimbusds>4.15</version.com.nimbusds>
+		<version.com.nimbusds>4.16</version.com.nimbusds>
 		<version.mockito-all>1.9.5</version.mockito-all>
 		<version.graphene-webdriver>2.0.3.Final</version.graphene-webdriver>
 
