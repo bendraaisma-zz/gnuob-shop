@@ -18,6 +18,8 @@ import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheRepository;
 @Controller("ShopperDataProvider")
 public class ShopperDataProvider<S extends Shopper> implements GenericTypeCacheDataProvider<S> {
 
+   private static final int ONE_DAY = 3600;
+
    private static final String SHOPPER_ID = "SHOPPER_ID";
 
    @Resource(name = "ShopperCacheRepository")
@@ -48,7 +50,7 @@ public class ShopperDataProvider<S extends Shopper> implements GenericTypeCacheD
                shopperId.setValue(cookie.getValue());
                //TODO BD: Enable this option when using HTTPS.
                //shopperId.setSecure(true);
-               shopperId.setMaxAge(3600);
+               shopperId.setMaxAge(ONE_DAY);
                type.setId(cookie.getValue());
                break;
             }

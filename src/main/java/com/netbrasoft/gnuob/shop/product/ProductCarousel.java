@@ -18,8 +18,8 @@ public class ProductCarousel extends Carousel {
 
    private static final long serialVersionUID = -8356867197970835590L;
 
-   public ProductCarousel(final String markupId, final List<ICarouselImage> images) {
-      super(markupId, images);
+   public ProductCarousel(final String id, final List<ICarouselImage> images) {
+      super(id, images);
    }
 
    @Override

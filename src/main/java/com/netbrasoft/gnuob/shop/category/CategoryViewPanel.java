@@ -182,10 +182,27 @@ public class CategoryViewPanel extends Panel {
                offerRecord.setQuantity(BigInteger.ONE);
                offerRecord.setProductNumber(item.getModelObject().getNumber());
                offerRecord.setAmount(item.getModelObject().getAmount().subtract(item.getModelObject().getDiscount()));
-               for (final Option option : item.getModelObject().getOptions()) {
-                  if (!option.isDisabled()) {
-                     offerRecord.setOption(option.getValue());
-                     break;
+               for (final Option rootOptionOriginal : item.getModelObject().getOptions()) {
+                  if (!rootOptionOriginal.isDisabled()) {
+
+                     final Option rootOption = new Option();
+                     rootOption.setValue(rootOptionOriginal.getValue());
+                     rootOption.setDescription(rootOptionOriginal.getDescription());
+                     rootOption.setDisabled(rootOptionOriginal.isDisabled());
+
+                     for(final Option childOptionOriginal: rootOptionOriginal.getOptions()) {
+                        if(!childOptionOriginal.isDisabled()) {
+                           final Option childOption = new Option();
+                           childOption.setValue(childOptionOriginal.getValue());
+                           childOption.setDescription(childOptionOriginal.getDescription());
+                           childOption.setDisabled(childOptionOriginal.isDisabled());
+
+                           rootOption.getOptions().add(childOption);
+                           break;
+                        }
+                     }
+
+                     offerRecord.getOptions().add(rootOption);
                   }
                }
 

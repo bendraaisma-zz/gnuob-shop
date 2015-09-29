@@ -1,5 +1,5 @@
 <wicket:panel xmlns:wicket="http://wicket.apache.org">
-	<wicket:container wicket:id="cartOfferProductViewFragement"></wicket:container>
+	<wicket:container wicket:id="cartOfferProductViewFragement" />
 	<wicket:fragment wicket:id="offerRecordViewFragement">
 		<style type="text/css">
 .offerRecordDataviewContainer tr {
@@ -7,8 +7,8 @@
 }
 </style>
 		<div class="row">
-			<div class="col-md-6" wicket:id="offerRecordProductDataViewContainer">
-				<div wicket:id=offerRecordProductDataView class="featurette">
+			<div class="col-md-6" wicket:id="offerRecordContainer">
+				<div class="featurette">
 					<div class="col-md-6">
 						<div wicket:id="productCarousel"></div>
 					</div>
@@ -20,7 +20,7 @@
 							<span wicket:id="rating"></span>
 						</p>
 						<h5>
-							<small><wicket:message key="quantityMessage"></wicket:message>&nbsp;<span wicket:id="product.stock.quantity"></span></small>
+							<small><wicket:message key="quantityMessage" />&nbsp;<span wicket:id="product.stock.quantity"></span></small>
 						</h5>
 						<br>
 						<h4>
@@ -28,13 +28,18 @@
 						</h4>
 						<br>
 						<h5>
-							<wicket:message key="quantityMessage"></wicket:message>
+							<wicket:message key="quantityMessage" />
 						</h5>
 						<select wicket:id="quantity" class="form-control input-sm"></select>
 						<h5>
-							<wicket:message key="optionMessage"></wicket:message>
+							<wicket:message key="optionMessage" />
 						</h5>
-						<select wicket:id="option" class="form-control input-sm"></select>
+						<wicket:container wicket:id="optionDataviewContainer">
+							<wicket:container wicket:id="optionDataview">
+								<select wicket:id="option" class="form-control input-sm"></select>
+								<br>
+							</wicket:container>
+						</wicket:container>
 					</div>
 				</div>
 			</div>
@@ -42,40 +47,40 @@
 				<table class="table">
 					<thead>
 						<tr>
-							<td colspan="2"><small><strong><wicket:message key="nameMessage"></wicket:message></strong></small></td>
-							<td><small><strong><wicket:message key="optionMessage"></wicket:message></strong></small></td>
-							<td align="right"><small><strong><wicket:message key="quantityMessage"></wicket:message></strong></small></td>
-							<td align="right"><small><strong><wicket:message key="amountMessage"></wicket:message></strong></small></td>
-							<td align="right"><small><strong><wicket:message key="amountWithDiscountMessage"></wicket:message></strong></small></td>
+							<td colspan="2"><small><strong><wicket:message key="nameMessage" /></strong></small></td>
+							<td><small><strong><wicket:message key="optionMessage" /></strong></small></td>
+							<td align="right"><small><strong><wicket:message key="quantityMessage" /></strong></small></td>
+							<td align="right"><small><strong><wicket:message key="amountMessage" /></strong></small></td>
+							<td align="right"><small><strong><wicket:message key="amountWithDiscountMessage" /></strong></small></td>
 						</tr>
 					</thead>
 					<tbody wicket:id="offerRecordDataviewContainer" class="offerRecordDataviewContainer">
 						<tr wicket:id="offerRecordDataview">
 							<td><a wicket:id="remove"></a></td>
 							<td><small><span wicket:id="name"></span></small></td>
-							<td><small><span wicket:id="option"></span></small></td>
+							<td><small><span wicket:id="options"></span></small></td>
 							<td align="right"><small><span wicket:id="quantity"></span></small></td>
 							<td align="right"><small><span style="text-decoration: line-through;" wicket:id="amount"></span></small></td>
 							<td align="right"><small><span wicket:id="amountWithDiscount"></span></small></td>
 						</tr>
 					</tbody>
-					<tfoot wicket:id="offerRecordTotalDataviewContainer">
+					<tfoot wicket:id="offerRecordTotalContainer">
 						<tr>
 							<td colspan="2" style="border: none;"></td>
-							<td colspan="2" align="left" style="border: none; background-color: #f7f7f9"><small><strong style="text-decoration: underline;"><wicket:message key="yourTotalDiscountMessage"></wicket:message>:</strong></small><br> <small><wicket:message key="allIncludedMessage"></wicket:message></small></td>
+							<td colspan="2" align="left" style="border: none; background-color: #f7f7f9"><small><strong style="text-decoration: underline;"><wicket:message key="yourTotalDiscountMessage" />:</strong></small><br> <small><wicket:message key="allIncludedMessage" /></small></td>
 							<td align="left" style="border: none; background-color: #f7f7f9"></td>
 							<td align="right" style="border: none; background-color: #f7f7f9"><small><span wicket:id="totalDiscount"></span></small></td>
 						</tr>
 						<tr>
 							<td colspan="2" style="border: none;"></td>
-							<td colspan="2" align="left" style="border: none; background-color: #f7f7f9"><strong><wicket:message key="totalMessage"></wicket:message>:</strong><br> <small style="text-decoration: underline;">(<wicket:message key="includedTransportMessage"></wicket:message>&nbsp;<span wicket:id="totalShippingCost"></span>)
+							<td colspan="2" align="left" style="border: none; background-color: #f7f7f9"><strong><wicket:message key="totalMessage" />:</strong><br> <small style="text-decoration: underline;">(<wicket:message key="includedTransportMessage" />&nbsp;<span wicket:id="totalShippingCost"></span>)
 							</small></td>
 							<td align="left" style="border: none; background-color: #f7f7f9"></td>
 							<td align="right" style="border: none; background-color: #f7f7f9"><strong><span wicket:id="total"></span></strong></td>
 						</tr>
 						<tr>
 							<td colspan="2" style="border: none;"><a wicket:id="saveToWishList"></a></td>
-							<td colspan="4" align="right" style="border: none; background-color: #f7f7f9"><a class="btn btn-primary" href="specification.html" role="button"><wicket:message key="nextMessage"></wicket:message></a></td>
+							<td colspan="4" align="right" style="border: none; background-color: #f7f7f9"><a class="btn btn-primary" href="specification.html" role="button"><wicket:message key="nextMessage" /></a></td>
 						</tr>
 					</tfoot>
 				</table>
@@ -89,11 +94,11 @@
 					<tbody>
 						<tr>
 							<td style="border-top: none;">
-								<form class="form-horizontal">
+								<form class="form-horizontal" action="">
 									<div class="panel-heading">
 										<h3>
-											<wicket:message key="noItemsInYourCartMessage"></wicket:message>
-											&nbsp;<small><wicket:message key="pricesDoNotIncludeShippingCostMessage"></wicket:message></small>
+											<wicket:message key="noItemsInYourCartMessage" />
+											&nbsp;<small><wicket:message key="pricesDoNotIncludeShippingCostMessage" /></small>
 										</h3>
 									</div>
 								</form>

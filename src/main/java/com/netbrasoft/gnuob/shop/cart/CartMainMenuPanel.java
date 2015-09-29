@@ -36,10 +36,12 @@ public class CartMainMenuPanel extends Panel {
 
    private static final long serialVersionUID = -4776222984181317489L;
 
-   private final MainMenuTabbedPanel mainMenuTabbedPanel = new MainMenuTabbedPanel();
+   private final MainMenuTabbedPanel mainMenuTabbedPanel;
 
    public CartMainMenuPanel(final String id, final IModel<Shopper> model) {
       super(id, model);
+
+      mainMenuTabbedPanel = new MainMenuTabbedPanel();
    }
 
    @Override
