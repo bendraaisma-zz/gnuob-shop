@@ -13,12 +13,14 @@ import com.netbrasoft.gnuob.shop.page.tab.AccountTab;
 import com.netbrasoft.gnuob.shop.page.tab.HomeTab;
 import com.netbrasoft.gnuob.shop.page.tab.WishListTab;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
+import com.netbrasoft.gnuob.shop.shopper.Shopper;
 
 import de.agilecoders.wicket.core.markup.html.bootstrap.tabs.BootstrapTabbedPanel;
 
 @AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
 public class CheckoutMainMenuPanel extends Panel {
 
+   @AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
    class MainMenuTabbedPanel extends BootstrapTabbedPanel<ITab> {
 
       private static final long serialVersionUID = 6838221105862530322L;
@@ -35,10 +37,12 @@ public class CheckoutMainMenuPanel extends Panel {
 
    private static final long serialVersionUID = 4037036072135523233L;
 
-   private final MainMenuTabbedPanel mainMenuTabbedPanel = new MainMenuTabbedPanel();
+   private final MainMenuTabbedPanel mainMenuTabbedPanel;
 
-   public CheckoutMainMenuPanel(final String id, final IModel<?> model) {
+   public CheckoutMainMenuPanel(final String id, final IModel<Shopper> model) {
       super(id, model);
+
+      mainMenuTabbedPanel = new MainMenuTabbedPanel();
    }
 
    @Override
@@ -52,5 +56,4 @@ public class CheckoutMainMenuPanel extends Panel {
       add(mainMenuTabbedPanel.setOutputMarkupId(true));
       super.onInitialize();
    }
-
 }

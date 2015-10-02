@@ -20,6 +20,7 @@ import de.agilecoders.wicket.core.markup.html.bootstrap.tabs.BootstrapTabbedPane
 @AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
 public class SpecificationMainMenuPanel extends Panel {
 
+   @AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
    class MainMenuTabbedPanel extends BootstrapTabbedPanel<ITab> {
 
       private static final long serialVersionUID = 6838221105862530322L;
@@ -36,10 +37,12 @@ public class SpecificationMainMenuPanel extends Panel {
 
    private static final long serialVersionUID = -4776222984181317489L;
 
-   private final MainMenuTabbedPanel mainMenuTabbedPanel = new MainMenuTabbedPanel();
+   private final MainMenuTabbedPanel mainMenuTabbedPanel;
 
    public SpecificationMainMenuPanel(final String id, final IModel<Shopper> model) {
       super(id, model);
+
+      mainMenuTabbedPanel = new MainMenuTabbedPanel();
    }
 
    @Override

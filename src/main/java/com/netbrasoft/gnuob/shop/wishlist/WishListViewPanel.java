@@ -96,11 +96,9 @@ public class WishListViewPanel extends Panel {
                   offerRecord.setProduct(new Product());
                }
 
-               if (offerRecord.getProduct() != null) {
-                  for (final Content content : offerRecord.getProduct().getContents()) {
-                     if (MediaType.HTML_UTF_8.is(MediaType.parse(content.getFormat()))) {
-                        carouselImages.add(new CarouselImage(new String(content.getContent())));
-                     }
+               for (final Content content : offerRecord.getProduct().getContents()) {
+                  if (MediaType.HTML_UTF_8.is(MediaType.parse(content.getFormat()))) {
+                     carouselImages.add(new CarouselImage(new String(content.getContent())));
                   }
                }
 

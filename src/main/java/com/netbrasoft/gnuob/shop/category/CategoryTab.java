@@ -9,7 +9,8 @@ import com.netbrasoft.gnuob.api.Category;
 public class CategoryTab extends AbstractTab {
 
    private static final long serialVersionUID = 4835579949680085443L;
-   IModel<Category> model;
+
+   private final IModel<Category> model;
 
    public CategoryTab(final IModel<String> title, final IModel<Category> model) {
       super(title);

@@ -20,6 +20,7 @@ import de.agilecoders.wicket.core.markup.html.bootstrap.tabs.BootstrapTabbedPane
 @AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
 public class WishListMainMenuPanel extends Panel {
 
+   @AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
    class MainMenuTabbedPanel extends BootstrapTabbedPanel<ITab> {
 
       private static final long serialVersionUID = 6838221105862530322L;

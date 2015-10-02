@@ -28,6 +28,7 @@ import de.agilecoders.wicket.core.markup.html.bootstrap.tabs.BootstrapTabbedPane
 @AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
 public class CategoryHomePanel extends Panel {
 
+   @AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
    class CategoryDataview extends DataView<Category> {
 
       private static final long serialVersionUID = 5098665993468197838L;
@@ -80,10 +81,12 @@ public class CategoryHomePanel extends Panel {
    @SpringBean(name = "CategoryDataProvider", required = true)
    private GenericTypeDataProvider<Category> categoryDataProvider;
 
-   private final CategoryDataview categoryDataView = new CategoryDataview();
+   private final CategoryDataview categoryDataView;
 
    public CategoryHomePanel(final String id, final IModel<Category> model) {
       super(id, model);
+
+      categoryDataView = new CategoryDataview();
    }
 
    @Override
