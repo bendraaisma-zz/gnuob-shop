@@ -13,6 +13,7 @@ import com.netbrasoft.gnuob.shop.page.tab.AccountTab;
 import com.netbrasoft.gnuob.shop.page.tab.CheckoutTab;
 import com.netbrasoft.gnuob.shop.page.tab.HomeTab;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
+import com.netbrasoft.gnuob.shop.shopper.Shopper;
 
 import de.agilecoders.wicket.core.markup.html.bootstrap.tabs.BootstrapTabbedPanel;
 
@@ -35,10 +36,12 @@ public class WishListMainMenuPanel extends Panel {
 
    private static final long serialVersionUID = 4037036072135523233L;
 
-   private final MainMenuTabbedPanel mainMenuTabbedPanel = new MainMenuTabbedPanel();
+   private final MainMenuTabbedPanel mainMenuTabbedPanel;
 
-   public WishListMainMenuPanel(final String id, final IModel<?> model) {
+   public WishListMainMenuPanel(final String id, final IModel<Shopper> model) {
       super(id, model);
+
+      mainMenuTabbedPanel = new MainMenuTabbedPanel();
    }
 
    @Override

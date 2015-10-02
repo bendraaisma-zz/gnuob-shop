@@ -19,12 +19,17 @@ public class WishListPage extends BasePage {
 
    private static final long serialVersionUID = 4051343927877779621L;
 
-   private final WishListMainMenuPanel mainMenuPanel = new WishListMainMenuPanel("mainMenuPanel", Model.of(new Shopper()));
+   private final WishListMainMenuPanel mainMenuPanel;
 
-   private final ContentBorder contentBorder = new ContentBorder("contentBorder");
+   private final ContentBorder contentBorder;
 
    @SpringBean(name = "ShopperDataProvider", required = true)
    private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
+
+   public WishListPage() {
+      mainMenuPanel = new WishListMainMenuPanel("mainMenuPanel", Model.of(new Shopper()));
+      contentBorder = new ContentBorder("contentBorder");
+   }
 
    @Override
    protected void onInitialize() {
