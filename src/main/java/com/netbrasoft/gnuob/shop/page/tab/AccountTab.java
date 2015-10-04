@@ -7,14 +7,14 @@ import org.apache.wicket.request.flow.RedirectToUrlException;
 
 public class AccountTab extends AbstractTab {
 
-   private static final long serialVersionUID = -7414478523953380913L;
+  private static final long serialVersionUID = -7414478523953380913L;
 
-   public AccountTab(final IModel<String> title) {
-      super(title);
-   }
+  public AccountTab(final IModel<String> title) {
+    super(title);
+  }
 
-   @Override
-   public WebMarkupContainer getPanel(final String panelId) {
-      throw new RedirectToUrlException("account.html");
-   }
+  @Override
+  public WebMarkupContainer getPanel(final String panelId) {
+    throw new RedirectToUrlException("account.html");
+  }
 }

@@ -14,40 +14,40 @@ import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
 import com.netbrasoft.gnuob.shop.shopper.Shopper;
 
-@AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
+@AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
 public class WishListPanel extends Panel {
 
-   private static final long serialVersionUID = 2034566325989232879L;
+  private static final long serialVersionUID = 2034566325989232879L;
 
-   private final WishListViewPanel wishListViewPanel;
+  private final WishListViewPanel wishListViewPanel;
 
-   @SpringBean(name = "ShopperDataProvider", required = true)
-   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
+  @SpringBean(name = "ShopperDataProvider", required = true)
+  private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
-   @SpringBean(name = "OfferDataProvider", required = true)
-   private GenericTypeDataProvider<Offer> offerDataProvider;
+  @SpringBean(name = "OfferDataProvider", required = true)
+  private GenericTypeDataProvider<Offer> offerDataProvider;
 
-   public WishListPanel(final String id, final IModel<Shopper> model) {
-      super(id, model);
-      wishListViewPanel = new WishListViewPanel("wishListViewPanel", model);
-   }
+  public WishListPanel(final String id, final IModel<Shopper> model) {
+    super(id, model);
+    wishListViewPanel = new WishListViewPanel("wishListViewPanel", model);
+  }
 
-   @Override
-   protected void onInitialize() {
-      offerDataProvider.setUser(AppServletContainerAuthenticatedWebSession.getUserName());
-      offerDataProvider.setPassword(AppServletContainerAuthenticatedWebSession.getPassword());
-      offerDataProvider.setSite(AppServletContainerAuthenticatedWebSession.getSite());
-      offerDataProvider.setType(new Offer());
-      offerDataProvider.getType().setActive(true);
-      offerDataProvider.setOrderBy(OrderBy.NONE);
-      offerDataProvider.getType().setContract(shopperDataProvider.find((Shopper) getDefaultModelObject()).getContract());
+  @Override
+  protected void onInitialize() {
+    offerDataProvider.setUser(AppServletContainerAuthenticatedWebSession.getUserName());
+    offerDataProvider.setPassword(AppServletContainerAuthenticatedWebSession.getPassword());
+    offerDataProvider.setSite(AppServletContainerAuthenticatedWebSession.getSite());
+    offerDataProvider.setType(new Offer());
+    offerDataProvider.getType().setActive(true);
+    offerDataProvider.setOrderBy(OrderBy.NONE);
+    offerDataProvider.getType().setContract(shopperDataProvider.find((Shopper) getDefaultModelObject()).getContract());
 
-      if (offerDataProvider.size() > 0) {
-         add(wishListViewPanel.add(wishListViewPanel.new WishtListViewFragment()).setOutputMarkupId(true));
-      } else {
-         add(wishListViewPanel.add(wishListViewPanel.new EmptyWishtListViewFragment()).setOutputMarkupId(true));
-      }
+    if (offerDataProvider.size() > 0) {
+      add(wishListViewPanel.add(wishListViewPanel.new WishtListViewFragment()).setOutputMarkupId(true));
+    } else {
+      add(wishListViewPanel.add(wishListViewPanel.new EmptyWishtListViewFragment()).setOutputMarkupId(true));
+    }
 
-      super.onInitialize();
-   }
+    super.onInitialize();
+  }
 }

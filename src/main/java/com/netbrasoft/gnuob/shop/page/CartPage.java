@@ -11,20 +11,20 @@ import com.netbrasoft.gnuob.shop.security.ShopRoles;
 import com.netbrasoft.gnuob.shop.shopper.Shopper;
 
 @MountPath("cart.html")
-@AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
+@AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
 public class CartPage extends BasePage {
 
-   private static final long serialVersionUID = -7854507374209656133L;
+  private static final long serialVersionUID = -7854507374209656133L;
 
-   private CartMainMenuPanel mainMenuPanel = new CartMainMenuPanel("mainMenuPanel", Model.of(new Shopper()));
+  private CartMainMenuPanel mainMenuPanel = new CartMainMenuPanel("mainMenuPanel", Model.of(new Shopper()));
 
-   private ContentBorder contentBorder = new ContentBorder("contentBorder");
+  private ContentBorder contentBorder = new ContentBorder("contentBorder");
 
-   @Override
-   protected void onInitialize() {
-      contentBorder.add(mainMenuPanel);
-      add(contentBorder);
+  @Override
+  protected void onInitialize() {
+    contentBorder.add(mainMenuPanel);
+    add(contentBorder);
 
-      super.onInitialize();
-   }
+    super.onInitialize();
+  }
 }

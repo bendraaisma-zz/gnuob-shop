@@ -10,14 +10,14 @@ import com.netbrasoft.gnuob.shop.panel.ContactPanel;
 
 public class ContactTab extends AbstractTab {
 
-   private static final long serialVersionUID = 4835579949680085443L;
+  private static final long serialVersionUID = 4835579949680085443L;
 
-   public ContactTab(final IModel<String> title) {
-      super(title);
-   }
+  public ContactTab(final IModel<String> title) {
+    super(title);
+  }
 
-   @Override
-   public WebMarkupContainer getPanel(final String panelId) {
-      return new ContactPanel(panelId, Model.of(new Category()));
-   }
+  @Override
+  public WebMarkupContainer getPanel(final String panelId) {
+    return new ContactPanel(panelId, Model.of(new Category()));
+  }
 }

@@ -25,150 +25,150 @@ import com.nimbusds.oauth2.sdk.id.ClientID;
 import com.nimbusds.oauth2.sdk.id.State;
 import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
 
-@AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
+@AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
 public class AuthorizationPanel extends Panel {
 
-   @AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
-   class FacebookAjaxLink extends AjaxLink<String> {
+  @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
+  class FacebookAjaxLink extends AjaxLink<String> {
 
-      private static final long serialVersionUID = -8317730269644885290L;
+    private static final long serialVersionUID = -8317730269644885290L;
 
-      public FacebookAjaxLink() {
-         super("facebook");
+    public FacebookAjaxLink() {
+      super("facebook");
+    }
+
+    @Override
+    public void onClick(AjaxRequestTarget target) {
+      try {
+        final Shopper shopper = shopperDataProvider.find(new Shopper());
+        shopper.setIssuer(OAuthUtils.ACCOUNTS_FACEBOOK_COM);
+
+        final URI issuerURI = new URI(shopper.getIssuer());
+        final ClientID clientID = OAuthUtils.getClientID(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
+        final State state = new State(shopper.getId());
+        final URI redirectURI = URI.create(System.getProperty("gnuob." + AppServletContainerAuthenticatedWebSession.getSite() + ".login.redirect"));
+        final Scope scope = OAuthUtils.getScope(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
+        final OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
+
+        shopperDataProvider.merge(shopper);
+
+        throw new RedirectToUrlException(OAuthUtils.getFacebookAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state).toURI().toString());
+      } catch (GNUOpenBusinessApplicationException | URISyntaxException | SerializeException e) {
+        LOGGER.warn("OAuth Exception with Facebook.", e);
       }
+    }
+  }
 
-      @Override
-      public void onClick(AjaxRequestTarget target) {
-         try {
-            final Shopper shopper = shopperDataProvider.find(new Shopper());
-            shopper.setIssuer(OAuthUtils.ACCOUNTS_FACEBOOK_COM);
+  @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
+  class GoogleAjaxLink extends AjaxLink<String> {
 
-            final URI issuerURI = new URI(shopper.getIssuer());
-            final ClientID clientID = OAuthUtils.getClientID(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
-            final State state = new State(shopper.getId());
-            final URI redirectURI = URI.create(System.getProperty("gnuob." + AppServletContainerAuthenticatedWebSession.getSite() + ".login.redirect"));
-            final Scope scope = OAuthUtils.getScope(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
-            final OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
+    private static final long serialVersionUID = -8317730269644885290L;
 
-            shopperDataProvider.merge(shopper);
+    public GoogleAjaxLink() {
+      super("google");
+    }
 
-            throw new RedirectToUrlException(OAuthUtils.getFacebookAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state).toURI().toString());
-         } catch (GNUOpenBusinessApplicationException | URISyntaxException | SerializeException e) {
-            LOGGER.warn("OAuth Exception with Facebook.",e);
-         }
+    @Override
+    public void onClick(AjaxRequestTarget target) {
+      try {
+        final Shopper shopper = shopperDataProvider.find(new Shopper());
+        shopper.setIssuer(OAuthUtils.ACCOUNTS_GOOGLE_COM);
+
+        final URI issuerURI = new URI(shopper.getIssuer());
+        final ClientID clientID = OAuthUtils.getClientID(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
+        final State state = new State(shopper.getId());
+        final URI redirectURI = URI.create(System.getProperty("gnuob." + AppServletContainerAuthenticatedWebSession.getSite() + ".login.redirect"));
+        final Scope scope = OAuthUtils.getScope(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
+        final OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
+
+        shopperDataProvider.merge(shopper);
+
+        throw new RedirectToUrlException(OAuthUtils.getAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state).toURI().toString());
+      } catch (GNUOpenBusinessApplicationException | URISyntaxException | SerializeException e) {
+        LOGGER.warn("OAuth Exception with Google.", e);
       }
-   }
+    }
+  }
 
-   @AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
-   class GoogleAjaxLink extends AjaxLink<String> {
+  @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
+  class MicrosoftAjaxLink extends AjaxLink<String> {
 
-      private static final long serialVersionUID = -8317730269644885290L;
+    private static final long serialVersionUID = -8317730269644885290L;
 
-      public GoogleAjaxLink() {
-         super("google");
+    public MicrosoftAjaxLink() {
+      super("microsoft");
+    }
+
+    @Override
+    public void onClick(AjaxRequestTarget target) {
+      try {
+        final Shopper shopper = shopperDataProvider.find(new Shopper());
+        shopper.setIssuer(OAuthUtils.ACCOUNTS_MICROSOFT_COM);
+
+        final URI issuerURI = new URI(shopper.getIssuer());
+        final ClientID clientID = OAuthUtils.getClientID(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
+        final State state = new State(shopper.getId());
+        final URI redirectURI = URI.create(System.getProperty("gnuob." + AppServletContainerAuthenticatedWebSession.getSite() + ".login.redirect"));
+        final Scope scope = OAuthUtils.getScope(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
+        final OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
+
+        shopperDataProvider.merge(shopper);
+
+        throw new RedirectToUrlException(OAuthUtils.getMicrosoftAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state).toURI().toString());
+      } catch (GNUOpenBusinessApplicationException | URISyntaxException | SerializeException e) {
+        LOGGER.warn("OAuth Exception with Microsoft.", e);
       }
+    }
+  }
 
-      @Override
-      public void onClick(AjaxRequestTarget target) {
-         try {
-            final Shopper shopper = shopperDataProvider.find(new Shopper());
-            shopper.setIssuer(OAuthUtils.ACCOUNTS_GOOGLE_COM);
+  @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
+  class PayPalAjaxLink extends AjaxLink<String> {
 
-            final URI issuerURI = new URI(shopper.getIssuer());
-            final ClientID clientID = OAuthUtils.getClientID(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
-            final State state = new State(shopper.getId());
-            final URI redirectURI = URI.create(System.getProperty("gnuob." + AppServletContainerAuthenticatedWebSession.getSite() + ".login.redirect"));
-            final Scope scope = OAuthUtils.getScope(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
-            final OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
+    private static final long serialVersionUID = -8317730269644885290L;
 
-            shopperDataProvider.merge(shopper);
+    public PayPalAjaxLink() {
+      super("paypal");
+    }
 
-            throw new RedirectToUrlException(OAuthUtils.getAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state).toURI().toString());
-         } catch (GNUOpenBusinessApplicationException | URISyntaxException | SerializeException e) {
-            LOGGER.warn("OAuth Exception with Google.",e);
-         }
+    @Override
+    public void onClick(AjaxRequestTarget target) {
+      try {
+        final Shopper shopper = shopperDataProvider.find(new Shopper());
+        shopper.setIssuer(OAuthUtils.ACCOUNTS_PAY_PAL_COM);
+
+        final URI issuerURI = new URI(shopper.getIssuer());
+        final ClientID clientID = OAuthUtils.getClientID(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
+        final State state = new State(shopper.getId());
+        final URI redirectURI = URI.create(System.getProperty("gnuob." + AppServletContainerAuthenticatedWebSession.getSite() + ".login.redirect"));
+        final Scope scope = OAuthUtils.getScope(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
+        final OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
+
+        shopperDataProvider.merge(shopper);
+
+        throw new RedirectToUrlException(OAuthUtils.getAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state).toURI().toString());
+      } catch (GNUOpenBusinessApplicationException | URISyntaxException | SerializeException e) {
+        LOGGER.warn("OAuth Exception with PayPal.", e);
       }
-   }
+    }
+  }
 
-   @AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
-   class MicrosoftAjaxLink extends AjaxLink<String> {
+  private static final Logger LOGGER = LoggerFactory.getLogger(AuthorizationPanel.class);
 
-      private static final long serialVersionUID = -8317730269644885290L;
+  private static final long serialVersionUID = -7007737558968816459L;
 
-      public MicrosoftAjaxLink() {
-         super("microsoft");
-      }
+  @SpringBean(name = "ShopperDataProvider", required = true)
+  private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
-      @Override
-      public void onClick(AjaxRequestTarget target) {
-         try {
-            final Shopper shopper = shopperDataProvider.find(new Shopper());
-            shopper.setIssuer(OAuthUtils.ACCOUNTS_MICROSOFT_COM);
+  public AuthorizationPanel(final String id, final IModel<Shopper> model) {
+    super(id, model);
+  }
 
-            final URI issuerURI = new URI(shopper.getIssuer());
-            final ClientID clientID = OAuthUtils.getClientID(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
-            final State state = new State(shopper.getId());
-            final URI redirectURI = URI.create(System.getProperty("gnuob." + AppServletContainerAuthenticatedWebSession.getSite() + ".login.redirect"));
-            final Scope scope = OAuthUtils.getScope(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
-            final OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
-
-            shopperDataProvider.merge(shopper);
-
-            throw new RedirectToUrlException(OAuthUtils.getMicrosoftAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state).toURI().toString());
-         } catch (GNUOpenBusinessApplicationException | URISyntaxException | SerializeException e) {
-            LOGGER.warn("OAuth Exception with Microsoft.",e);
-         }
-      }
-   }
-
-   @AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
-   class PayPalAjaxLink extends AjaxLink<String> {
-
-      private static final long serialVersionUID = -8317730269644885290L;
-
-      public PayPalAjaxLink() {
-         super("paypal");
-      }
-
-      @Override
-      public void onClick(AjaxRequestTarget target) {
-         try {
-            final Shopper shopper = shopperDataProvider.find(new Shopper());
-            shopper.setIssuer(OAuthUtils.ACCOUNTS_PAY_PAL_COM);
-
-            final URI issuerURI = new URI(shopper.getIssuer());
-            final ClientID clientID = OAuthUtils.getClientID(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
-            final State state = new State(shopper.getId());
-            final URI redirectURI = URI.create(System.getProperty("gnuob." + AppServletContainerAuthenticatedWebSession.getSite() + ".login.redirect"));
-            final Scope scope = OAuthUtils.getScope(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
-            final OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
-
-            shopperDataProvider.merge(shopper);
-
-            throw new RedirectToUrlException(OAuthUtils.getAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state).toURI().toString());
-         } catch (GNUOpenBusinessApplicationException | URISyntaxException | SerializeException e) {
-            LOGGER.warn("OAuth Exception with PayPal.",e);
-         }
-      }
-   }
-
-   private static final Logger LOGGER = LoggerFactory.getLogger(AuthorizationPanel.class);
-
-   private static final long serialVersionUID = -7007737558968816459L;
-
-   @SpringBean(name = "ShopperDataProvider", required = true)
-   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
-
-   public AuthorizationPanel(final String id, final IModel<Shopper> model) {
-      super(id, model);
-   }
-
-   @Override
-   protected void onInitialize() {
-      add(new GoogleAjaxLink());
-      add(new FacebookAjaxLink());
-      add(new PayPalAjaxLink());
-      add(new MicrosoftAjaxLink());
-      super.onInitialize();
-   }
+  @Override
+  protected void onInitialize() {
+    add(new GoogleAjaxLink());
+    add(new FacebookAjaxLink());
+    add(new PayPalAjaxLink());
+    add(new MicrosoftAjaxLink());
+    super.onInitialize();
+  }
 }

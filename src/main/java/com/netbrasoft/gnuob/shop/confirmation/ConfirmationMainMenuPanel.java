@@ -17,40 +17,44 @@ import com.netbrasoft.gnuob.shop.shopper.Shopper;
 
 import de.agilecoders.wicket.core.markup.html.bootstrap.tabs.BootstrapTabbedPanel;
 
-@AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
+@AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
 public class ConfirmationMainMenuPanel extends Panel {
 
-   class MainMenuTabbedPanel extends BootstrapTabbedPanel<ITab> {
+  private static final int SELECTED_TAB = 3;
 
-      private static final long serialVersionUID = 6838221105862530322L;
+  @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
+  class MainMenuTabbedPanel extends BootstrapTabbedPanel<ITab> {
 
-      public MainMenuTabbedPanel() {
-         super("mainMenuTabbedPanel", new ArrayList<ITab>());
-      }
+    private static final long serialVersionUID = 6838221105862530322L;
 
-      @Override
-      public String getTabContainerCssClass() {
-         return "nav nav-pills nav-justified";
-      }
-   }
+    public MainMenuTabbedPanel() {
+      super("mainMenuTabbedPanel", new ArrayList<ITab>());
+    }
 
-   private static final long serialVersionUID = -4776222984181317489L;
+    @Override
+    public String getTabContainerCssClass() {
+      return "nav nav-pills nav-justified";
+    }
+  }
 
-   private final MainMenuTabbedPanel mainMenuTabbedPanel = new MainMenuTabbedPanel();
+  private static final long serialVersionUID = -4776222984181317489L;
 
-   public ConfirmationMainMenuPanel(final String id, final IModel<Shopper> model) {
-      super(id, model);
-   }
+  private final MainMenuTabbedPanel mainMenuTabbedPanel;
 
-   @Override
-   protected void onInitialize() {
-      mainMenuTabbedPanel.getTabs().add(new HomeTab(Model.of(getString("homeMessage", new Model<String>(), "HOME").toUpperCase())));
-      mainMenuTabbedPanel.getTabs().add(new CartTab(Model.of(getString("cartMessage", new Model<String>(), "CART").toUpperCase())));
-      mainMenuTabbedPanel.getTabs().add(new SpecificationTab(Model.of(getString("specificationMessage", new Model<String>(), "SPECIFICATIONS").toUpperCase())));
-      mainMenuTabbedPanel.getTabs().add(new ConfirmationTab(Model.of(getString("confirmationMessage", new Model<String>(), "CONFIRMATION").toUpperCase())));
-      mainMenuTabbedPanel.setSelectedTab(3);
+  public ConfirmationMainMenuPanel(final String id, final IModel<Shopper> model) {
+    super(id, model);
+    mainMenuTabbedPanel = new MainMenuTabbedPanel();
+  }
 
-      add(mainMenuTabbedPanel.setOutputMarkupId(true));
-      super.onInitialize();
-   }
+  @Override
+  protected void onInitialize() {
+    mainMenuTabbedPanel.getTabs().add(new HomeTab(Model.of(getString("homeMessage", new Model<String>(), "HOME").toUpperCase())));
+    mainMenuTabbedPanel.getTabs().add(new CartTab(Model.of(getString("cartMessage", new Model<String>(), "CART").toUpperCase())));
+    mainMenuTabbedPanel.getTabs().add(new SpecificationTab(Model.of(getString("specificationMessage", new Model<String>(), "SPECIFICATIONS").toUpperCase())));
+    mainMenuTabbedPanel.getTabs().add(new ConfirmationTab(Model.of(getString("confirmationMessage", new Model<String>(), "CONFIRMATION").toUpperCase())));
+    mainMenuTabbedPanel.setSelectedTab(SELECTED_TAB);
+
+    add(mainMenuTabbedPanel.setOutputMarkupId(true));
+    super.onInitialize();
+  }
 }

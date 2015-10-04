@@ -14,32 +14,32 @@ import com.netbrasoft.gnuob.shop.shopper.Shopper;
 import com.netbrasoft.gnuob.shop.wishlist.WishListMainMenuPanel;
 
 @MountPath("wishlist.html")
-@AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
+@AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
 public class WishListPage extends BasePage {
 
-   private static final long serialVersionUID = 4051343927877779621L;
+  private static final long serialVersionUID = 4051343927877779621L;
 
-   private final WishListMainMenuPanel mainMenuPanel;
+  private final WishListMainMenuPanel mainMenuPanel;
 
-   private final ContentBorder contentBorder;
+  private final ContentBorder contentBorder;
 
-   @SpringBean(name = "ShopperDataProvider", required = true)
-   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
+  @SpringBean(name = "ShopperDataProvider", required = true)
+  private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
-   public WishListPage() {
-      mainMenuPanel = new WishListMainMenuPanel("mainMenuPanel", Model.of(new Shopper()));
-      contentBorder = new ContentBorder("contentBorder");
-   }
+  public WishListPage() {
+    mainMenuPanel = new WishListMainMenuPanel("mainMenuPanel", Model.of(new Shopper()));
+    contentBorder = new ContentBorder("contentBorder");
+  }
 
-   @Override
-   protected void onInitialize() {
-      if (!shopperDataProvider.find(new Shopper()).isLoggedIn()) {
-         throw new RedirectToUrlException("account.html");
-      }
+  @Override
+  protected void onInitialize() {
+    if (!shopperDataProvider.find(new Shopper()).isLoggedIn()) {
+      throw new RedirectToUrlException("account.html");
+    }
 
-      contentBorder.add(mainMenuPanel);
-      add(contentBorder);
+    contentBorder.add(mainMenuPanel);
+    add(contentBorder);
 
-      super.onInitialize();
-   }
+    super.onInitialize();
+  }
 }

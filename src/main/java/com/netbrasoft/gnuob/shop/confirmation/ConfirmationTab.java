@@ -9,14 +9,14 @@ import com.netbrasoft.gnuob.shop.shopper.Shopper;
 
 public class ConfirmationTab extends AbstractTab {
 
-   private static final long serialVersionUID = 6278429178773013326L;
+  private static final long serialVersionUID = 6278429178773013326L;
 
-   public ConfirmationTab(final IModel<String> title) {
-      super(title);
-   }
+  public ConfirmationTab(final IModel<String> title) {
+    super(title);
+  }
 
-   @Override
-   public WebMarkupContainer getPanel(final String panelId) {
-      return new ConfirmationPanel(panelId, Model.of(new Shopper()));
-   }
+  @Override
+  public WebMarkupContainer getPanel(final String panelId) {
+    return new ConfirmationPanel(panelId, Model.of(new Shopper()));
+  }
 }

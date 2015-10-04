@@ -14,55 +14,55 @@ import net.minidev.json.JSONObject;
 
 public class PayPalUserInfoSuccessResponse extends UserInfoSuccessResponse {
 
-   public static PayPalUserInfoSuccessResponse parse(final HTTPResponse httpResponse) throws ParseException {
-      httpResponse.ensureStatusCode(HTTPResponse.SC_OK);
+  public static PayPalUserInfoSuccessResponse parse(final HTTPResponse httpResponse) throws ParseException {
+    httpResponse.ensureStatusCode(HTTPResponse.SC_OK);
 
-      httpResponse.ensureContentType();
+    httpResponse.ensureContentType();
 
-      final ContentType ct = httpResponse.getContentType();
+    final ContentType ct = httpResponse.getContentType();
 
-      PayPalUserInfoSuccessResponse response;
+    PayPalUserInfoSuccessResponse response;
 
-      if (ct.match(CommonContentTypes.APPLICATION_JSON)) {
+    if (ct.match(CommonContentTypes.APPLICATION_JSON)) {
 
-         UserInfo claimsSet;
+      UserInfo claimsSet;
 
-         try {
-            final JSONObject jsonObject = httpResponse.getContentAsJSONObject();
-            jsonObject.put(UserInfo.SUB_CLAIM_NAME, JSONObjectUtils.getString(jsonObject, "user_id"));
-            claimsSet = new UserInfo(jsonObject);
+      try {
+        final JSONObject jsonObject = httpResponse.getContentAsJSONObject();
+        jsonObject.put(UserInfo.SUB_CLAIM_NAME, JSONObjectUtils.getString(jsonObject, "user_id"));
+        claimsSet = new UserInfo(jsonObject);
 
-         } catch (final Exception e) {
+      } catch (final Exception e) {
 
-            throw new ParseException("Couldn't parse UserInfo claims: " + e.getMessage(), e);
-         }
-
-         response = new PayPalUserInfoSuccessResponse(claimsSet);
-      } else if (ct.match(CommonContentTypes.APPLICATION_JWT)) {
-
-         JWT jwt;
-
-         try {
-            jwt = httpResponse.getContentAsJWT();
-
-         } catch (final ParseException e) {
-
-            throw new ParseException("Couldn't parse UserInfo claims JWT: " + e.getMessage(), e);
-         }
-
-         response = new PayPalUserInfoSuccessResponse(jwt);
-      } else {
-         throw new ParseException("Unexpected Content-Type, must be " + CommonContentTypes.APPLICATION_JSON + " or " + CommonContentTypes.APPLICATION_JWT);
+        throw new ParseException("Couldn't parse UserInfo claims: " + e.getMessage(), e);
       }
 
-      return response;
-   }
+      response = new PayPalUserInfoSuccessResponse(claimsSet);
+    } else if (ct.match(CommonContentTypes.APPLICATION_JWT)) {
 
-   public PayPalUserInfoSuccessResponse(JWT jwt) {
-      super(jwt);
-   }
+      JWT jwt;
 
-   public PayPalUserInfoSuccessResponse(UserInfo claimsSet) {
-      super(claimsSet);
-   }
+      try {
+        jwt = httpResponse.getContentAsJWT();
+
+      } catch (final ParseException e) {
+
+        throw new ParseException("Couldn't parse UserInfo claims JWT: " + e.getMessage(), e);
+      }
+
+      response = new PayPalUserInfoSuccessResponse(jwt);
+    } else {
+      throw new ParseException("Unexpected Content-Type, must be " + CommonContentTypes.APPLICATION_JSON + " or " + CommonContentTypes.APPLICATION_JWT);
+    }
+
+    return response;
+  }
+
+  public PayPalUserInfoSuccessResponse(JWT jwt) {
+    super(jwt);
+  }
+
+  public PayPalUserInfoSuccessResponse(UserInfo claimsSet) {
+    super(claimsSet);
+  }
 }

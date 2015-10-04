@@ -7,14 +7,14 @@ import org.apache.wicket.request.flow.RedirectToUrlException;
 
 public class ConfirmationTab extends AbstractTab {
 
-   private static final long serialVersionUID = -7414478523953380913L;
+  private static final long serialVersionUID = -7414478523953380913L;
 
-   public ConfirmationTab(final IModel<String> title) {
-      super(title);
-   }
+  public ConfirmationTab(final IModel<String> title) {
+    super(title);
+  }
 
-   @Override
-   public WebMarkupContainer getPanel(final String panelId) {
-      throw new RedirectToUrlException("confirmation.html");
-   }
+  @Override
+  public WebMarkupContainer getPanel(final String panelId) {
+    throw new RedirectToUrlException("confirmation.html");
+  }
 }

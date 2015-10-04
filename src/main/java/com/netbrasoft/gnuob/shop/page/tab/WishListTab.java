@@ -7,14 +7,14 @@ import org.apache.wicket.request.flow.RedirectToUrlException;
 
 public class WishListTab extends AbstractTab {
 
-   private static final long serialVersionUID = -7414478523953380913L;
+  private static final long serialVersionUID = -7414478523953380913L;
 
-   public WishListTab(final IModel<String> title) {
-      super(title);
-   }
+  public WishListTab(final IModel<String> title) {
+    super(title);
+  }
 
-   @Override
-   public WebMarkupContainer getPanel(final String panelId) {
-      throw new RedirectToUrlException("wishlist.html");
-   }
+  @Override
+  public WebMarkupContainer getPanel(final String panelId) {
+    throw new RedirectToUrlException("wishlist.html");
+  }
 }

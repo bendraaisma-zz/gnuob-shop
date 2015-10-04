@@ -7,21 +7,21 @@ import com.netbrasoft.gnuob.shop.panel.HeaderPanel;
 
 public class ContentBorder extends Border {
 
-   private static final long serialVersionUID = 6569587142042286311L;
+  private static final long serialVersionUID = 6569587142042286311L;
 
-   private HeaderPanel headerPanel = new HeaderPanel("headerPanel");
+  private HeaderPanel headerPanel = new HeaderPanel("headerPanel");
 
-   private FooterPanel footerPanel = new FooterPanel("footerPanel");
+  private FooterPanel footerPanel = new FooterPanel("footerPanel");
 
-   public ContentBorder(String id) {
-      super(id);
-   }
+  public ContentBorder(String id) {
+    super(id);
+  }
 
-   @Override
-   protected void onInitialize() {
-      super.onInitialize();
+  @Override
+  protected void onInitialize() {
+    super.onInitialize();
 
-      addToBorder(headerPanel.setOutputMarkupId(true));
-      addToBorder(footerPanel.setOutputMarkupId(true));
-   }
+    addToBorder(headerPanel.setOutputMarkupId(true));
+    addToBorder(footerPanel.setOutputMarkupId(true));
+  }
 }

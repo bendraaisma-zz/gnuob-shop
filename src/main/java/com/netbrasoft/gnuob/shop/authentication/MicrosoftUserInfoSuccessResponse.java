@@ -14,55 +14,55 @@ import net.minidev.json.JSONObject;
 
 public class MicrosoftUserInfoSuccessResponse extends UserInfoSuccessResponse {
 
-   public static MicrosoftUserInfoSuccessResponse parse(final HTTPResponse httpResponse) throws ParseException {
-      httpResponse.ensureStatusCode(HTTPResponse.SC_OK);
+  public static MicrosoftUserInfoSuccessResponse parse(final HTTPResponse httpResponse) throws ParseException {
+    httpResponse.ensureStatusCode(HTTPResponse.SC_OK);
 
-      httpResponse.ensureContentType();
+    httpResponse.ensureContentType();
 
-      final ContentType ct = httpResponse.getContentType();
+    final ContentType ct = httpResponse.getContentType();
 
-      MicrosoftUserInfoSuccessResponse response;
+    MicrosoftUserInfoSuccessResponse response;
 
-      if (ct.match(CommonContentTypes.APPLICATION_JSON)) {
+    if (ct.match(CommonContentTypes.APPLICATION_JSON)) {
 
-         MicrosoftUserInfo claimsSet;
+      MicrosoftUserInfo claimsSet;
 
-         try {
-            final JSONObject jsonObject = httpResponse.getContentAsJSONObject();
-            jsonObject.put(UserInfo.SUB_CLAIM_NAME, JSONObjectUtils.getString(jsonObject, "id"));
-            claimsSet = new MicrosoftUserInfo(jsonObject);
+      try {
+        final JSONObject jsonObject = httpResponse.getContentAsJSONObject();
+        jsonObject.put(UserInfo.SUB_CLAIM_NAME, JSONObjectUtils.getString(jsonObject, "id"));
+        claimsSet = new MicrosoftUserInfo(jsonObject);
 
-         } catch (final Exception e) {
+      } catch (final Exception e) {
 
-            throw new ParseException("Couldn't parse UserInfo claims: " + e.getMessage(), e);
-         }
-
-         response = new MicrosoftUserInfoSuccessResponse(claimsSet);
-      } else if (ct.match(CommonContentTypes.APPLICATION_JWT)) {
-
-         JWT jwt;
-
-         try {
-            jwt = httpResponse.getContentAsJWT();
-
-         } catch (final ParseException e) {
-
-            throw new ParseException("Couldn't parse UserInfo claims JWT: " + e.getMessage(), e);
-         }
-
-         response = new MicrosoftUserInfoSuccessResponse(jwt);
-      } else {
-         throw new ParseException("Unexpected Content-Type, must be " + CommonContentTypes.APPLICATION_JSON + " or " + CommonContentTypes.APPLICATION_JWT);
+        throw new ParseException("Couldn't parse UserInfo claims: " + e.getMessage(), e);
       }
 
-      return response;
-   }
+      response = new MicrosoftUserInfoSuccessResponse(claimsSet);
+    } else if (ct.match(CommonContentTypes.APPLICATION_JWT)) {
 
-   public MicrosoftUserInfoSuccessResponse(JWT jwt) {
-      super(jwt);
-   }
+      JWT jwt;
 
-   public MicrosoftUserInfoSuccessResponse(UserInfo claimsSet) {
-      super(claimsSet);
-   }
+      try {
+        jwt = httpResponse.getContentAsJWT();
+
+      } catch (final ParseException e) {
+
+        throw new ParseException("Couldn't parse UserInfo claims JWT: " + e.getMessage(), e);
+      }
+
+      response = new MicrosoftUserInfoSuccessResponse(jwt);
+    } else {
+      throw new ParseException("Unexpected Content-Type, must be " + CommonContentTypes.APPLICATION_JSON + " or " + CommonContentTypes.APPLICATION_JWT);
+    }
+
+    return response;
+  }
+
+  public MicrosoftUserInfoSuccessResponse(JWT jwt) {
+    super(jwt);
+  }
+
+  public MicrosoftUserInfoSuccessResponse(UserInfo claimsSet) {
+    super(claimsSet);
+  }
 }

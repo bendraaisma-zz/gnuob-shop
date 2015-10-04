@@ -10,31 +10,31 @@ import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
 import com.netbrasoft.gnuob.shop.shopper.Shopper;
 
-@AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
+@AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
 public class CartPanel extends Panel {
 
-   private static final long serialVersionUID = 2034566325989232879L;
+  private static final long serialVersionUID = 2034566325989232879L;
 
-   private final CartViewPanel cartViewPanel;
+  private final CartViewPanel cartViewPanel;
 
-   @SpringBean(name = "ShopperDataProvider", required = true)
-   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
+  @SpringBean(name = "ShopperDataProvider", required = true)
+  private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
-   public CartPanel(final String id, final IModel<Shopper> model) {
-      super(id, model);
+  public CartPanel(final String id, final IModel<Shopper> model) {
+    super(id, model);
 
-      cartViewPanel = new CartViewPanel("cartViewPanel", model);
-   }
+    cartViewPanel = new CartViewPanel("cartViewPanel", model);
+  }
 
-   @Override
-   protected void onInitialize() {
+  @Override
+  protected void onInitialize() {
 
-      if (shopperDataProvider.find((Shopper) getDefaultModelObject()).getCart().getRecords().isEmpty()) {
-         add(cartViewPanel.add(cartViewPanel.new EmptyOfferRecordViewFragement().setOutputMarkupId(true)).setOutputMarkupId(true));
-      } else {
-         add(cartViewPanel.add(cartViewPanel.new OfferRecordViewFragement().setOutputMarkupId(true)).setOutputMarkupId(true));
-      }
+    if (shopperDataProvider.find((Shopper) getDefaultModelObject()).getCart().getRecords().isEmpty()) {
+      add(cartViewPanel.add(cartViewPanel.new EmptyOfferRecordViewFragement().setOutputMarkupId(true)).setOutputMarkupId(true));
+    } else {
+      add(cartViewPanel.add(cartViewPanel.new OfferRecordViewFragement().setOutputMarkupId(true)).setOutputMarkupId(true));
+    }
 
-      super.onInitialize();
-   }
+    super.onInitialize();
+  }
 }

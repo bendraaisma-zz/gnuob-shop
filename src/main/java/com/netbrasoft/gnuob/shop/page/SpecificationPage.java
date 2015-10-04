@@ -11,20 +11,20 @@ import com.netbrasoft.gnuob.shop.shopper.Shopper;
 import com.netbrasoft.gnuob.shop.specification.SpecificationMainMenuPanel;
 
 @MountPath("specification.html")
-@AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
+@AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
 public class SpecificationPage extends BasePage {
 
-   private static final long serialVersionUID = 120059668578792943L;
+  private static final long serialVersionUID = 120059668578792943L;
 
-   private SpecificationMainMenuPanel mainMenuPanel = new SpecificationMainMenuPanel("mainMenuPanel", Model.of(new Shopper()));
+  private SpecificationMainMenuPanel mainMenuPanel = new SpecificationMainMenuPanel("mainMenuPanel", Model.of(new Shopper()));
 
-   private ContentBorder contentBorder = new ContentBorder("contentBorder");
+  private ContentBorder contentBorder = new ContentBorder("contentBorder");
 
-   @Override
-   protected void onInitialize() {
-      contentBorder.add(mainMenuPanel);
-      add(contentBorder);
+  @Override
+  protected void onInitialize() {
+    contentBorder.add(mainMenuPanel);
+    add(contentBorder);
 
-      super.onInitialize();
-   }
+    super.onInitialize();
+  }
 }

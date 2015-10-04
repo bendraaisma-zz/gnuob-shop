@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.netbrasoft</groupId>
@@ -34,17 +35,17 @@
 		<version.wicket-source.plugin>7.0.0</version.wicket-source.plugin>
 		<version.springframework.plugin>4.1.7.RELEASE</version.springframework.plugin>
 		<version.surefire.plugin>2.17</version.surefire.plugin>
-		<version.netbrasoft.gnuob>0.0.6-SNAPSHOT</version.netbrasoft.gnuob>
+		<version.gnuob-api>0.0.7-SNAPSHOT</version.gnuob-api>
+		<version.gnuob-login>0.0.2-SNAPSHOT</version.gnuob-login>
 		<version.javasimon>4.0.1</version.javasimon>
 		<version.wicket-dnd>0.6.0</version.wicket-dnd>
 		<version.wicket-bootstrap>0.10.3</version.wicket-bootstrap>
 		<version.bootstrap-validator>0.8.1</version.bootstrap-validator>
 		<version.jquery.cookie>1.4.1</version.jquery.cookie>
 		<version.bootstrap-3-datepicker>1.4.0</version.bootstrap-3-datepicker>
-		<version.com.nimbusds>4.16.1</version.com.nimbusds>
+		<version.com.nimbusds>4.17</version.com.nimbusds>
 		<version.mockito-all>1.9.5</version.mockito-all>
 		<version.graphene-webdriver>2.0.3.Final</version.graphene-webdriver>
-
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.source>1.8</maven.compiler.source>
 	</properties>
@@ -190,12 +191,12 @@
 		<dependency>
 			<groupId>com.netbrasoft</groupId>
 			<artifactId>gnuob-api</artifactId>
-			<version>${version.netbrasoft.gnuob}</version>
+			<version>${version.gnuob-api}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.netbrasoft</groupId>
 			<artifactId>gnuob-login</artifactId>
-			<version>0.0.2-SNAPSHOT</version>
+			<version>${version.gnuob-login}</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -238,7 +239,8 @@
 	</dependencies>
 
 	<build>
-		<!-- Maven will append the version to the finalName (which is the name given to the generated war, and hence the context root) -->
+		<!-- Maven will append the version to the finalName (which is the name 
+			given to the generated war, and hence the context root) -->
 		<finalName>${project.artifactId}</finalName>
 		<resources>
 			<resource>
@@ -273,7 +275,8 @@
 						<manifestEntries>
 							<mode>development</mode>
 							<url>${project.url}</url>
-							<dependencies>org.apache.cxf services,org.apache.cxf.impl, net.sf.ehcache</dependencies>
+							<dependencies>org.apache.cxf services,org.apache.cxf.impl,
+								net.sf.ehcache</dependencies>
 						</manifestEntries>
 						<manifest>
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
@@ -294,8 +297,10 @@
 
 	<profiles>
 		<profile>
-			<!-- The default profile skips all tests, though you can tune it to run just unit tests based on a custom pattern -->
-			<!-- Seperate profiles are provided for running all tests, including Arquillian tests that execute in the specified container -->
+			<!-- The default profile skips all tests, though you can tune it to run 
+				just unit tests based on a custom pattern -->
+			<!-- Seperate profiles are provided for running all tests, including Arquillian 
+				tests that execute in the specified container -->
 			<id>default</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
@@ -313,8 +318,10 @@
 			</build>
 		</profile>
 		<profile>
-			<!-- An optional Arquillian testing profile that executes tests in your JBoss EAP instance -->
-			<!-- This profile will start a new JBoss EAP instance, and execute the test, shutting it down when done -->
+			<!-- An optional Arquillian testing profile that executes tests in your 
+				JBoss EAP instance -->
+			<!-- This profile will start a new JBoss EAP instance, and execute the 
+				test, shutting it down when done -->
 			<!-- Run with: mvn clean test -Parq-jbossas-managed -->
 			<id>arq-jbossas-managed</id>
 			<dependencies>

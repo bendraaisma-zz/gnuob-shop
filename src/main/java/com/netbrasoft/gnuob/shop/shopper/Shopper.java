@@ -7,128 +7,169 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.io.IClusterable;
+import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.Cacheable;
 
 import com.netbrasoft.gnuob.api.Contract;
 import com.netbrasoft.gnuob.api.Customer;
 import com.netbrasoft.gnuob.api.Offer;
 import com.netbrasoft.gnuob.api.OfferRecord;
+import com.netbrasoft.gnuob.api.Option;
 import com.netbrasoft.gnuob.api.Order;
+import com.netbrasoft.gnuob.api.SubOption;
 
 @Cacheable()
 public class Shopper implements IClusterable {
 
-   private static final long serialVersionUID = -3944018215261797780L;
+  private static final long serialVersionUID = -3944018215261797780L;
 
-   private String id = UUID.randomUUID().toString();
+  private String id = UUID.randomUUID().toString();
 
-   private String issuer = "";
+  private String issuer = "";
 
-   private Contract contract = new Contract();
+  private Contract contract = new Contract();
 
-   private Offer cart = new Offer();
+  private Offer cart = new Offer();
 
-   private Order checkout = new Order();
+  private Order checkout = new Order();
 
-   private boolean loggedIn = false;
+  private boolean loggedIn = false;
 
-   public Shopper() {
-      logout();
-   }
+  public Shopper() {}
 
-   public Offer getCart() {
-      return cart;
-   }
+  private Offer copyPropertiesCart(final Offer sourceCart) {
+    final Offer targetCart = new Offer();
 
-   public BigDecimal getCartTotal() {
-      BigDecimal total = BigDecimal.ZERO;
+    BeanUtils.copyProperties(sourceCart, targetCart, "id", "version", "permission");
 
-      for (final OfferRecord offerRecord : cart.getRecords()) {
-         total = total.add(offerRecord.getAmount().multiply(BigDecimal.valueOf(offerRecord.getQuantity().longValue())));
+    for (final OfferRecord sourceOfferRecord : sourceCart.getRecords()) {
+      final OfferRecord targetOfferRecord = new OfferRecord();
+
+      BeanUtils.copyProperties(sourceOfferRecord, targetOfferRecord, "id", "version");
+
+      for (final Option sourceRootOption : sourceOfferRecord.getOptions()) {
+        final Option targetRootOption = new Option();
+
+        BeanUtils.copyProperties(sourceRootOption, targetRootOption, "id", "version");
+
+        for (final SubOption sourceChildSubOption : sourceRootOption.getSubOptions()) {
+          final SubOption targetChildSubOption = new SubOption();
+
+          BeanUtils.copyProperties(sourceChildSubOption, targetChildSubOption, "id", "version");
+          targetRootOption.getSubOptions().add(targetChildSubOption);
+        }
+
+        targetOfferRecord.getOptions().add(targetRootOption);
       }
-      return total.add(getTaxTotal()).add(getShippingCostTotal());
-   }
 
-   public BigDecimal getCartTotalDiscount() {
-      BigDecimal discountTotal = BigDecimal.ZERO;
+      targetCart.getRecords().add(targetOfferRecord);
+    }
 
-      for (final OfferRecord offerRecord : cart.getRecords()) {
-         discountTotal = discountTotal.add(offerRecord.getDiscount().multiply(BigDecimal.valueOf(offerRecord.getQuantity().longValue())));
-      }
-      return discountTotal;
-   }
+    return targetCart;
+  }
 
-   public Order getCheckout() {
-      return checkout;
-   }
+  public Offer getCart() {
+    return cart;
+  }
 
-   public Contract getContract() {
-      return contract;
-   }
+  public BigDecimal getCartTotal() {
+    BigDecimal total = BigDecimal.ZERO;
 
-   public String getId() {
-      return id;
-   }
+    for (final OfferRecord offerRecord : cart.getRecords()) {
+      total = total.add(offerRecord.getAmount().multiply(BigDecimal.valueOf(offerRecord.getQuantity().longValue())));
+    }
+    return total.add(getTaxTotal()).add(getShippingCostTotal());
+  }
 
-   public String getIssuer() {
-      return issuer;
-   }
+  public BigDecimal getCartTotalDiscount() {
+    BigDecimal discountTotal = BigDecimal.ZERO;
 
-   public BigDecimal getShippingCostTotal() {
-      BigDecimal shippingCostTotal = BigDecimal.ZERO;
+    for (final OfferRecord offerRecord : cart.getRecords()) {
+      discountTotal = discountTotal.add(offerRecord.getDiscount().multiply(BigDecimal.valueOf(offerRecord.getQuantity().longValue())));
+    }
+    return discountTotal;
+  }
 
-      for (final OfferRecord offerRecord : cart.getRecords()) {
-         shippingCostTotal = shippingCostTotal.add(offerRecord.getShippingCost().multiply(BigDecimal.valueOf(offerRecord.getQuantity().longValue())));
-      }
-      return shippingCostTotal;
-   }
+  public Order getCheckout() {
+    return checkout;
+  }
 
-   public BigDecimal getTaxTotal() {
-      BigDecimal taxTotal = BigDecimal.ZERO;
+  public Contract getContract() {
+    return contract;
+  }
 
-      for (final OfferRecord offerRecord : cart.getRecords()) {
-         taxTotal = taxTotal.add(offerRecord.getTax().multiply(BigDecimal.valueOf(offerRecord.getQuantity().longValue())));
-      }
-      return taxTotal;
-   }
+  public String getId() {
+    return id;
+  }
 
-   public boolean isLoggedIn() {
-      return loggedIn;
-   }
+  public String getIssuer() {
+    return issuer;
+  }
 
-   public boolean login() {
-      return issuer != null && !"".equals(issuer) && RequestCycle.get().getRequest().getClientUrl().getQueryParameter("state") != null;
-   }
+  public BigDecimal getShippingCostTotal() {
+    BigDecimal shippingCostTotal = BigDecimal.ZERO;
 
-   public void logout() {
-      loggedIn = false;
-      contract = new Contract();
-      contract.setActive(true);
-      contract.setCustomer(new Customer());
-      contract.getCustomer().setActive(true);
-   }
+    for (final OfferRecord offerRecord : cart.getRecords()) {
+      shippingCostTotal = shippingCostTotal.add(offerRecord.getShippingCost().multiply(BigDecimal.valueOf(offerRecord.getQuantity().longValue())));
+    }
+    return shippingCostTotal;
+  }
 
-   public void setCart(@NotNull Offer cart) {
-      this.cart = cart;
-   }
+  public BigDecimal getTaxTotal() {
+    BigDecimal taxTotal = BigDecimal.ZERO;
 
-   public void setCheckout(@NotNull Order checkout) {
-      this.checkout = checkout;
-   }
+    for (final OfferRecord offerRecord : cart.getRecords()) {
+      taxTotal = taxTotal.add(offerRecord.getTax().multiply(BigDecimal.valueOf(offerRecord.getQuantity().longValue())));
+    }
+    return taxTotal;
+  }
 
-   public void setContract(@NotNull Contract contract) {
-      this.contract = contract;
-   }
+  public boolean isLoggedIn() {
+    return loggedIn;
+  }
 
-   public void setId(String id) {
-      this.id = id;
-   }
+  public boolean login() {
+    return issuer != null && !"".equals(issuer) && RequestCycle.get().getRequest().getClientUrl().getQueryParameter("state") != null;
+  }
 
-   public void setIsLoggedIn(boolean loggedIn) {
-      this.loggedIn = loggedIn;
-   }
+  public void logout() {
+    issuer = "";
+    loggedIn = false;
 
-   public void setIssuer(String issuer) {
-      this.issuer = issuer;
-   }
+    contract = new Contract();
+    contract.setActive(true);
+    contract.setCustomer(new Customer());
+    contract.getCustomer().setActive(true);
+
+    checkout = new Order();
+    checkout.setActive(true);
+
+    // Make new copy of current cart in a new cart.
+    cart = copyPropertiesCart(cart);
+    cart.setActive(true);
+  }
+
+  public void setCart(@NotNull Offer cart) {
+    this.cart = cart;
+  }
+
+  public void setCheckout(@NotNull Order checkout) {
+    this.checkout = checkout;
+  }
+
+  public void setContract(@NotNull Contract contract) {
+    this.contract = contract;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public void setIsLoggedIn(boolean loggedIn) {
+    this.loggedIn = loggedIn;
+  }
+
+  public void setIssuer(String issuer) {
+    this.issuer = issuer;
+  }
 }

@@ -14,56 +14,56 @@ import net.minidev.json.JSONObject;
 
 public class FacebookUserInfoSuccessResponse extends UserInfoSuccessResponse {
 
-   public FacebookUserInfoSuccessResponse(JWT jwt) {
-      super(jwt);
-   }
-   
-   public FacebookUserInfoSuccessResponse(UserInfo claimsSet) {
-      super(claimsSet);
-   }
+  public FacebookUserInfoSuccessResponse(JWT jwt) {
+    super(jwt);
+  }
 
-   public static FacebookUserInfoSuccessResponse parse(final HTTPResponse httpResponse) throws ParseException {
-      httpResponse.ensureStatusCode(HTTPResponse.SC_OK);
+  public FacebookUserInfoSuccessResponse(UserInfo claimsSet) {
+    super(claimsSet);
+  }
 
-      httpResponse.ensureContentType();
+  public static FacebookUserInfoSuccessResponse parse(final HTTPResponse httpResponse) throws ParseException {
+    httpResponse.ensureStatusCode(HTTPResponse.SC_OK);
 
-      ContentType ct = httpResponse.getContentType();
+    httpResponse.ensureContentType();
 
-      FacebookUserInfoSuccessResponse response;
+    ContentType ct = httpResponse.getContentType();
 
-      if (ct.match(CommonContentTypes.APPLICATION_JSON)) {
+    FacebookUserInfoSuccessResponse response;
 
-         FacebookUserInfo claimsSet;
+    if (ct.match(CommonContentTypes.APPLICATION_JSON)) {
 
-         try {
-            JSONObject jsonObject = httpResponse.getContentAsJSONObject();
-            jsonObject.put(UserInfo.SUB_CLAIM_NAME, JSONObjectUtils.getString(jsonObject, "id"));
-            claimsSet = new FacebookUserInfo(jsonObject);
+      FacebookUserInfo claimsSet;
 
-         } catch (Exception e) {
+      try {
+        JSONObject jsonObject = httpResponse.getContentAsJSONObject();
+        jsonObject.put(UserInfo.SUB_CLAIM_NAME, JSONObjectUtils.getString(jsonObject, "id"));
+        claimsSet = new FacebookUserInfo(jsonObject);
 
-            throw new ParseException("Couldn't parse UserInfo claims: " + e.getMessage(), e);
-         }
+      } catch (Exception e) {
 
-         response = new FacebookUserInfoSuccessResponse(claimsSet);
-      } else if (ct.match(CommonContentTypes.APPLICATION_JWT)) {
-
-         JWT jwt;
-
-         try {
-            jwt = httpResponse.getContentAsJWT();
-
-         } catch (ParseException e) {
-
-            throw new ParseException("Couldn't parse UserInfo claims JWT: " + e.getMessage(), e);
-         }
-
-         response = new FacebookUserInfoSuccessResponse(jwt);
-      } else {
-         throw new ParseException("Unexpected Content-Type, must be " + CommonContentTypes.APPLICATION_JSON + " or " + CommonContentTypes.APPLICATION_JWT);
+        throw new ParseException("Couldn't parse UserInfo claims: " + e.getMessage(), e);
       }
 
-      return response;
-   }
+      response = new FacebookUserInfoSuccessResponse(claimsSet);
+    } else if (ct.match(CommonContentTypes.APPLICATION_JWT)) {
+
+      JWT jwt;
+
+      try {
+        jwt = httpResponse.getContentAsJWT();
+
+      } catch (ParseException e) {
+
+        throw new ParseException("Couldn't parse UserInfo claims JWT: " + e.getMessage(), e);
+      }
+
+      response = new FacebookUserInfoSuccessResponse(jwt);
+    } else {
+      throw new ParseException("Unexpected Content-Type, must be " + CommonContentTypes.APPLICATION_JSON + " or " + CommonContentTypes.APPLICATION_JWT);
+    }
+
+    return response;
+  }
 
 }

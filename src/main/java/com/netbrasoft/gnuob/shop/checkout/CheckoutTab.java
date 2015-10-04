@@ -9,14 +9,14 @@ import com.netbrasoft.gnuob.shop.shopper.Shopper;
 
 public class CheckoutTab extends AbstractTab {
 
-   private static final long serialVersionUID = 6278429178773013326L;
+  private static final long serialVersionUID = 6278429178773013326L;
 
-   public CheckoutTab(final IModel<String> title) {
-      super(title);
-   }
+  public CheckoutTab(final IModel<String> title) {
+    super(title);
+  }
 
-   @Override
-   public WebMarkupContainer getPanel(final String panelId) {
-      return new CheckoutPanel(panelId, Model.of(new Shopper()));
-   }
+  @Override
+  public WebMarkupContainer getPanel(final String panelId) {
+    return new CheckoutPanel(panelId, Model.of(new Shopper()));
+  }
 }

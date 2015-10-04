@@ -17,55 +17,55 @@ import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedW
 @MountPath("pagseguro_notifications")
 public class PagseguroNotificationPage extends BasePage {
 
-   private static final long serialVersionUID = -2980296583669048069L;
+  private static final long serialVersionUID = -2980296583669048069L;
 
-   private static final Logger LOGGER = LoggerFactory.getLogger(PagseguroNotificationPage.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(PagseguroNotificationPage.class);
 
-   @SpringBean(name = "OrderDataProvider", required = true)
-   private GenericOrderCheckoutDataProvider<Order> orderDataProvider;
+  @SpringBean(name = "OrderDataProvider", required = true)
+  private GenericOrderCheckoutDataProvider<Order> orderDataProvider;
 
-   private void doPagSeguroNotification() {
-      final HttpServletRequest request = (HttpServletRequest) getRequest().getContainerRequest();
+  private void doPagSeguroNotification() {
+    final HttpServletRequest request = (HttpServletRequest) getRequest().getContainerRequest();
 
-      final String notificationCode = request.getParameter("notificationCode");
+    final String notificationCode = request.getParameter("notificationCode");
 
-      if("POST".equalsIgnoreCase(request.getMethod()) && notificationCode != null) {
-         LOGGER.info("Retrieve notifcation request from PagSeguro.");
+    if ("POST".equalsIgnoreCase(request.getMethod()) && notificationCode != null) {
+      LOGGER.info("Retrieve notifcation request from PagSeguro.");
 
-         Order order = new Order();
-         order.setNotificationId(notificationCode);
+      Order order = new Order();
+      order.setNotificationId(notificationCode);
 
-         order = orderDataProvider.doNotification(order);
-      } else {
-         LOGGER.warn("Retrieve notifcation request from PagSeguro without a notificationCode parameter or not a POST method.");
-      }
-   }
+      order = orderDataProvider.doNotification(order);
+    } else {
+      LOGGER.warn("Retrieve notifcation request from PagSeguro without a notificationCode parameter or not a POST method.");
+    }
+  }
 
-   private boolean isSignedIn() {
-      return AuthenticatedWebSession.get().isSignedIn();
-   }
+  private boolean isSignedIn() {
+    return AuthenticatedWebSession.get().isSignedIn();
+  }
 
-   @Override
-   protected void onInitialize() {
-      if (!isSignedIn()) {
-         final String site = getRequest().getClientUrl().getHost();
-         signIn(System.getProperty("gnuob." + site + ".username", "guest"), System.getProperty("gnuob." + site + ".password", "guest"));
-      }
+  @Override
+  protected void onInitialize() {
+    if (!isSignedIn()) {
+      final String site = getRequest().getClientUrl().getHost();
+      signIn(System.getProperty("gnuob." + site + ".username", "guest"), System.getProperty("gnuob." + site + ".password", "guest"));
+    }
 
-      orderDataProvider.setUser(AppServletContainerAuthenticatedWebSession.getUserName());
-      orderDataProvider.setPassword(AppServletContainerAuthenticatedWebSession.getPassword());
-      orderDataProvider.setSite(AppServletContainerAuthenticatedWebSession.getSite());
-      orderDataProvider.setType(new Order());
-      orderDataProvider.getType().setActive(true);
-      orderDataProvider.setOrderBy(OrderBy.NONE);
-      orderDataProvider.setCheckOut(CheckOut.PAGSEGURO);
+    orderDataProvider.setUser(AppServletContainerAuthenticatedWebSession.getUserName());
+    orderDataProvider.setPassword(AppServletContainerAuthenticatedWebSession.getPassword());
+    orderDataProvider.setSite(AppServletContainerAuthenticatedWebSession.getSite());
+    orderDataProvider.setType(new Order());
+    orderDataProvider.getType().setActive(true);
+    orderDataProvider.setOrderBy(OrderBy.NONE);
+    orderDataProvider.setCheckOut(CheckOut.PAGSEGURO);
 
-      super.onInitialize();
+    super.onInitialize();
 
-      doPagSeguroNotification();
-   }
+    doPagSeguroNotification();
+  }
 
-   private boolean signIn(String username, String password) {
-      return AuthenticatedWebSession.get().signIn(username, password);
-   }
+  private boolean signIn(String username, String password) {
+    return AuthenticatedWebSession.get().signIn(username, password);
+  }
 }

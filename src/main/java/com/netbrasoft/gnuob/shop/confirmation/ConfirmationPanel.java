@@ -12,32 +12,37 @@ import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
 import com.netbrasoft.gnuob.shop.shopper.Shopper;
 
-@SuppressWarnings("unchecked")
-@AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
+@AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
 public class ConfirmationPanel extends Panel {
 
-   private static final long serialVersionUID = -305453593387396902L;
+  private static final String TRANSACTION_ID = "transaction_id";
 
-   private final ConfirmationViewPanel confirmationViewPanel = new ConfirmationViewPanel("confirmationViewPanel", (IModel<Shopper>) getDefaultModel());
+  private static final String PAYER_ID = "PayerID";
 
-   @SpringBean(name = "ShopperDataProvider", required = true)
-   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
+  private static final long serialVersionUID = -305453593387396902L;
 
-   public ConfirmationPanel(final String id, final IModel<Shopper> model) {
-      super(id, model);
-   }
+  private final ConfirmationViewPanel confirmationViewPanel;
 
-   @Override
-   protected void onInitialize() {
-      final QueryParameter payerId = getRequest().getClientUrl().getQueryParameter("PayerID");
-      final QueryParameter transactionId = getRequest().getClientUrl().getQueryParameter("transaction_id");
-      final Shopper shopper = shopperDataProvider.find(new Shopper());
+  @SpringBean(name = "ShopperDataProvider", required = true)
+  private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
-      if ((payerId != null || transactionId != null) && shopper.getCheckout().getOrderId() != null) {
-         add(confirmationViewPanel.add(confirmationViewPanel.new ConfirmationViewFragement()).setOutputMarkupId(true));
-         super.onInitialize();
-      } else {
-         throw new RedirectToUrlException("specification.html");
-      }
-   }
+  public ConfirmationPanel(final String id, final IModel<Shopper> model) {
+    super(id, model);
+    confirmationViewPanel = new ConfirmationViewPanel("confirmationViewPanel", model);
+  }
+
+  @Override
+  protected void onInitialize() {
+    final QueryParameter payerId = getRequest().getClientUrl().getQueryParameter(PAYER_ID);
+    final QueryParameter transactionId = getRequest().getClientUrl().getQueryParameter(TRANSACTION_ID);
+    final Shopper shopper = shopperDataProvider.find(new Shopper());
+
+    // Checkout if the returned customer from the payment provider has a valid payed order.
+    if ((payerId != null || transactionId != null) && shopper.getCheckout().getOrderId() != null) {
+      add(confirmationViewPanel.add(confirmationViewPanel.new ConfirmationViewFragement()).setOutputMarkupId(true));
+      super.onInitialize();
+    } else {
+      throw new RedirectToUrlException("specification.html");
+    }
+  }
 }

@@ -14,27 +14,27 @@ import com.netbrasoft.gnuob.shop.security.ShopRoles;
 import com.netbrasoft.gnuob.shop.shopper.Shopper;
 
 @MountPath("checkout.html")
-@AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
+@AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
 public class CheckoutPage extends BasePage {
 
-   private static final long serialVersionUID = 4051343927877779621L;
+  private static final long serialVersionUID = 4051343927877779621L;
 
-   private final CheckoutMainMenuPanel mainMenuPanel = new CheckoutMainMenuPanel("mainMenuPanel", Model.of(new Shopper()));
+  private final CheckoutMainMenuPanel mainMenuPanel = new CheckoutMainMenuPanel("mainMenuPanel", Model.of(new Shopper()));
 
-   private final ContentBorder contentBorder = new ContentBorder("contentBorder");
+  private final ContentBorder contentBorder = new ContentBorder("contentBorder");
 
-   @SpringBean(name = "ShopperDataProvider", required = true)
-   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
+  @SpringBean(name = "ShopperDataProvider", required = true)
+  private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
-   @Override
-   protected void onInitialize() {
-      if (!shopperDataProvider.find(new Shopper()).isLoggedIn()) {
-         throw new RedirectToUrlException("account.html");
-      }
+  @Override
+  protected void onInitialize() {
+    if (!shopperDataProvider.find(new Shopper()).isLoggedIn()) {
+      throw new RedirectToUrlException("account.html");
+    }
 
-      contentBorder.add(mainMenuPanel);
-      add(contentBorder);
+    contentBorder.add(mainMenuPanel);
+    add(contentBorder);
 
-      super.onInitialize();
-   }
+    super.onInitialize();
+  }
 }

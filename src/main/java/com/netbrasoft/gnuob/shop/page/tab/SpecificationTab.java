@@ -7,14 +7,14 @@ import org.apache.wicket.request.flow.RedirectToUrlException;
 
 public class SpecificationTab extends AbstractTab {
 
-   private static final long serialVersionUID = -2199080888114094533L;
+  private static final long serialVersionUID = -2199080888114094533L;
 
-   public SpecificationTab(final IModel<String> title) {
-      super(title);
-   }
+  public SpecificationTab(final IModel<String> title) {
+    super(title);
+  }
 
-   @Override
-   public WebMarkupContainer getPanel(final String panelId) {
-      throw new RedirectToUrlException("specification.html");
-   }
+  @Override
+  public WebMarkupContainer getPanel(final String panelId) {
+    throw new RedirectToUrlException("specification.html");
+  }
 }

@@ -13,24 +13,24 @@ import com.nimbusds.oauth2.sdk.util.URLUtils;
 
 public class SecretTokenRequest extends TokenRequest {
 
-   private final Secret secret;
+  private final Secret secret;
 
-   public SecretTokenRequest(URI uri, ClientID clientID, Secret secret, AuthorizationGrant authzGrant) {
-      super(uri, clientID, authzGrant);
-      this.secret = secret;
-   }
+  public SecretTokenRequest(URI uri, ClientID clientID, Secret secret, AuthorizationGrant authzGrant) {
+    super(uri, clientID, authzGrant);
+    this.secret = secret;
+  }
 
-   @Override
-   public HTTPRequest toHTTPRequest() throws SerializeException {
-      final HTTPRequest httpRequest = super.toHTTPRequest();
+  @Override
+  public HTTPRequest toHTTPRequest() throws SerializeException {
+    final HTTPRequest httpRequest = super.toHTTPRequest();
 
-      final Map<String,String> params = httpRequest.getQueryParameters();
+    final Map<String, String> params = httpRequest.getQueryParameters();
 
-      if (secret != null) {
-         params.put("client_secret", secret.getValue());
-      }
+    if (secret != null) {
+      params.put("client_secret", secret.getValue());
+    }
 
-      httpRequest.setQuery(URLUtils.serializeParameters(params));
-      return httpRequest;
-   }
+    httpRequest.setQuery(URLUtils.serializeParameters(params));
+    return httpRequest;
+  }
 }

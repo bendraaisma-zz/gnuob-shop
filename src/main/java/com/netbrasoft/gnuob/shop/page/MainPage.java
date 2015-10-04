@@ -11,20 +11,20 @@ import com.netbrasoft.gnuob.shop.category.CategoryMainMenuPanel;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
 
 @MountPath("shop.html")
-@AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
+@AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
 public class MainPage extends BasePage {
 
-   private static final long serialVersionUID = 7583829533111693200L;
+  private static final long serialVersionUID = 7583829533111693200L;
 
-   private CategoryMainMenuPanel mainMenuPanel = new CategoryMainMenuPanel("mainMenuPanel", Model.of(new Category()));
+  private CategoryMainMenuPanel mainMenuPanel = new CategoryMainMenuPanel("mainMenuPanel", Model.of(new Category()));
 
-   private ContentBorder contentBorder = new ContentBorder("contentBorder");
+  private ContentBorder contentBorder = new ContentBorder("contentBorder");
 
-   @Override
-   protected void onInitialize() {
-      contentBorder.add(mainMenuPanel);
-      add(contentBorder);
+  @Override
+  protected void onInitialize() {
+    contentBorder.add(mainMenuPanel);
+    add(contentBorder);
 
-      super.onInitialize();
-   }
+    super.onInitialize();
+  }
 }

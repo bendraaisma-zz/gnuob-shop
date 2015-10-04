@@ -25,81 +25,82 @@ import com.netbrasoft.gnuob.shop.security.ShopRoles;
 import de.agilecoders.wicket.core.markup.html.bootstrap.tabs.BootstrapTabbedPanel;
 
 @SuppressWarnings("unchecked")
-@AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
+@AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
 public class CategoryHomePanel extends Panel {
 
-   @AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
-   class CategoryDataview extends DataView<Category> {
+  @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
+  class CategoryDataview extends DataView<Category> {
 
-      private static final long serialVersionUID = 5098665993468197838L;
+    private static final long serialVersionUID = 5098665993468197838L;
 
-      private static final int ITEMS_PER_PAGE = 5;
+    private static final int ITEMS_PER_PAGE = 5;
 
-      private CategoryDataview() {
-         super("categoryDataView", categoryDataProvider, ITEMS_PER_PAGE);
-      }
+    private CategoryDataview() {
+      super("categoryDataView", categoryDataProvider, ITEMS_PER_PAGE);
+    }
 
-      @Override
-      protected void populateItem(Item<Category> item) {
-         item.setModel(new CompoundPropertyModel<Category>(item.getModelObject()));
-         item.add(new Label("content", new AbstractReadOnlyModel<String>() {
+    @Override
+    protected void populateItem(Item<Category> item) {
+      item.setModel(new CompoundPropertyModel<Category>(item.getModelObject()));
+      item.add(new Label("content", new AbstractReadOnlyModel<String>() {
 
-            private static final long serialVersionUID = 4751535250171413561L;
+        private static final long serialVersionUID = 4751535250171413561L;
 
-            @Override
-            public String getObject() {
-               for (final Content content : item.getModelObject().getContents()) {
+        @Override
+        public String getObject() {
+          for (final Content content : item.getModelObject().getContents()) {
 
-                  if (MediaType.HTML_UTF_8.is(MediaType.parse(content.getFormat()))) {
-                     return new String(content.getContent());
-                  }
-               }
-               return new String("");
+            if (MediaType.HTML_UTF_8.is(MediaType.parse(content.getFormat()))) {
+              return new String(content.getContent());
             }
-         }).setEscapeModelStrings(false));
-         item.add(new AjaxEventBehavior("click") {
-            private static final long serialVersionUID = 1L;
+          }
+          return new String("");
+        }
+      }).setEscapeModelStrings(false));
+      item.add(new AjaxEventBehavior("click") {
+        private static final long serialVersionUID = 1L;
 
-            @Override
-            public void onEvent(AjaxRequestTarget target) {
-               final BootstrapTabbedPanel<ITab> bootstrapTabbedPanel = (BootstrapTabbedPanel<ITab>) getPage().get("contentBorder:contentBorder_body:mainMenuPanel:mainMenuTabbedPanel");
+        @Override
+        public void onEvent(AjaxRequestTarget target) {
+          final BootstrapTabbedPanel<ITab> bootstrapTabbedPanel =
+              (BootstrapTabbedPanel<ITab>) getPage().get("contentBorder:contentBorder_body:mainMenuPanel:mainMenuTabbedPanel");
 
-               for (final ITab tab : bootstrapTabbedPanel.getTabs()) {
-                  if (tab instanceof CategoryTab && ((CategoryTab) tab).getModelObject().getId() == ((Category) item.getDefaultModelObject()).getId()) {
-                     bootstrapTabbedPanel.setSelectedTab(bootstrapTabbedPanel.getTabs().lastIndexOf(tab));
-                  }
-               }
-
-               target.add(target.getPage());
+          for (final ITab tab : bootstrapTabbedPanel.getTabs()) {
+            if (tab instanceof CategoryTab && ((CategoryTab) tab).getModelObject().getId() == ((Category) item.getDefaultModelObject()).getId()) {
+              bootstrapTabbedPanel.setSelectedTab(bootstrapTabbedPanel.getTabs().lastIndexOf(tab));
             }
-         });
-      }
-   }
+          }
 
-   private static final long serialVersionUID = 5858682402634442147L;
+          target.add(target.getPage());
+        }
+      });
+    }
+  }
 
-   @SpringBean(name = "CategoryDataProvider", required = true)
-   private GenericTypeDataProvider<Category> categoryDataProvider;
+  private static final long serialVersionUID = 5858682402634442147L;
 
-   private final CategoryDataview categoryDataView;
+  @SpringBean(name = "CategoryDataProvider", required = true)
+  private GenericTypeDataProvider<Category> categoryDataProvider;
 
-   public CategoryHomePanel(final String id, final IModel<Category> model) {
-      super(id, model);
+  private final CategoryDataview categoryDataView;
 
-      categoryDataView = new CategoryDataview();
-   }
+  public CategoryHomePanel(final String id, final IModel<Category> model) {
+    super(id, model);
 
-   @Override
-   protected void onInitialize() {
-      categoryDataProvider.setUser(AppServletContainerAuthenticatedWebSession.getUserName());
-      categoryDataProvider.setPassword(AppServletContainerAuthenticatedWebSession.getPassword());
-      categoryDataProvider.setSite(AppServletContainerAuthenticatedWebSession.getSite());
-      categoryDataProvider.setType(new Category());
-      categoryDataProvider.getType().setActive(true);
-      categoryDataProvider.setOrderBy(OrderBy.POSITION_A_Z);
+    categoryDataView = new CategoryDataview();
+  }
 
-      add(categoryDataView.setOutputMarkupId(true));
+  @Override
+  protected void onInitialize() {
+    categoryDataProvider.setUser(AppServletContainerAuthenticatedWebSession.getUserName());
+    categoryDataProvider.setPassword(AppServletContainerAuthenticatedWebSession.getPassword());
+    categoryDataProvider.setSite(AppServletContainerAuthenticatedWebSession.getSite());
+    categoryDataProvider.setType(new Category());
+    categoryDataProvider.getType().setActive(true);
+    categoryDataProvider.setOrderBy(OrderBy.POSITION_A_Z);
 
-      super.onInitialize();
-   }
+    add(categoryDataView.setOutputMarkupId(true));
+
+    super.onInitialize();
+  }
 }

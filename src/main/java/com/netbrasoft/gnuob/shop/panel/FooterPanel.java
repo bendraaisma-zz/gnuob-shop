@@ -6,12 +6,12 @@ import org.apache.wicket.markup.html.panel.Panel;
 
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
 
-@AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
+@AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
 public class FooterPanel extends Panel {
 
-   private static final long serialVersionUID = 2384748913794006217L;
+  private static final long serialVersionUID = 2384748913794006217L;
 
-   public FooterPanel(String id) {
-      super(id);
-   }
+  public FooterPanel(String id) {
+    super(id);
+  }
 }

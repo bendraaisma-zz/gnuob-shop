@@ -61,6 +61,11 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
+		<buildCommand>
+			<name>net.sf.eclipsecs.core.CheckstyleBuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
 	</buildSpec>
 	<natures>
 		<nature>org.eclipse.m2e.core.maven2Nature</nature>
@@ -75,5 +80,6 @@
 		<nature>org.jboss.tools.cdi.core.cdinature</nature>
 		<nature>org.zeroturnaround.eclipse.jrebelNature</nature>
 		<nature>org.jboss.tools.arquillian.core.arquillianNature</nature>
+		<nature>net.sf.eclipsecs.core.CheckstyleNature</nature>
 	</natures>
 </projectDescription>

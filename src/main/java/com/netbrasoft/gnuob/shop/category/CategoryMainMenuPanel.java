@@ -20,54 +20,54 @@ import com.netbrasoft.gnuob.shop.security.ShopRoles;
 
 import de.agilecoders.wicket.core.markup.html.bootstrap.tabs.BootstrapTabbedPanel;
 
-@AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
+@AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
 public class CategoryMainMenuPanel extends Panel {
 
-   class MainMenuTabbedPanel extends BootstrapTabbedPanel<ITab> {
+  class MainMenuTabbedPanel extends BootstrapTabbedPanel<ITab> {
 
-      private static final long serialVersionUID = 6838221105862530322L;
+    private static final long serialVersionUID = 6838221105862530322L;
 
-      public MainMenuTabbedPanel() {
-         super("mainMenuTabbedPanel", new ArrayList<ITab>());
-      }
+    public MainMenuTabbedPanel() {
+      super("mainMenuTabbedPanel", new ArrayList<ITab>());
+    }
 
-      @Override
-      public String getTabContainerCssClass() {
-         return "nav nav-pills nav-justified";
-      }
-   }
+    @Override
+    public String getTabContainerCssClass() {
+      return "nav nav-pills nav-justified";
+    }
+  }
 
-   private static final long serialVersionUID = 6083651059402628915L;
+  private static final long serialVersionUID = 6083651059402628915L;
 
-   private final MainMenuTabbedPanel mainMenuTabbedPanel = new MainMenuTabbedPanel();
+  private final MainMenuTabbedPanel mainMenuTabbedPanel = new MainMenuTabbedPanel();
 
-   @SpringBean(name = "CategoryDataProvider", required = true)
-   private GenericTypeDataProvider<Category> categoryDataProvider;
+  @SpringBean(name = "CategoryDataProvider", required = true)
+  private GenericTypeDataProvider<Category> categoryDataProvider;
 
-   public CategoryMainMenuPanel(final String id, final IModel<Category> model) {
-      super(id, model);
-   }
+  public CategoryMainMenuPanel(final String id, final IModel<Category> model) {
+    super(id, model);
+  }
 
-   @Override
-   protected void onInitialize() {
-      categoryDataProvider.setUser(AppServletContainerAuthenticatedWebSession.getUserName());
-      categoryDataProvider.setPassword(AppServletContainerAuthenticatedWebSession.getPassword());
-      categoryDataProvider.setSite(AppServletContainerAuthenticatedWebSession.getSite());
-      categoryDataProvider.setType(new Category());
-      categoryDataProvider.getType().setActive(true);
-      categoryDataProvider.setOrderBy(OrderBy.POSITION_A_Z);
+  @Override
+  protected void onInitialize() {
+    categoryDataProvider.setUser(AppServletContainerAuthenticatedWebSession.getUserName());
+    categoryDataProvider.setPassword(AppServletContainerAuthenticatedWebSession.getPassword());
+    categoryDataProvider.setSite(AppServletContainerAuthenticatedWebSession.getSite());
+    categoryDataProvider.setType(new Category());
+    categoryDataProvider.getType().setActive(true);
+    categoryDataProvider.setOrderBy(OrderBy.POSITION_A_Z);
 
-      mainMenuTabbedPanel.getTabs().add(new CategoryHomeTab(Model.of(getString("homeMessage", new Model<String>(), "INIT").toUpperCase())));
+    mainMenuTabbedPanel.getTabs().add(new CategoryHomeTab(Model.of(getString("homeMessage", new Model<String>(), "INIT").toUpperCase())));
 
-      for (Iterator<? extends Category> iterator = categoryDataProvider.iterator(0, 5); iterator.hasNext();) {
-         Category category = iterator.next();
-         mainMenuTabbedPanel.getTabs().add(new CategoryTab(Model.of(category.getName().toUpperCase()), Model.of(category)));
-      }
+    for (Iterator<? extends Category> iterator = categoryDataProvider.iterator(0, 5); iterator.hasNext();) {
+      Category category = iterator.next();
+      mainMenuTabbedPanel.getTabs().add(new CategoryTab(Model.of(category.getName().toUpperCase()), Model.of(category)));
+    }
 
-      mainMenuTabbedPanel.getTabs().add(new ContactTab(Model.of(getString("contactMessage", new Model<String>(), "CONTACT").toUpperCase())));
+    mainMenuTabbedPanel.getTabs().add(new ContactTab(Model.of(getString("contactMessage", new Model<String>(), "CONTACT").toUpperCase())));
 
-      add(mainMenuTabbedPanel.setOutputMarkupId(true));
+    add(mainMenuTabbedPanel.setOutputMarkupId(true));
 
-      super.onInitialize();
-   }
+    super.onInitialize();
+  }
 }

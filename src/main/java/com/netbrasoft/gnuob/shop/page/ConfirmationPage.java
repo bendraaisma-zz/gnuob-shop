@@ -11,20 +11,20 @@ import com.netbrasoft.gnuob.shop.security.ShopRoles;
 import com.netbrasoft.gnuob.shop.shopper.Shopper;
 
 @MountPath("confirmation.html")
-@AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
+@AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
 public class ConfirmationPage extends BasePage {
 
-   private static final long serialVersionUID = -4414527389707408188L;
+  private static final long serialVersionUID = -4414527389707408188L;
 
-   private ConfirmationMainMenuPanel mainMenuPanel = new ConfirmationMainMenuPanel("mainMenuPanel", Model.of(new Shopper()));
+  private ConfirmationMainMenuPanel mainMenuPanel = new ConfirmationMainMenuPanel("mainMenuPanel", Model.of(new Shopper()));
 
-   private ContentBorder contentBorder = new ContentBorder("contentBorder");
+  private ContentBorder contentBorder = new ContentBorder("contentBorder");
 
-   @Override
-   protected void onInitialize() {
-      contentBorder.add(mainMenuPanel);
-      add(contentBorder);
+  @Override
+  protected void onInitialize() {
+    contentBorder.add(mainMenuPanel);
+    add(contentBorder);
 
-      super.onInitialize();
-   }
+    super.onInitialize();
+  }
 }
