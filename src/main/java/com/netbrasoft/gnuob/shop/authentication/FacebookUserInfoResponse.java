@@ -9,9 +9,10 @@ public abstract class FacebookUserInfoResponse extends UserInfoResponse {
 
   public static UserInfoResponse parse(final HTTPResponse httpResponse) throws ParseException {
 
-    if (httpResponse.getStatusCode() == HTTPResponse.SC_OK)
+    if (httpResponse.getStatusCode() == HTTPResponse.SC_OK) {
       return FacebookUserInfoSuccessResponse.parse(httpResponse);
-    else
+    } else {
       return UserInfoErrorResponse.parse(httpResponse);
+    }
   }
 }
