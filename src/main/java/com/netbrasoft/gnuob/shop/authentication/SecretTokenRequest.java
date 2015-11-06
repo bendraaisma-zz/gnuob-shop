@@ -15,7 +15,7 @@ public class SecretTokenRequest extends TokenRequest {
 
   private final Secret secret;
 
-  public SecretTokenRequest(URI uri, ClientID clientID, Secret secret, AuthorizationGrant authzGrant) {
+  public SecretTokenRequest(final URI uri, final ClientID clientID, final Secret secret, final AuthorizationGrant authzGrant) {
     super(uri, clientID, authzGrant);
     this.secret = secret;
   }

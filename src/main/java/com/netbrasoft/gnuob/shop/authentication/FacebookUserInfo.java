@@ -6,7 +6,7 @@ import net.minidev.json.JSONObject;
 
 public class FacebookUserInfo extends UserInfo {
 
-  public FacebookUserInfo(JSONObject contentAsJSONObject) {
+  public FacebookUserInfo(final JSONObject contentAsJSONObject) {
     super(contentAsJSONObject);
   }
 

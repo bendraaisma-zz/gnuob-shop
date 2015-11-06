@@ -6,14 +6,16 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.Url.QueryParameter;
 import org.apache.wicket.request.flow.RedirectToUrlException;
-import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
+import com.netbrasoft.gnuob.api.Order;
+import com.netbrasoft.gnuob.shop.page.SpecificationPage;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
-import com.netbrasoft.gnuob.shop.shopper.Shopper;
 
+@SuppressWarnings("unchecked")
 @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
 public class ConfirmationPanel extends Panel {
+
+  private static final String CONFIRMATION_VIEW_PANEL_ID = "confirmationViewPanel";
 
   private static final String TRANSACTION_ID = "transaction_id";
 
@@ -21,28 +23,23 @@ public class ConfirmationPanel extends Panel {
 
   private static final long serialVersionUID = -305453593387396902L;
 
-  private final ConfirmationViewPanel confirmationViewPanel;
+  private final ConfirmationEmptyOrEditPanel confirmationViewPanel;
 
-  @SpringBean(name = "ShopperDataProvider", required = true)
-  private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
-
-  public ConfirmationPanel(final String id, final IModel<Shopper> model) {
+  public ConfirmationPanel(final String id, final IModel<Order> model) {
     super(id, model);
-    confirmationViewPanel = new ConfirmationViewPanel("confirmationViewPanel", model);
+    confirmationViewPanel = new ConfirmationEmptyOrEditPanel(CONFIRMATION_VIEW_PANEL_ID, (IModel<Order>) ConfirmationPanel.this.getDefaultModel());
   }
 
   @Override
   protected void onInitialize() {
     final QueryParameter payerId = getRequest().getClientUrl().getQueryParameter(PAYER_ID);
     final QueryParameter transactionId = getRequest().getClientUrl().getQueryParameter(TRANSACTION_ID);
-    final Shopper shopper = shopperDataProvider.find(new Shopper());
-
     // Checkout if the returned customer from the payment provider has a valid payed order.
-    if ((payerId != null || transactionId != null) && shopper.getCheckout().getOrderId() != null) {
+    if ((payerId != null || transactionId != null) && ((Order) ConfirmationPanel.this.getDefaultModelObject()).getOrderId() != null) {
       add(confirmationViewPanel.add(confirmationViewPanel.new ConfirmationViewFragement()).setOutputMarkupId(true));
       super.onInitialize();
     } else {
-      throw new RedirectToUrlException("specification.html");
+      throw new RedirectToUrlException(SpecificationPage.SPECIFICATION_HTML_VALUE);
     }
   }
 }

@@ -5,7 +5,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
-import com.netbrasoft.gnuob.shop.shopper.Shopper;
+import com.netbrasoft.gnuob.api.Contract;
 
 public class AccountTab extends AbstractTab {
 
@@ -17,6 +17,6 @@ public class AccountTab extends AbstractTab {
 
   @Override
   public WebMarkupContainer getPanel(final String panelId) {
-    return new AccountPanel(panelId, Model.of(new Shopper()));
+    return new AccountPanel(panelId, Model.of(new Contract()));
   }
 }

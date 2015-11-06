@@ -5,7 +5,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
-import com.netbrasoft.gnuob.shop.shopper.Shopper;
+import com.netbrasoft.gnuob.api.Order;
 
 public class CheckoutTab extends AbstractTab {
 
@@ -17,6 +17,6 @@ public class CheckoutTab extends AbstractTab {
 
   @Override
   public WebMarkupContainer getPanel(final String panelId) {
-    return new CheckoutPanel(panelId, Model.of(new Shopper()));
+    return new CheckoutPanel(panelId, Model.of(new Order()));
   }
 }

@@ -13,16 +13,14 @@ public class SignInPage extends BasePage {
   @Override
   protected void onConfigure() {
     super.onConfigure();
-
     if (!isSignedIn()) {
       final String site = getRequest().getClientUrl().getHost();
       signIn(System.getProperty("gnuob." + site + ".username", "guest"), System.getProperty("gnuob." + site + ".password", "guest"));
     }
-
     setResponsePage(getApplication().getHomePage());
   }
 
-  private boolean signIn(String username, String password) {
+  private boolean signIn(final String username, final String password) {
     return AuthenticatedWebSession.get().signIn(username, password);
   }
 }

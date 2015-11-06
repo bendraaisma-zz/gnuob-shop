@@ -12,29 +12,40 @@ import com.netbrasoft.gnuob.shop.checkout.CheckoutMainMenuPanel;
 import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
 import com.netbrasoft.gnuob.shop.shopper.Shopper;
+import com.netbrasoft.gnuob.shop.shopper.ShopperDataProvider;
 
-@MountPath("checkout.html")
+@MountPath(CheckoutPage.CHECKOUT_HTML_VALUE)
 @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
 public class CheckoutPage extends BasePage {
 
+  private static final String CONTENT_BORDER_ID = "contentBorder";
+
+  public static final String CHECKOUT_HTML_VALUE = "checkout.html";
+
+  private static final String MAIN_MENU_PANEL_ID = "mainMenuPanel";
+
   private static final long serialVersionUID = 4051343927877779621L;
 
-  private final CheckoutMainMenuPanel mainMenuPanel = new CheckoutMainMenuPanel("mainMenuPanel", Model.of(new Shopper()));
+  private final CheckoutMainMenuPanel mainMenuPanel;
 
-  private final ContentBorder contentBorder = new ContentBorder("contentBorder");
+  private final ContentBorder contentBorder;
 
-  @SpringBean(name = "ShopperDataProvider", required = true)
+  @SpringBean(name = ShopperDataProvider.SHOPPER_DATA_PROVIDER_NAME, required = true)
   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
+
+  public CheckoutPage() {
+    mainMenuPanel = new CheckoutMainMenuPanel(MAIN_MENU_PANEL_ID);
+    contentBorder = new ContentBorder(CONTENT_BORDER_ID, Model.of(new Shopper()));
+  }
 
   @Override
   protected void onInitialize() {
     if (!shopperDataProvider.find(new Shopper()).isLoggedIn()) {
-      throw new RedirectToUrlException("account.html");
+      throw new RedirectToUrlException(AccountPage.ACCOUNT_HTML_VALUE);
     }
-
+    contentBorder.setDefaultModelObject(shopperDataProvider.find(new Shopper()));
     contentBorder.add(mainMenuPanel);
     add(contentBorder);
-
     super.onInitialize();
   }
 }

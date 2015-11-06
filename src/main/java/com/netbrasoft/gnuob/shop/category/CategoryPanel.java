@@ -8,21 +8,31 @@ import org.apache.wicket.model.IModel;
 import com.netbrasoft.gnuob.api.Category;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
 
+/**
+ * Panel for viewing, selecting {@link Category} entities.
+ *
+ * @author Bernard Arjan Draaisma
+ *
+ */
 @SuppressWarnings("unchecked")
 @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
 public class CategoryPanel extends Panel {
 
+  private static final String CATEGORY_VIEW_PANEL_ID = "categoryViewPanel";
+
   private static final long serialVersionUID = 1970275605681803223L;
 
-  private CategoryViewPanel categoryViewPanel = new CategoryViewPanel("categoryViewPanel", (IModel<Category>) getDefaultModel());
+  private final CategoryViewPanel categoryViewPanel;
 
   public CategoryPanel(final String id, final IModel<Category> model) {
     super(id, model);
+    categoryViewPanel = new CategoryViewPanel(CATEGORY_VIEW_PANEL_ID, (IModel<Category>) CategoryPanel.this.getDefaultModel());
   }
 
   @Override
   protected void onInitialize() {
-    add(categoryViewPanel.add(categoryViewPanel.new SubCategoryViewFragement()).setOutputMarkupId(true));
+    categoryViewPanel.add(categoryViewPanel.new SubCategoryViewFragment());
+    add(categoryViewPanel.setOutputMarkupId(true));
     super.onInitialize();
   }
 }

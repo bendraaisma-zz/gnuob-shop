@@ -6,46 +6,50 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import com.netbrasoft.gnuob.api.Offer;
+import com.netbrasoft.gnuob.api.Order;
 import com.netbrasoft.gnuob.api.OrderBy;
-import com.netbrasoft.gnuob.api.generic.GenericTypeDataProvider;
+import com.netbrasoft.gnuob.api.order.GenericOrderCheckoutDataProvider;
+import com.netbrasoft.gnuob.api.order.OrderDataProvider;
 import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
 import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
 import com.netbrasoft.gnuob.shop.shopper.Shopper;
+import com.netbrasoft.gnuob.shop.shopper.ShopperDataProvider;
 
+@SuppressWarnings("unchecked")
 @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
 public class CheckoutPanel extends Panel {
 
+  private static final String CHECKOUT_EMPTY_OR_EDIT_PANEL_ID = "checkoutEmptyOrEditPanel";
+
   private static final long serialVersionUID = 2034566325989232879L;
 
-  private final CheckoutViewPanel checkoutViewPanel;
+  private final CheckoutEmptyOrEditPanel checkoutEmptyOrEditPanel;
 
-  @SpringBean(name = "ShopperDataProvider", required = true)
+  @SpringBean(name = ShopperDataProvider.SHOPPER_DATA_PROVIDER_NAME, required = true)
   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
-  @SpringBean(name = "OfferDataProvider", required = true)
-  private GenericTypeDataProvider<Offer> offerDataProvider;
+  @SpringBean(name = OrderDataProvider.ORDER_DATA_PROVIDER_NAME, required = true)
+  private transient GenericOrderCheckoutDataProvider<Order> orderDataProvider;
 
-  public CheckoutPanel(final String id, final IModel<Shopper> model) {
+  public CheckoutPanel(final String id, final IModel<Order> model) {
     super(id, model);
-    checkoutViewPanel = new CheckoutViewPanel("checkoutViewPanel", model);
+    checkoutEmptyOrEditPanel = new CheckoutEmptyOrEditPanel(CHECKOUT_EMPTY_OR_EDIT_PANEL_ID, (IModel<Order>) CheckoutPanel.this.getDefaultModel());
   }
 
   @Override
   protected void onInitialize() {
-    offerDataProvider.setUser(AppServletContainerAuthenticatedWebSession.getUserName());
-    offerDataProvider.setPassword(AppServletContainerAuthenticatedWebSession.getPassword());
-    offerDataProvider.setSite(AppServletContainerAuthenticatedWebSession.getSite());
-    offerDataProvider.setType(new Offer());
-    offerDataProvider.getType().setActive(true);
-    offerDataProvider.setOrderBy(OrderBy.NONE);
-    offerDataProvider.getType().setContract(shopperDataProvider.find((Shopper) getDefaultModelObject()).getContract());
-
-    if (offerDataProvider.size() > 0) {
-      add(checkoutViewPanel.add(checkoutViewPanel.new CheckoutViewFragment()).setOutputMarkupId(true));
+    orderDataProvider.setUser(AppServletContainerAuthenticatedWebSession.getUserName());
+    orderDataProvider.setPassword(AppServletContainerAuthenticatedWebSession.getPassword());
+    orderDataProvider.setSite(AppServletContainerAuthenticatedWebSession.getSite());
+    orderDataProvider.setType(new Order());
+    orderDataProvider.getType().setActive(true);
+    orderDataProvider.setOrderBy(OrderBy.CREATION_Z_A);
+    orderDataProvider.getType().setContract(shopperDataProvider.find(new Shopper()).getContract());
+    if (orderDataProvider.size() > 0) {
+      add(checkoutEmptyOrEditPanel.add(checkoutEmptyOrEditPanel.new CheckoutEditFragment()).setOutputMarkupId(true));
     } else {
-      add(checkoutViewPanel.add(checkoutViewPanel.new EmptyCheckoutViewFragment()).setOutputMarkupId(true));
+      add(checkoutEmptyOrEditPanel.add(checkoutEmptyOrEditPanel.new CheckoutEmptyFragment()).setOutputMarkupId(true));
     }
     super.onInitialize();
   }

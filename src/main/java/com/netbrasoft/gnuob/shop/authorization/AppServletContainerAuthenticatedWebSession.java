@@ -13,17 +13,19 @@ public class AppServletContainerAuthenticatedWebSession extends ServletContainer
 
   private static final long serialVersionUID = 2503512201455796747L;
 
+  public AppServletContainerAuthenticatedWebSession(final Request request) {
+    super(request);
+  }
+
   public static AppServletContainerAuthenticatedWebSession get() {
     return (AppServletContainerAuthenticatedWebSession) Session.get();
   }
 
   public static String getPassword() {
     final GNUOBPrincipal gnuobPrincipal = (GNUOBPrincipal) getRequest().getUserPrincipal();
-
     if (gnuobPrincipal == null) {
       return null;
     }
-
     return gnuobPrincipal.getPassword();
   }
 
@@ -33,11 +35,9 @@ public class AppServletContainerAuthenticatedWebSession extends ServletContainer
 
   public static String getSite() {
     final GNUOBPrincipal gnuobPrincipal = (GNUOBPrincipal) getRequest().getUserPrincipal();
-
     if (gnuobPrincipal == null) {
       return null;
     }
-
     return gnuobPrincipal.getSite();
   }
 
@@ -45,7 +45,4 @@ public class AppServletContainerAuthenticatedWebSession extends ServletContainer
     return ServletContainerAuthenticatedWebSession.getUserName();
   }
 
-  public AppServletContainerAuthenticatedWebSession(Request request) {
-    super(request);
-  }
 }

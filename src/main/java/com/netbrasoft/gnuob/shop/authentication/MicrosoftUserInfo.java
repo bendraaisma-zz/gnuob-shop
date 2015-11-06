@@ -10,7 +10,7 @@ import net.minidev.json.JSONObject;
 
 public class MicrosoftUserInfo extends UserInfo {
 
-  public MicrosoftUserInfo(JSONObject contentAsJSONObject) {
+  public MicrosoftUserInfo(final JSONObject contentAsJSONObject) {
     super(contentAsJSONObject);
   }
 

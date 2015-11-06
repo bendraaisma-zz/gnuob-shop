@@ -5,6 +5,8 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.flow.RedirectToUrlException;
 
+import com.netbrasoft.gnuob.shop.page.SpecificationPage;
+
 public class SpecificationTab extends AbstractTab {
 
   private static final long serialVersionUID = -2199080888114094533L;
@@ -15,6 +17,6 @@ public class SpecificationTab extends AbstractTab {
 
   @Override
   public WebMarkupContainer getPanel(final String panelId) {
-    throw new RedirectToUrlException("specification.html");
+    throw new RedirectToUrlException(SpecificationPage.SPECIFICATION_HTML_VALUE);
   }
 }

@@ -6,9 +6,11 @@ import org.wicketstuff.wicket.mount.core.annotation.MountPath;
 
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
 
-@MountPath("store.html")
+@MountPath(StorePage.STORE_HTML_VALUE)
 @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
 public class StorePage extends BasePage {
+
+  protected static final String STORE_HTML_VALUE = "store.html";
 
   private static final long serialVersionUID = -7721060791790055851L;
 }

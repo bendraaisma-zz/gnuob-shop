@@ -7,6 +7,7 @@ import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.AbstractReadOnlyModel;
+import org.apache.wicket.model.IModel;
 
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
 
@@ -18,13 +19,13 @@ public class ProductCarousel extends Carousel {
 
   private static final long serialVersionUID = -8356867197970835590L;
 
-  public ProductCarousel(final String id, final List<ICarouselImage> images) {
-    super(id, images);
+  public ProductCarousel(final String id, final IModel<List<ICarouselImage>> model) {
+    super(id, model);
   }
 
   @Override
-  protected Component newImage(String markupId, ICarouselImage image) {
-    final Label html = new Label(markupId, new AbstractReadOnlyModel<String>() {
+  protected Component newImage(final String markupId, final ICarouselImage image) {
+    final Label htmlLabel = new Label(markupId, new AbstractReadOnlyModel<String>() {
 
       private static final long serialVersionUID = -7501719023515852494L;
 
@@ -33,6 +34,6 @@ public class ProductCarousel extends Carousel {
         return image.url();
       }
     });
-    return html.setEscapeModelStrings(false);
+    return htmlLabel.setEscapeModelStrings(false);
   }
 }

@@ -5,6 +5,8 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.flow.RedirectToUrlException;
 
+import com.netbrasoft.gnuob.shop.page.ConfirmationPage;
+
 public class ConfirmationTab extends AbstractTab {
 
   private static final long serialVersionUID = -7414478523953380913L;
@@ -15,6 +17,6 @@ public class ConfirmationTab extends AbstractTab {
 
   @Override
   public WebMarkupContainer getPanel(final String panelId) {
-    throw new RedirectToUrlException("confirmation.html");
+    throw new RedirectToUrlException(ConfirmationPage.CONFIRMATION_HTML_VALUE);
   }
 }

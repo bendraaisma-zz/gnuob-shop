@@ -16,53 +16,40 @@ public class PayPalUserInfoSuccessResponse extends UserInfoSuccessResponse {
 
   public static PayPalUserInfoSuccessResponse parse(final HTTPResponse httpResponse) throws ParseException {
     httpResponse.ensureStatusCode(HTTPResponse.SC_OK);
-
     httpResponse.ensureContentType();
-
     final ContentType ct = httpResponse.getContentType();
-
     PayPalUserInfoSuccessResponse response;
-
     if (ct.match(CommonContentTypes.APPLICATION_JSON)) {
-
       UserInfo claimsSet;
-
       try {
         final JSONObject jsonObject = httpResponse.getContentAsJSONObject();
         jsonObject.put(UserInfo.SUB_CLAIM_NAME, JSONObjectUtils.getString(jsonObject, "user_id"));
         claimsSet = new UserInfo(jsonObject);
-
       } catch (final Exception e) {
-
         throw new ParseException("Couldn't parse UserInfo claims: " + e.getMessage(), e);
       }
-
       response = new PayPalUserInfoSuccessResponse(claimsSet);
-    } else if (ct.match(CommonContentTypes.APPLICATION_JWT)) {
-
-      JWT jwt;
-
-      try {
-        jwt = httpResponse.getContentAsJWT();
-
-      } catch (final ParseException e) {
-
-        throw new ParseException("Couldn't parse UserInfo claims JWT: " + e.getMessage(), e);
-      }
-
-      response = new PayPalUserInfoSuccessResponse(jwt);
     } else {
-      throw new ParseException("Unexpected Content-Type, must be " + CommonContentTypes.APPLICATION_JSON + " or " + CommonContentTypes.APPLICATION_JWT);
+      if (ct.match(CommonContentTypes.APPLICATION_JWT)) {
+        JWT jwt;
+        try {
+          jwt = httpResponse.getContentAsJWT();
+        } catch (final ParseException e) {
+          throw new ParseException("Couldn't parse UserInfo claims JWT: " + e.getMessage(), e);
+        }
+        response = new PayPalUserInfoSuccessResponse(jwt);
+      } else {
+        throw new ParseException("Unexpected Content-Type, must be " + CommonContentTypes.APPLICATION_JSON + " or " + CommonContentTypes.APPLICATION_JWT);
+      }
     }
-
     return response;
   }
 
-  public PayPalUserInfoSuccessResponse(JWT jwt) {
+  public PayPalUserInfoSuccessResponse(final JWT jwt) {
     super(jwt);
   }
 
-  public PayPalUserInfoSuccessResponse(UserInfo claimsSet) {
+  public PayPalUserInfoSuccessResponse(final UserInfo claimsSet) {
     super(claimsSet);
   }
 }

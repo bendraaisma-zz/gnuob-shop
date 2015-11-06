@@ -1,9 +1,7 @@
 package com.netbrasoft.gnuob.shop.category;
 
 import java.math.BigInteger;
-import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.wicket.ajax.AjaxEventBehavior;
@@ -20,12 +18,13 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
+import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.apache.wicket.util.time.Duration;
+import org.apache.wicket.util.convert.IConverter;
 import org.springframework.beans.BeanUtils;
 
 import com.google.common.net.MediaType;
@@ -37,16 +36,21 @@ import com.netbrasoft.gnuob.api.Product;
 import com.netbrasoft.gnuob.api.SubCategory;
 import com.netbrasoft.gnuob.api.SubOption;
 import com.netbrasoft.gnuob.api.generic.GenericTypeDataProvider;
+import com.netbrasoft.gnuob.api.generic.converter.CurrencyConverter;
+import com.netbrasoft.gnuob.api.product.ProductDataProvider;
+import com.netbrasoft.gnuob.shop.NetbrasoftShopMessageKeyConstants;
 import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
 import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import com.netbrasoft.gnuob.shop.page.CartPage;
 import com.netbrasoft.gnuob.shop.product.ProductCarousel;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
 import com.netbrasoft.gnuob.shop.shopper.Shopper;
+import com.netbrasoft.gnuob.shop.shopper.ShopperDataProvider;
 
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapAjaxLink;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.Buttons;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.Buttons.Size;
+import de.agilecoders.wicket.core.markup.html.bootstrap.button.Buttons.Type;
 import de.agilecoders.wicket.core.markup.html.bootstrap.carousel.CarouselImage;
 import de.agilecoders.wicket.core.markup.html.bootstrap.carousel.ICarouselImage;
 import de.agilecoders.wicket.core.markup.html.bootstrap.components.PopoverBehavior;
@@ -57,327 +61,452 @@ import de.agilecoders.wicket.core.markup.html.bootstrap.image.IconBehavior;
 import de.agilecoders.wicket.core.markup.html.bootstrap.list.BootstrapListView;
 import de.agilecoders.wicket.core.markup.html.bootstrap.navigation.BootstrapPagingNavigator;
 
+@SuppressWarnings("unchecked")
 @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
 public class CategoryViewPanel extends Panel {
 
-  class OfferRecordDataProvider implements IDataProvider<OfferRecord> {
+  @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
+  class ProductViewFragment extends Fragment {
 
-    private static final long serialVersionUID = 3755475588885853693L;
+    @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
+    class ProductDataviewContainer extends WebMarkupContainer {
 
-    @Override
-    public void detach() {
-      return;
-    }
+      class ProductDataView extends DataView<Product> {
 
-    @Override
-    public Iterator<? extends OfferRecord> iterator(long first, long count) {
-      final List<OfferRecord> offerRecordIteratorList = new ArrayList<OfferRecord>();
+        @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
+        class RatingLoop extends Loop {
 
-      for (int index = (int) first; index < first + count; index++) {
-        offerRecordIteratorList.add(shopperDataProvider.find(new Shopper()).getCart().getRecords().get(index));
-      }
+          private static final long serialVersionUID = 5495135025461796293L;
 
-      return offerRecordIteratorList.iterator();
-    }
+          private final IModel<Integer> minModel;
 
-    @Override
-    public IModel<OfferRecord> model(OfferRecord object) {
-      return Model.of(object);
-    }
+          public RatingLoop(final String id, final IModel<Integer> minModel, final IModel<Integer> maxModel) {
+            super(id, maxModel);
+            this.minModel = minModel;
+          }
 
-    @Override
-    public long size() {
-      return shopperDataProvider.find(new Shopper()).getCart().getRecords().size();
-    }
-  }
+          @Override
+          protected void populateItem(final LoopItem item) {
+            final IconBehavior iconBehavior = new IconBehavior(item.getIndex() < minModel.getObject() ? GlyphIconType.star : GlyphIconType.starempty);
+            item.add(iconBehavior);
+          }
+        }
 
-  class OfferRecordProductDataProvider implements IDataProvider<Product> {
+        private static final String NAME_ID = "name";
 
-    private static final long serialVersionUID = 9170940545796805775L;
+        private static final String STOCK_QUANTITY_ID = "stock.quantity";
 
-    private transient List<Product> products = new ArrayList<Product>();
+        private static final String PRODUCT_CAROUSEL_ID = "productCarousel";
 
-    @Override
-    public void detach() {
-      return;
-    }
+        private static final String RATING_ID = "rating";
 
-    public List<Product> getProducts() {
-      return products;
-    }
+        private static final String AMOUNT_WITH_DISCOUNT_ID = "amountWithDiscount";
 
-    @Override
-    public Iterator<? extends Product> iterator(long first, long count) {
-      final List<Product> productIteratorList = new ArrayList<Product>();
+        private static final String AMOUNT_ID = "amount";
 
-      for (int index = (int) first; index < first + count; index++) {
-        productIteratorList.add(products.get(index));
-      }
+        private static final String PURCHASE_ID = "purchase";
 
-      return productIteratorList.iterator();
-    }
+        private static final long serialVersionUID = -8926501865477098913L;
 
-    @Override
-    public IModel<Product> model(Product object) {
-      return Model.of(object);
-    }
+        private static final int FIVE_STARS_RATING = 5;
 
-    public void setProducts(List<Product> products) {
-      this.products = products;
-    }
+        private ProductDataView(final String id, final IDataProvider<Product> dataProvider, final long itemsPerPage) {
+          super(id, dataProvider, itemsPerPage);
+        }
 
-    @Override
-    public long size() {
-      return products.size();
-    }
-  }
+        private List<ICarouselImage> convertContentsToCarouselImages(final List<Content> contents) {
+          final List<ICarouselImage> carouselImages = new ArrayList<ICarouselImage>();
+          for (final Content content : contents) {
+            if (MediaType.HTML_UTF_8.is(MediaType.parse(content.getFormat()))) {
+              carouselImages.add(new CarouselImage(new String(content.getContent())));
+            }
+          }
+          return carouselImages;
+        }
 
-  class ProductDataView extends DataView<Product> {
+        @Override
+        protected void populateItem(final Item<Product> item) {
+          final Label nameLabel = new Label(NAME_ID);
+          final Label stockQuantityLabel = new Label(STOCK_QUANTITY_ID);
+          final ProductCarousel productCarousel = new ProductCarousel(PRODUCT_CAROUSEL_ID, Model.ofList(convertContentsToCarouselImages(item.getModelObject().getContents())));
+          final RatingLoop ratingLoop = new RatingLoop(RATING_ID, Model.of(((Product) item.getDefaultModelObject()).getRating()), Model.of(FIVE_STARS_RATING));
+          final Label amountWithDiscountLabel = new Label(AMOUNT_WITH_DISCOUNT_ID, Model.of(item.getModelObject().getAmount().subtract(item.getModelObject().getDiscount()))) {
 
-    private static final long serialVersionUID = -8926501865477098913L;
+            private static final long serialVersionUID = 2992356937203130959L;
 
-    private static final int ITEMS_PER_PAGE = 5;
+            @Override
+            public <C> IConverter<C> getConverter(final Class<C> type) {
+              return (IConverter<C>) new CurrencyConverter();
+            }
+          };
+          final Label amountLabel = new Label(AMOUNT_ID) {
 
-    private ProductDataView() {
-      super("productDataview", productDataProvider, ITEMS_PER_PAGE);
-    }
+            private static final long serialVersionUID = -2395718656821800152L;
 
-    @Override
-    protected void populateItem(Item<Product> item) {
-      final List<ICarouselImage> carouselImages = new ArrayList<ICarouselImage>();
-
-      for (final Content content : item.getModelObject().getContents()) {
-        if (MediaType.HTML_UTF_8.is(MediaType.parse(content.getFormat()))) {
-          carouselImages.add(new CarouselImage(new String(content.getContent())));
+            @Override
+            public <C> IConverter<C> getConverter(final Class<C> type) {
+              return (IConverter<C>) new CurrencyConverter();
+            }
+          };
+          final PurchaseBootstrapAjaxLink purchaseBootstrapAjaxLink =
+              new PurchaseBootstrapAjaxLink(PURCHASE_ID, item.getModel(), Type.Primary, Model.of(CategoryViewPanel.this.getString(NetbrasoftShopMessageKeyConstants.PURCHASE_MESSAGE_KEY)));
+          final PopoverConfig popoverConfig = new PopoverConfig();
+          final PopoverBehavior popoverBehavior = new PopoverBehavior(Model.of(CategoryViewPanel.this.getString(NetbrasoftShopMessageKeyConstants.DESCRIPTION_MESSAGE_KEY)),
+              Model.of(item.getModelObject().getDescription()), popoverConfig);
+          popoverConfig.withHoverTrigger();
+          popoverConfig.withPlacement(Placement.bottom);
+          productCarousel.add(popoverBehavior);
+          item.setModel(new CompoundPropertyModel<Product>(item.getModelObject()));
+          item.add(nameLabel.setOutputMarkupId(true));
+          item.add(stockQuantityLabel).setOutputMarkupId(true);
+          item.add(amountWithDiscountLabel.setOutputMarkupId(true));
+          item.add(amountLabel.setOutputMarkupId(true));
+          item.add(productCarousel.setOutputMarkupId(true));
+          item.add(ratingLoop.setOutputMarkupId(true));
+          item.add(purchaseBootstrapAjaxLink.setOutputMarkupId(true));
         }
       }
 
-      item.setModel(new CompoundPropertyModel<Product>(item.getModelObject()));
-      item.add(new Label("name"));
-      item.add(new Label("stock.quantity"));
-      item.add(new Label("amountWithDiscount",
-          Model.of(NumberFormat.getCurrencyInstance().format(item.getModelObject().getAmount().subtract(item.getModelObject().getDiscount())))));
-      item.add(new Label("amount", Model.of(NumberFormat.getCurrencyInstance().format(item.getModelObject().getAmount()))));
-      item.add(new ProductCarousel("productCarousel", carouselImages).setInterval(Duration.NONE).add(new PopoverBehavior(Model.of(getString("descriptionMessage")),
-          Model.of(item.getModelObject().getDescription()), new PopoverConfig().withHoverTrigger().withPlacement(Placement.bottom))));
-      item.add(new Loop("rating", ITEMS_PER_PAGE) {
+      @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
+      class PurchaseBootstrapAjaxLink extends BootstrapAjaxLink<Product> {
 
-        private static final long serialVersionUID = -443304621920358169L;
+        private static final String VERSION_IGNORE_PROPERTIES = "version";
 
-        @Override
-        protected void populateItem(LoopItem loopItem) {
-          loopItem.add(new IconBehavior(loopItem.getIndex() < item.getModelObject().getRating() ? GlyphIconType.star : GlyphIconType.starempty));
+        private static final String ID_IGNORE_PROPERTIES = "id";
+
+        private static final long serialVersionUID = 1393894351888380103L;
+
+        public PurchaseBootstrapAjaxLink(final String id, final IModel<Product> model, final Type type, final IModel<String> labelModel) {
+          super(id, model, type, labelModel);
+          setSize(Buttons.Size.Small);
         }
-      });
-      item.add(new BootstrapAjaxLink<String>("purchase", Model.of(getString("purchaseMessage")), Buttons.Type.Primary, Model.of(getString("purchaseMessage"))) {
-
-        private static final long serialVersionUID = -2845735209719008615L;
 
         @Override
-        public void onClick(AjaxRequestTarget target) {
+        public void onClick(final AjaxRequestTarget target) {
           final OfferRecord offerRecord = new OfferRecord();
-          offerRecord.setProduct(item.getModelObject());
-          offerRecord.setName(item.getModelObject().getName());
-          offerRecord.setDescription(item.getModelObject().getDescription());
-          offerRecord.setDiscount(item.getModelObject().getDiscount());
-          offerRecord.setShippingCost(item.getModelObject().getShippingCost());
-          offerRecord.setTax(item.getModelObject().getTax());
+          final Product product = PurchaseBootstrapAjaxLink.this.getModelObject();
+          BeanUtils.copyProperties(product, offerRecord, ID_IGNORE_PROPERTIES, VERSION_IGNORE_PROPERTIES);
+          offerRecord.setProduct(product);
+          offerRecord.setProductNumber(product.getNumber());
+          offerRecord.setAmount(product.getAmount().subtract(product.getDiscount()));
           offerRecord.setQuantity(BigInteger.ONE);
-          offerRecord.setProductNumber(item.getModelObject().getNumber());
-          offerRecord.setAmount(item.getModelObject().getAmount().subtract(item.getModelObject().getDiscount()));
-          for (final Option rootOption : item.getModelObject().getOptions()) {
+          for (final Option rootOption : product.getOptions()) {
             if (!rootOption.isDisabled()) {
-
               final Option offerRecordRootOption = new Option();
-              BeanUtils.copyProperties(rootOption, offerRecordRootOption, "id", "version");
-
+              BeanUtils.copyProperties(rootOption, offerRecordRootOption, ID_IGNORE_PROPERTIES, VERSION_IGNORE_PROPERTIES);
               for (final SubOption childSubOption : rootOption.getSubOptions()) {
                 if (!childSubOption.isDisabled()) {
-
                   final SubOption offerRecordChildSubOption = new SubOption();
-                  BeanUtils.copyProperties(childSubOption, offerRecordChildSubOption, "id", "version");
-
+                  BeanUtils.copyProperties(childSubOption, offerRecordChildSubOption, ID_IGNORE_PROPERTIES, VERSION_IGNORE_PROPERTIES);
                   offerRecordRootOption.getSubOptions().add(offerRecordChildSubOption);
                   break;
                 }
               }
-
               offerRecord.getOptions().add(offerRecordRootOption);
             }
           }
-
           shopperDataProvider.find(new Shopper()).getCart().getRecords().add(0, offerRecord);
           setResponsePage(new CartPage());
         }
-      }.setSize(Buttons.Size.Small).setOutputMarkupId(true));
-    }
-  }
+      }
 
-  class ProductViewFragement extends Fragment {
+      private static final String PRODUCT_DATAVIEW_ID = "productDataview";
+
+      private static final int ITEMS_PER_PAGE = 5;
+
+      private static final long serialVersionUID = 6364502301735024811L;
+
+      private final ProductDataView productDataView;
+
+      public ProductDataviewContainer(final String id, final IModel<Category> model) {
+        super(id, model);
+        productDataView = new ProductDataView(PRODUCT_DATAVIEW_ID, productDataProvider, ITEMS_PER_PAGE);
+      }
+
+      @Override
+      protected void onInitialize() {
+        add(productDataView.setOutputMarkupId(true));
+        super.onInitialize();
+      }
+    }
+
+    @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
+    class SubCategoryDataviewContainer extends WebMarkupContainer {
+
+      class SubCategoryDataview extends DataView<SubCategory> {
+
+        private static final String CLICK_EVENT = "click";
+
+        private static final String CONTENT_ID = "content";
+
+        private static final long serialVersionUID = 2776123630121635305L;
+
+        private SubCategoryDataview(final String id, final IDataProvider<SubCategory> dataProvider, final long itemsPerPage) {
+          super(id, dataProvider, itemsPerPage);
+        }
+
+        @Override
+        protected void populateItem(final Item<SubCategory> item) {
+          item.setModel(new CompoundPropertyModel<SubCategory>(item.getModelObject()));
+          item.add(new Label(CONTENT_ID, new AbstractReadOnlyModel<String>() {
+
+            private static final long serialVersionUID = 4751535250171413561L;
+
+            @Override
+            public String getObject() {
+              final StringBuilder stringBuilder = new StringBuilder();
+              for (final Content content : item.getModelObject().getContents()) {
+                stringBuilder.append(new String(content.getContent()));
+              }
+              return stringBuilder.toString();
+            }
+          }).setEscapeModelStrings(false));
+          item.add(new AjaxEventBehavior(CLICK_EVENT) {
+
+            private static final long serialVersionUID = 3898435649434303190L;
+
+            @Override
+            protected void onEvent(final AjaxRequestTarget target) {
+              selectedModel = (IModel<SubCategory>) item.getDefaultModel();
+              selectedModelList = Model.ofList(((SubCategory) item.getDefaultModelObject()).getSubCategories());
+              subCategoryMenuBootstrapListView.setDefaultModel(Model.ofList(((SubCategory) item.getDefaultModelObject()).getSubCategories()));
+              productDataProvider.setType(new Product());
+              productDataProvider.getType().setActive(true);
+              productDataProvider.getType().getSubCategories().add((SubCategory) item.getDefaultModelObject());
+              CategoryViewPanel.this.removeAll();
+              CategoryViewPanel.this.add(new ProductViewFragment().setOutputMarkupId(true));
+              target.add(CategoryViewPanel.this);
+            }
+          });
+        }
+      }
+
+      private static final String SUB_CATEGORY_DATAVIEW_ID = "subCategoryDataview";
+
+      private static final long serialVersionUID = 6098269569797773482L;
+
+      private final SubCategoryDataview subCategoryDataview;
+
+      public SubCategoryDataviewContainer(final String id, final IModel<Category> model) {
+        super(id, model);
+        final IDataProvider<SubCategory> subCategoryDataProvider = new ListDataProvider<SubCategory>() {
+
+          private static final long serialVersionUID = 1L;
+
+          @Override
+          protected List<SubCategory> getData() {
+            return createFlatSubCategoryList(selectedModelList.getObject());
+          }
+        };
+        subCategoryDataview = new SubCategoryDataview(SUB_CATEGORY_DATAVIEW_ID, subCategoryDataProvider, Integer.MAX_VALUE);
+      }
+
+      @Override
+      protected void onInitialize() {
+        add(subCategoryDataview.setOutputMarkupId(true));
+        super.onInitialize();
+      }
+    }
+
+    private static final String PRODUCT_VIEW_FRAGMENT_MARKUP_ID = "productViewFragment";
+
+    private static final String SUB_CATEGORY_PRODUCT_VIEW_FRAGMENT_ID = "subCategoryProductViewFragment";
+
+    private static final String PRODUCT_DATAVIEW_CONTAINER_ID = "productDataviewContainer";
+
+    private static final String PRODUCT_PAGING_NAVIGATOR_MARKUP_ID = "productPagingNavigator";
 
     private static final long serialVersionUID = -1722501866439698640L;
 
-    public ProductViewFragement() {
-      super("subCategoryProductViewFragement", "productViewFragement", CategoryViewPanel.this, CategoryViewPanel.this.getDefaultModel());
+    private static final String SUB_CATEGORY_MENU_BOOTSTRAP_LIST_VIEW_ID = "subCategoryMenuBootstrapListView";
+
+    private static final String SUB_CATEGORY_DATAVIEW_CONTAINER_ID = "subCategoryDataviewContainer";
+
+    private final SubCategoryMenuBootstrapListView subCategoryMenuBootstrapListView;
+
+    private final SubCategoryDataviewContainer subCategoryDataviewContainer;
+
+    private final ProductDataviewContainer productDataviewContainer;
+
+    private final BootstrapPagingNavigator productPagingNavigator;
+
+    public ProductViewFragment() {
+      super(SUB_CATEGORY_PRODUCT_VIEW_FRAGMENT_ID, PRODUCT_VIEW_FRAGMENT_MARKUP_ID, CategoryViewPanel.this, CategoryViewPanel.this.getDefaultModel());
+      final ArrayList<SubCategory> subCategoryList = new ArrayList<SubCategory>();
+      subCategoryList.add(selectedModel.getObject());
+      subCategoryMenuBootstrapListView = new SubCategoryMenuBootstrapListView(SUB_CATEGORY_MENU_BOOTSTRAP_LIST_VIEW_ID, Model.ofList(subCategoryList));
+      subCategoryDataviewContainer = new SubCategoryDataviewContainer(SUB_CATEGORY_DATAVIEW_CONTAINER_ID, (IModel<Category>) ProductViewFragment.this.getDefaultModel());
+      productDataviewContainer = new ProductDataviewContainer(PRODUCT_DATAVIEW_CONTAINER_ID, (IModel<Category>) ProductViewFragment.this.getDefaultModel());
+      productPagingNavigator = new BootstrapPagingNavigator(PRODUCT_PAGING_NAVIGATOR_MARKUP_ID, productDataviewContainer.productDataView);
     }
 
     @Override
     protected void onInitialize() {
       add(subCategoryMenuBootstrapListView.setOutputMarkupId(true));
       add(subCategoryDataviewContainer.setOutputMarkupId(true));
-      add(productDataView.setOutputMarkupId(true));
-      add(productPagingNavigator);
+      add(productDataviewContainer.setOutputMarkupId(true));
+      add(productPagingNavigator.setOutputMarkupId(true));
       super.onInitialize();
-    }
-  }
-
-  class SubCategoryBootstrapListView extends BootstrapListView<SubCategory> {
-
-    private static final long serialVersionUID = 2148940232228759419L;
-
-    private SubCategoryBootstrapListView(final List<SubCategory> listData) {
-      super("subCategoryBootstrapListView", listData);
-    }
-
-    @Override
-    protected void populateItem(ListItem<SubCategory> item) {
-      item.setModel(new CompoundPropertyModel<SubCategory>(item.getModelObject()));
-      item.add(new BootstrapAjaxLink<String>("link", Model.of(item.getModel().getObject().getName()), Buttons.Type.Link, Model.of(item.getModel().getObject().getName())) {
-
-        private static final long serialVersionUID = -1216788078532675590L;
-
-        @Override
-        public void onClick(AjaxRequestTarget target) {
-          final List<SubCategory> subCategories = new ArrayList<SubCategory>();
-          subCategories.add((SubCategory) item.getDefaultModelObject());
-
-          subCategoryDataProvider.setSubCategories(subCategories.get(0).getSubCategories());
-          subCategoryMenuBootstrapListView.setModelObject(subCategories);
-          productDataProvider.setType(new Product());
-          productDataProvider.getType().setActive(true);
-          productDataProvider.getType().getSubCategories().addAll(subCategories);
-
-          CategoryViewPanel.this.removeAll();
-          CategoryViewPanel.this.add(new ProductViewFragement().setOutputMarkupId(true));
-          target.add(CategoryViewPanel.this);
-        }
-
-      }.setSize(Size.Small).setOutputMarkupId(true));
-    }
-  }
-
-  class SubCategoryDataProvider implements IDataProvider<SubCategory> {
-
-    private static final long serialVersionUID = -2600778565688301137L;
-
-    private transient List<SubCategory> subCategories = new ArrayList<SubCategory>();
-
-    @Override
-    public void detach() {
-      return;
-    }
-
-    public List<SubCategory> getSubCategories() {
-      return subCategories;
-    }
-
-    @Override
-    public Iterator<? extends SubCategory> iterator(long first, long count) {
-      final List<SubCategory> subCategoryIteratorList = new ArrayList<SubCategory>();
-
-      for (int index = (int) first; index < first + count; index++) {
-        subCategoryIteratorList.add(subCategories.get(index));
-      }
-
-      return subCategoryIteratorList.iterator();
-    }
-
-    @Override
-    public IModel<SubCategory> model(SubCategory object) {
-      return Model.of(object);
-    }
-
-    public void setSubCategories(List<SubCategory> subCategories) {
-      this.subCategories = subCategories;
-    }
-
-    @Override
-    public long size() {
-      return subCategories.size();
-    }
-  }
-
-  class SubCategoryDataview extends DataView<SubCategory> {
-
-    private static final long serialVersionUID = 2776123630121635305L;
-
-    private SubCategoryDataview() {
-      super("subCategoryDataview", subCategoryDataProvider);
-    }
-
-    @Override
-    protected void populateItem(Item<SubCategory> item) {
-      item.setModel(new CompoundPropertyModel<SubCategory>(item.getModelObject()));
-      item.add(new Label("content", new AbstractReadOnlyModel<String>() {
-
-        private static final long serialVersionUID = 4751535250171413561L;
-
-        @Override
-        public String getObject() {
-          final StringBuilder contentStringBuilder = new StringBuilder();
-
-          for (final Content content : item.getModelObject().getContents()) {
-            contentStringBuilder.append(new String(content.getContent()));
-          }
-
-          return contentStringBuilder.toString();
-        }
-      }).setEscapeModelStrings(false));
-      item.add(new AjaxEventBehavior("click") {
-
-        private static final long serialVersionUID = 3898435649434303190L;
-
-        @Override
-        protected void onEvent(AjaxRequestTarget target) {
-          final List<SubCategory> subCategories = new ArrayList<SubCategory>();
-          subCategories.add((SubCategory) item.getDefaultModelObject());
-
-          subCategoryDataProvider.setSubCategories(subCategories.get(0).getSubCategories());
-          subCategoryMenuBootstrapListView.setModelObject(subCategories);
-          productDataProvider.setType(new Product());
-          productDataProvider.getType().setActive(true);
-          productDataProvider.getType().getSubCategories().addAll(subCategories);
-
-          CategoryViewPanel.this.removeAll();
-          CategoryViewPanel.this.add(new ProductViewFragement().setOutputMarkupId(true));
-          target.add(CategoryViewPanel.this);
-        }
-      });
     }
   }
 
   class SubCategoryMenuBootstrapListView extends BootstrapListView<SubCategory> {
 
+    class SubCategoryBootstrapListView extends BootstrapListView<SubCategory> {
+
+      private static final String LINK_ID = "link";
+
+      private static final long serialVersionUID = 2148940232228759419L;
+
+      private SubCategoryBootstrapListView(final String id, final IModel<? extends List<SubCategory>> model) {
+        super(id, model);
+      }
+
+      @Override
+      protected void populateItem(final ListItem<SubCategory> item) {
+        final BootstrapAjaxLink<String> bootstrapAjaxLink =
+            new BootstrapAjaxLink<String>(LINK_ID, Model.of(item.getModel().getObject().getName()), Buttons.Type.Link, Model.of(item.getModel().getObject().getName())) {
+
+              private static final long serialVersionUID = -1216788078532675590L;
+
+              @Override
+              public void onClick(final AjaxRequestTarget target) {
+                selectedModel = (IModel<SubCategory>) item.getDefaultModel();
+                selectedModelList = Model.ofList(((SubCategory) item.getDefaultModelObject()).getSubCategories());
+                SubCategoryMenuBootstrapListView.this.setDefaultModel(Model.ofList(((SubCategory) item.getDefaultModelObject()).getSubCategories()));
+                productDataProvider.setType(new Product());
+                productDataProvider.getType().setActive(true);
+                productDataProvider.getType().getSubCategories().add((SubCategory) item.getDefaultModelObject());
+                CategoryViewPanel.this.removeAll();
+                CategoryViewPanel.this.add(new ProductViewFragment().setOutputMarkupId(true));
+                target.add(CategoryViewPanel.this);
+              }
+            };
+        item.setModel(new CompoundPropertyModel<SubCategory>(item.getModelObject()));
+        item.add(bootstrapAjaxLink.setSize(Size.Small).setOutputMarkupId(true));
+      }
+    }
+
+    private static final String SUB_CATEGORY_BOOTSTRAP_LIST_VIEW_ID = "subCategoryBootstrapListView";
+
+    private static final String NAME_ID = "name";
+
     private static final long serialVersionUID = 2148940232228759419L;
 
-    private SubCategoryMenuBootstrapListView() {
-      super("subCategoryMenuBootstrapListView", ((Category) CategoryViewPanel.this.getDefaultModelObject()).getSubCategories());
+    private SubCategoryMenuBootstrapListView(final String id, final IModel<? extends List<SubCategory>> model) {
+      super(id, model);
     }
 
     @Override
-    protected void populateItem(ListItem<SubCategory> item) {
+    protected void populateItem(final ListItem<SubCategory> item) {
+      final Label nameLabel = new Label(NAME_ID);
+      final SubCategoryBootstrapListView subCategoryBootstrapListView =
+          new SubCategoryBootstrapListView(SUB_CATEGORY_BOOTSTRAP_LIST_VIEW_ID, Model.ofList(item.getModelObject().getSubCategories()));
       item.setModel(new CompoundPropertyModel<SubCategory>(item.getModelObject()));
-      item.add(new Label("name"));
-      item.add(new SubCategoryBootstrapListView(item.getModelObject().getSubCategories()));
+      item.add(nameLabel);
+      item.add(subCategoryBootstrapListView);
     }
   }
 
-  class SubCategoryViewFragement extends Fragment {
+  @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
+  class SubCategoryViewFragment extends Fragment {
+
+    @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
+    class SubCategoryDataviewContainer extends WebMarkupContainer {
+
+      class SubCategoryDataview extends DataView<SubCategory> {
+
+        private static final String CLICK_EVENT = "click";
+
+        private static final String CONTENT_ID = "content";
+
+        private static final long serialVersionUID = 2776123630121635305L;
+
+        private SubCategoryDataview(final String id, final IDataProvider<SubCategory> dataProvider, final long itemsPerPage) {
+          super(id, dataProvider, itemsPerPage);
+        }
+
+        @Override
+        protected void populateItem(final Item<SubCategory> item) {
+          item.setModel(new CompoundPropertyModel<SubCategory>(item.getModelObject()));
+          item.add(new Label(CONTENT_ID, new AbstractReadOnlyModel<String>() {
+
+            private static final long serialVersionUID = 4751535250171413561L;
+
+            @Override
+            public String getObject() {
+              final StringBuilder stringBuilder = new StringBuilder();
+              for (final Content content : item.getModelObject().getContents()) {
+                stringBuilder.append(new String(content.getContent()));
+              }
+              return stringBuilder.toString();
+            }
+          }).setEscapeModelStrings(false));
+          item.add(new AjaxEventBehavior(CLICK_EVENT) {
+
+            private static final long serialVersionUID = 3898435649434303190L;
+
+            @Override
+            protected void onEvent(final AjaxRequestTarget target) {
+              selectedModel = (IModel<SubCategory>) item.getDefaultModel();
+              selectedModelList = Model.ofList(((SubCategory) item.getDefaultModelObject()).getSubCategories());
+              subCategoryMenuBootstrapListView.setDefaultModel(Model.ofList(((SubCategory) item.getDefaultModelObject()).getSubCategories()));
+              productDataProvider.setType(new Product());
+              productDataProvider.getType().setActive(true);
+              productDataProvider.getType().getSubCategories().add((SubCategory) item.getDefaultModelObject());
+              CategoryViewPanel.this.removeAll();
+              CategoryViewPanel.this.add(new ProductViewFragment().setOutputMarkupId(true));
+              target.add(CategoryViewPanel.this);
+            }
+          });
+        }
+      }
+
+      private static final String SUB_CATEGORY_DATAVIEW_ID = "subCategoryDataview";
+
+      private static final long serialVersionUID = 6098269569797773482L;
+
+      private final SubCategoryDataview subCategoryDataview;
+
+      public SubCategoryDataviewContainer(final String id, final IModel<Category> model) {
+        super(id, model);
+        final IDataProvider<SubCategory> subCategoryDataProvider = new ListDataProvider<SubCategory>() {
+
+          private static final long serialVersionUID = 1L;
+
+          @Override
+          protected List<SubCategory> getData() {
+            return createFlatSubCategoryList(selectedModelList.getObject());
+          }
+        };
+        subCategoryDataview = new SubCategoryDataview(SUB_CATEGORY_DATAVIEW_ID, subCategoryDataProvider, Integer.MAX_VALUE);
+      }
+
+      @Override
+      protected void onInitialize() {
+        add(subCategoryDataview.setOutputMarkupId(true));
+        super.onInitialize();
+      }
+    }
+
+    private static final String SUB_CATEGORY_DATAVIEW_CONTAINER_ID = "subCategoryDataviewContainer";
+
+    private static final String SUB_CATEGORY_MENU_BOOTSTRAP_LIST_VIEW_ID = "subCategoryMenuBootstrapListView";
+
+    private static final String SUB_CATEGORY_VIEW_FRAGMENT_MARKUP_ID = "subCategoryViewFragment";
+
+    private static final String SUB_CATEGORY_PRODUCT_VIEW_FRAGMENT_ID = "subCategoryProductViewFragment";
 
     private static final long serialVersionUID = -3028153699938016168L;
 
-    public SubCategoryViewFragement() {
-      super("subCategoryProductViewFragement", "subCategoryViewFragement", CategoryViewPanel.this, CategoryViewPanel.this.getDefaultModel());
+    private final SubCategoryMenuBootstrapListView subCategoryMenuBootstrapListView;
+
+    private final SubCategoryDataviewContainer subCategoryDataviewContainer;
+
+    public SubCategoryViewFragment() {
+      super(SUB_CATEGORY_PRODUCT_VIEW_FRAGMENT_ID, SUB_CATEGORY_VIEW_FRAGMENT_MARKUP_ID, CategoryViewPanel.this, CategoryViewPanel.this.getDefaultModel());
+      subCategoryMenuBootstrapListView = new SubCategoryMenuBootstrapListView(SUB_CATEGORY_MENU_BOOTSTRAP_LIST_VIEW_ID, Model.ofList(selectedModelList.getObject()));
+      subCategoryDataviewContainer = new SubCategoryDataviewContainer(SUB_CATEGORY_DATAVIEW_CONTAINER_ID, (IModel<Category>) SubCategoryViewFragment.this.getDefaultModel());
     }
 
     @Override
@@ -390,44 +519,27 @@ public class CategoryViewPanel extends Panel {
 
   private static final long serialVersionUID = -9083340164646887954L;
 
-  private final WebMarkupContainer subCategoryDataviewContainer = new WebMarkupContainer("subCategoryDataviewContainer") {
+  @SpringBean(name = ProductDataProvider.PRODUCT_DATA_PROVIDER_NAME, required = true)
+  private transient GenericTypeDataProvider<Product> productDataProvider;
 
-    private static final long serialVersionUID = -497527332092449028L;
-
-    @Override
-    protected void onInitialize() {
-      add(subCategoryDataview);
-      super.onInitialize();
-    }
-  };
-
-  private final SubCategoryDataProvider subCategoryDataProvider = new SubCategoryDataProvider();
-
-  private final SubCategoryMenuBootstrapListView subCategoryMenuBootstrapListView = new SubCategoryMenuBootstrapListView();
-
-  private final SubCategoryDataview subCategoryDataview = new SubCategoryDataview();
-
-  private final ProductDataView productDataView = new ProductDataView();
-
-  private final BootstrapPagingNavigator productPagingNavigator = new BootstrapPagingNavigator("productPagingNavigator", productDataView);
-
-  @SpringBean(name = "ProductDataProvider", required = true)
-  private GenericTypeDataProvider<Product> productDataProvider;
-
-  @SpringBean(name = "ShopperDataProvider", required = true)
+  @SpringBean(name = ShopperDataProvider.SHOPPER_DATA_PROVIDER_NAME, required = true)
   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
+
+  private IModel<SubCategory> selectedModel;
+
+  private IModel<List<SubCategory>> selectedModelList;
 
   public CategoryViewPanel(final String id, final IModel<Category> model) {
     super(id, model);
+    selectedModel = Model.of(((Category) CategoryViewPanel.this.getDefaultModelObject()).getSubCategories().iterator().next());
+    selectedModelList = Model.ofList(((Category) CategoryViewPanel.this.getDefaultModelObject()).getSubCategories());
   }
 
-  private List<SubCategory> createFlatSubCategoryList(List<SubCategory> subCategories) {
+  private List<SubCategory> createFlatSubCategoryList(final List<SubCategory> subCategories) {
     final List<SubCategory> flatSubCategoryList = new ArrayList<SubCategory>();
-
     for (final SubCategory subCategory : subCategories) {
       flatSubCategoryList.addAll(subCategory.getSubCategories());
     }
-
     return flatSubCategoryList;
   }
 
@@ -438,9 +550,6 @@ public class CategoryViewPanel extends Panel {
     productDataProvider.setSite(AppServletContainerAuthenticatedWebSession.getSite());
     productDataProvider.setType(new Product());
     productDataProvider.getType().setActive(true);
-
-    subCategoryDataProvider.setSubCategories(createFlatSubCategoryList(((Category) CategoryViewPanel.this.getDefaultModelObject()).getSubCategories()));
-
     super.onInitialize();
   }
 }

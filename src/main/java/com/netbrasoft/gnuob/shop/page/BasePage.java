@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 import com.netbrasoft.gnuob.api.Contract;
 import com.netbrasoft.gnuob.api.OrderBy;
+import com.netbrasoft.gnuob.api.contract.ContractDataProvider;
 import com.netbrasoft.gnuob.api.generic.GNUOpenBusinessApplicationException;
 import com.netbrasoft.gnuob.api.generic.GenericTypeDataProvider;
 import com.netbrasoft.gnuob.shop.authentication.OAuthUtils;
@@ -33,6 +34,7 @@ import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedW
 import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
 import com.netbrasoft.gnuob.shop.shopper.Shopper;
+import com.netbrasoft.gnuob.shop.shopper.ShopperDataProvider;
 import com.nimbusds.oauth2.sdk.id.ClientID;
 import com.nimbusds.oauth2.sdk.id.State;
 import com.nimbusds.openid.connect.sdk.claims.UserInfo;
@@ -47,23 +49,25 @@ public abstract class BasePage extends WebPage implements IAjaxIndicatorAware {
 
   class NetbrasoftApplicationJavaScript extends JavaScriptResourceReference {
 
+    private static final String BOOTSTRAP_CONFIRMATION_JS_NAME = "bootstrap-confirmation.js";
+
     private static final long serialVersionUID = 62421909883685410L;
 
     private NetbrasoftApplicationJavaScript() {
-      super(ConfirmationBehavior.class, "bootstrap-confirmation.js");
+      super(ConfirmationBehavior.class, BOOTSTRAP_CONFIRMATION_JS_NAME);
     }
 
     @Override
     public List<HeaderItem> getDependencies() {
       final List<HeaderItem> dependencies = Lists.newArrayList(super.getDependencies());
-
       dependencies.add(JavaScriptHeaderItem.forReference(JQueryCookieJsReference.INSTANCE));
       dependencies.add(JavaScriptHeaderItem.forReference(WebApplication.get().getJavaScriptLibrarySettings().getJQueryReference()));
       dependencies.add(JavaScriptHeaderItem.forReference(Bootstrap.getSettings().getJsResourceReference()));
-
       return dependencies;
     }
   }
+
+  private static final String NETBRASOFT_SHOPPING_JAVASCRIPT_CONTAINER_ID = "netbrasoft-shopping-javascript-container";
 
   private static final long serialVersionUID = 8192334293970678397L;
 
@@ -73,24 +77,21 @@ public abstract class BasePage extends WebPage implements IAjaxIndicatorAware {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(BasePage.class);
 
-  @SpringBean(name = "ShopperDataProvider", required = true)
+  @SpringBean(name = ShopperDataProvider.SHOPPER_DATA_PROVIDER_NAME, required = true)
   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
-  @SpringBean(name = "ContractDataProvider", required = true)
-  private GenericTypeDataProvider<Contract> contractDataProvider;
+  @SpringBean(name = ContractDataProvider.CONTRACT_DATA_PROVIDER_NAME, required = true)
+  private transient GenericTypeDataProvider<Contract> contractDataProvider;
 
   private void authenticateShopper() {
     final Shopper shopper = shopperDataProvider.find(new Shopper());
-
     if (shopper.login()) {
       try {
         getShopperContractFromUserInfo(shopper);
-
         shopperDataProvider.merge(shopper);
       } catch (GNUOpenBusinessApplicationException | URISyntaxException e) {
         LOGGER.warn(e.getMessage(), e);
       }
-
       final URI redirectURI = URI.create(System.getProperty("gnuob." + AppServletContainerAuthenticatedWebSession.getSite() + ".login.redirect"));
       throw new RedirectToUrlException(redirectURI.toString());
     }
@@ -101,21 +102,19 @@ public abstract class BasePage extends WebPage implements IAjaxIndicatorAware {
     return VEIL_HEX_LOADING;
   }
 
-  private void getShopperContractFromUserInfo(Shopper shopper) throws URISyntaxException {
+  private void getShopperContractFromUserInfo(final Shopper shopper) throws URISyntaxException {
     final UserInfo userInfo = getUserInfo(shopper);
-
     shopper.logout();
-    shopper.setIsLoggedIn(true);
+    shopper.setLoggedIn(true);
     shopper.getContract().setContractId(userInfo.getEmail().toString());
     shopper.getContract().getCustomer().setBuyerEmail(userInfo.getEmail().toString());
     shopper.getContract().getCustomer().setFirstName(userInfo.getGivenName());
     shopper.getContract().getCustomer().setLastName(userInfo.getFamilyName());
     shopper.getContract().getCustomer().setFriendlyName(userInfo.getName());
-
     saveOrLoadShopperContract(shopper);
   }
 
-  private UserInfo getUserInfo(Shopper shopper) throws URISyntaxException {
+  private UserInfo getUserInfo(final Shopper shopper) throws URISyntaxException {
     final URI issuerURI = new URI(shopper.getIssuer());
     final ClientID clientID = OAuthUtils.getClientID(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
     final State state = new State(shopper.getId());
@@ -139,24 +138,21 @@ public abstract class BasePage extends WebPage implements IAjaxIndicatorAware {
     final String title = site.replaceFirst("www.", "").split("\\.")[0];
 
     add(new Label(GNUOB_SITE_TITLE_PROPERTY, System.getProperty(GNUOB_SITE_TITLE_PROPERTY, WordUtils.capitalize(title))));
-    add(new HeaderResponseContainer("netbrasoft-shopping-javascript-container", "netbrasoft-shopping-javascript-container"));
+    add(new HeaderResponseContainer(NETBRASOFT_SHOPPING_JAVASCRIPT_CONTAINER_ID, NETBRASOFT_SHOPPING_JAVASCRIPT_CONTAINER_ID));
 
     authenticateShopper();
     super.onInitialize();
   }
 
   @Override
-  public void renderHead(IHeaderResponse response) {
-    response.render(new FilteredHeaderItem(JavaScriptHeaderItem.forReference(new NetbrasoftApplicationJavaScript()), "netbrasoft-shopping-javascript-container"));
+  public void renderHead(final IHeaderResponse response) {
+    response.render(new FilteredHeaderItem(JavaScriptHeaderItem.forReference(new NetbrasoftApplicationJavaScript()), NETBRASOFT_SHOPPING_JAVASCRIPT_CONTAINER_ID));
     super.renderHead(response);
   }
 
-  private void saveOrLoadShopperContract(Shopper shopper) {
+  private void saveOrLoadShopperContract(final Shopper shopper) {
     contractDataProvider.setType(shopper.getContract());
-
-    @SuppressWarnings("unchecked")
-    final Iterator<Contract> iterator = (Iterator<Contract>) contractDataProvider.iterator(0, 1);
-
+    final Iterator<? extends Contract> iterator = contractDataProvider.iterator(0, 1);
     if (iterator.hasNext()) {
       shopper.setContract(iterator.next());
     } else {

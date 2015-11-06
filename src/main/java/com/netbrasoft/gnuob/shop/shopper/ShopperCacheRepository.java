@@ -11,24 +11,26 @@ import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheRepository;
 
 @CacheConfig(cacheNames = {"com.netbrasoft.gnuob.shop.shopper.Shopper"})
 @Monitored
-@Repository("ShopperCacheRepository")
-public class ShopperCacheRepository<S extends Shopper> implements GenericTypeCacheRepository<S> {
+@Repository(ShopperCacheRepository.SHOPPER_CACHE_REPOSITORY_NAME)
+public class ShopperCacheRepository<T extends Shopper> implements GenericTypeCacheRepository<T> {
 
-  @Cacheable(key = "#paramType.id", condition = "#paramType.id != null")
+  protected static final String SHOPPER_CACHE_REPOSITORY_NAME = "ShopperCacheRepository";
+
+  @Cacheable(key = "#type.id", condition = "#type.id != null")
   @Override
-  public S find(S paramType) {
-    return paramType;
+  public T find(final T type) {
+    return type;
   }
 
-  @CachePut(key = "#paramType.id", condition = "#paramType.id != null")
+  @CachePut(key = "#type.id", condition = "#type.id != null")
   @Override
-  public S merge(S paramType) {
-    return paramType;
+  public T merge(final T type) {
+    return type;
   }
 
-  @CacheEvict(key = "#paramType.id", condition = "#paramType.id != null")
+  @CacheEvict(key = "#type.id", condition = "#type.id != null")
   @Override
-  public void remove(S paramType) {
+  public void remove(final T type) {
     return;
   }
 }
