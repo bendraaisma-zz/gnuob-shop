@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package com.netbrasoft.gnuob.shop;
 
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -32,6 +33,8 @@ import org.wicketstuff.wicket.servlet3.auth.ServletContainerAuthenticatedWebSess
 
 import com.netbrasoft.gnuob.api.generic.converter.XmlGregorianCalendarConverter;
 import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
+import com.netbrasoft.gnuob.shop.html.NetbrasoftShopTheme;
+import com.netbrasoft.gnuob.shop.html.NetbrasoftShopThemeProvider;
 import com.netbrasoft.gnuob.shop.page.MainPage;
 import com.netbrasoft.gnuob.shop.page.SignInPage;
 import com.netbrasoft.gnuob.shop.page.error.AccessDeniedPage;
@@ -40,6 +43,7 @@ import com.netbrasoft.gnuob.shop.page.error.InternalErrorPage;
 import de.agilecoders.wicket.core.Bootstrap;
 import de.agilecoders.wicket.core.markup.html.RenderJavaScriptToFooterHeaderResponseDecorator;
 import de.agilecoders.wicket.core.settings.BootstrapSettings;
+import de.agilecoders.wicket.core.settings.CookieThemeProvider;
 import de.agilecoders.wicket.webjars.WicketWebjars;
 import de.agilecoders.wicket.webjars.settings.WebjarsSettings;
 import net.ftlines.wicketsource.WicketSource;
@@ -136,16 +140,21 @@ public class NetbrasoftShop extends ServletContainerAuthenticatedWebApplication 
   @Override
   protected void init() {
     super.init();
+    final NetbrasoftShopThemeProvider netbrasoftShopThemeProvider = new NetbrasoftShopThemeProvider(NetbrasoftShopTheme.Localhost);
+    final CookieThemeProvider activeThemeProvider = new CookieThemeProvider();
     final BootstrapSettings bootstrapSettings = new BootstrapSettings();
     final WebjarsSettings webjarsSettings = new WebjarsSettings();
+    final SpringComponentInjector springComponentInjector = new SpringComponentInjector(this);
     bootstrapSettings.useCdnResources(Boolean.valueOf(System.getProperty(GNUOB_SITE_CDN_ENABLED_PROPERTY, FALSE_DEFAULT_VALUE)));
     bootstrapSettings.setJsResourceFilterName(NETBRASOFT_SHOPPING_JAVASCRIPT_CONTAINER_NAME);
+    bootstrapSettings.setThemeProvider(netbrasoftShopThemeProvider);
+    bootstrapSettings.setActiveThemeProvider(activeThemeProvider);
     webjarsSettings.cdnUrl(System.getProperty(GNUOB_SITE_CDN_URL_PROPERTY, CDNJS_CLOUDFLARE_COM_80_DEFAULT_VALUE));
     webjarsSettings.useCdnResources(Boolean.valueOf(System.getProperty(GNUOB_SITE_CDN_ENABLED_PROPERTY, FALSE_DEFAULT_VALUE)));
     Bootstrap.install(this, bootstrapSettings);
     WicketWebjars.install(this, webjarsSettings);
     setHeaderResponseDecorator(new RenderJavaScriptToFooterHeaderResponseDecorator());
-    getComponentInstantiationListeners().add(new SpringComponentInjector(this));
+    getComponentInstantiationListeners().add(springComponentInjector);
     getApplicationSettings().setUploadProgressUpdatesEnabled(true);
     getApplicationSettings().setInternalErrorPage(InternalErrorPage.class);
     getApplicationSettings().setAccessDeniedPage(AccessDeniedPage.class);

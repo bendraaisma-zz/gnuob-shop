@@ -124,7 +124,7 @@ public class CartEmptyOrEditPanel extends Panel {
                   @Override
                   public void renderHead(final Component component, final IHeaderResponse response) {
                     response.render($(component).chain(CONFIRMATION_FUNCTION_NAME,
-                        new ConfirmationConfig().withTitle(getString(NetbrasoftShopMessageKeyConstants.CONFIRMATION_TITLE_MESSAGE_KEY)).withSingleton(true).withPopout(true)
+                        new ConfirmationConfig().withTitle(getString(NetbrasoftShopMessageKeyConstants.CONFIRMATION_MESSAGE_KEY)).withSingleton(true).withPopout(true)
                             .withBtnOkLabel(getString(NetbrasoftShopMessageKeyConstants.CONFIRM_MESSAGE_KEY))
                             .withBtnCancelLabel(getString(NetbrasoftShopMessageKeyConstants.CANCEL_MESSAGE_KEY)))
                         .asDomReadyScript());

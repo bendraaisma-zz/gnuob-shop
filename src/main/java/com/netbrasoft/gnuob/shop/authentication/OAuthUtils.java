@@ -9,6 +9,7 @@ import java.security.spec.InvalidKeySpecException;
 
 import com.netbrasoft.gnuob.api.generic.GNUOpenBusinessApplicationException;
 import com.nimbusds.jose.JOSEException;
+import com.nimbusds.oauth2.sdk.AccessTokenResponse;
 import com.nimbusds.oauth2.sdk.AuthorizationCode;
 import com.nimbusds.oauth2.sdk.AuthorizationCodeGrant;
 import com.nimbusds.oauth2.sdk.ErrorObject;
@@ -28,7 +29,7 @@ import com.nimbusds.openid.connect.sdk.AuthenticationResponse;
 import com.nimbusds.openid.connect.sdk.AuthenticationResponseParser;
 import com.nimbusds.openid.connect.sdk.AuthenticationSuccessResponse;
 import com.nimbusds.openid.connect.sdk.Nonce;
-import com.nimbusds.openid.connect.sdk.OIDCAccessTokenResponse;
+import com.nimbusds.openid.connect.sdk.OIDCTokenResponse;
 import com.nimbusds.openid.connect.sdk.OIDCTokenResponseParser;
 import com.nimbusds.openid.connect.sdk.UserInfoErrorResponse;
 import com.nimbusds.openid.connect.sdk.UserInfoRequest;
@@ -156,14 +157,38 @@ public final class OAuthUtils {
           throws SerializeException, ParseException, IOException, NoSuchAlgorithmException, InvalidKeySpecException, java.text.ParseException, JOSEException {
     final SecretTokenRequest tokenRequest =
         new SecretTokenRequest(providerConfiguration.getTokenEndpointURI(), clientID, clientSecret, new AuthorizationCodeGrant(authorizationCode, redirectURI));
-    final TokenResponse tokenResponse = OIDCTokenResponseParser.parse(tokenRequest.toHTTPRequest().send());
+
+    TokenResponse tokenResponse;
+
+    switch (providerConfiguration.getIssuer().getValue()) {
+      case ISSUER_FACEBOOK:
+        tokenResponse = AccessTokenResponse.parse(tokenRequest.toHTTPRequest().send());
+        break;
+      case ISSUER_PAY_PAL:
+        tokenResponse = OIDCTokenResponseParser.parse(tokenRequest.toHTTPRequest().send());
+        break;
+      case ISSUER_MICROSOFT:
+        tokenResponse = AccessTokenResponse.parse(tokenRequest.toHTTPRequest().send());
+        break;
+      default: // Google.
+        tokenResponse = OIDCTokenResponseParser.parse(tokenRequest.toHTTPRequest().send());
+        break;
+    }
 
     if (tokenResponse instanceof TokenErrorResponse) {
       final ErrorObject error = ((TokenErrorResponse) tokenResponse).getErrorObject();
       throw new GNUOpenBusinessApplicationException(error.getDescription());
     }
 
-    return ((OIDCAccessTokenResponse) tokenResponse).getBearerAccessToken();
+    if (tokenResponse instanceof OIDCTokenResponse) {
+      return ((OIDCTokenResponse) tokenResponse).getOIDCTokens().getBearerAccessToken();
+    }
+
+    if (tokenResponse instanceof AccessTokenResponse) {
+      return ((AccessTokenResponse) tokenResponse).getTokens().getBearerAccessToken();
+    }
+
+    throw new GNUOpenBusinessApplicationException("Couldn't get a BearerAccessToken");
   }
 
   private static UserInfo getUserInfo(final OIDCProviderMetadata providerConfiguration, final BearerAccessToken bearerAccessToken)
@@ -173,7 +198,6 @@ public final class OAuthUtils {
     UserInfoResponse userInfoResponse;
 
     switch (providerConfiguration.getIssuer().getValue()) {
-
       case ISSUER_FACEBOOK:
         userInfoResponse = FacebookUserInfoResponse.parse(userInfoRequest.toHTTPRequest().send());
         break;

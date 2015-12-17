@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package com.netbrasoft.gnuob.shop;
 
 /**
@@ -61,8 +62,6 @@ public final class NetbrasoftShopMessageKeyConstants {
   public static final String DESCRIPTION_MESSAGE_KEY = "descriptionMessage";
 
   public static final String REMOVE_MESSAGE_KEY = "removeMessage";
-
-  public static final String CONFIRMATION_TITLE_MESSAGE_KEY = "confirmationTitleMessage";
 
   public static final String CONFIRM_MESSAGE_KEY = "confirmMessage";
 

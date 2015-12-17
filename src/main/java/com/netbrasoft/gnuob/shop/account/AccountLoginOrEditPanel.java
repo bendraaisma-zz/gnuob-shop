@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package com.netbrasoft.gnuob.shop.account;
 
 import java.net.URI;
@@ -43,7 +44,6 @@ import org.apache.wicket.validation.validator.StringValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.netbrasoft.gnuob.api.Category;
 import com.netbrasoft.gnuob.api.Contract;
 import com.netbrasoft.gnuob.api.Customer;
 import com.netbrasoft.gnuob.api.OrderBy;
@@ -124,15 +124,21 @@ public class AccountLoginOrEditPanel extends Panel {
        */
       class BloodhoundPlaceNames extends Bloodhound<String> {
 
+        /**
+         * Format value for rendering choices.
+         */
         private static final String VALUE_S_FORMAT = "{\"value\":\"%s\"}";
 
+        /**
+         * Serial version UID of class {@link BloodhoundPlaceNames}.
+         */
         private static final long serialVersionUID = 697786098676195271L;
 
         /**
          * Constructor that initialize the place name Bloodhound source.
          *
-         * @param name the name of this bloodhound instance.
-         * @param config the configuration of this bloodhound instance.
+         * @param name The name of this bloodhound instance.
+         * @param config The configuration of this bloodhound instance.
          */
         public BloodhoundPlaceNames(final String name, final BloodhoundConfig config) {
           super(name, config);
@@ -173,6 +179,9 @@ public class AccountLoginOrEditPanel extends Panel {
       @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
       class SaveAjaxButton extends BootstrapAjaxButton {
 
+        /**
+         * Serial version UID of class {@link SaveAjaxButton}.
+         */
         private static final long serialVersionUID = 2695394292963384938L;
 
         /**
@@ -233,88 +242,197 @@ public class AccountLoginOrEditPanel extends Panel {
        */
       class State implements IClusterable {
 
+        /**
+         * Serial version UID of class {@link State}.
+         */
         private static final long serialVersionUID = -318735320199663283L;
 
+        /**
+         * Property to store the country state code.
+         */
         private final String code;
 
+        /**
+         * Property to store the country state name.
+         */
         private final String name;
 
         /**
+         * Constructor that initialize the {@link State} holding a country state code and -name
+         * property.
          *
-         * @param code Country state code.
-         * @param name Country state name.
+         * @param code The country state code.
+         * @param name The country state name.
          */
         public State(final String code, final String name) {
           this.code = code;
           this.name = name;
         }
 
+        /**
+         * Method to get the stored country state name property.
+         *
+         * @return The country state name.
+         */
         public String getName() {
           return name;
         }
 
+        /**
+         * toString() method to get the stored country state code property.
+         *
+         * @return The country state code.
+         */
         @Override
         public String toString() {
           return code;
         }
       }
 
+      /**
+       * Wicket markup id of the account edit form.
+       */
       private static final String ACCOUNT_EDIT_FORM_COMPONENT_ID = "accountEditForm";
 
+      /**
+       * Bloodhound remote configuration name property.
+       */
       private static final String REMOTE_NAME = "remote";
 
+      /**
+       * RegEx pattern of the Brazilian zip code formats.
+       */
       private static final String PATTERN_0_9_5_0_9_3 = "([0-9]){5}([-])([0-9]){3}";
 
+      /**
+       * Wicket markup id of the state or province input field.
+       */
       private static final String CUSTOMER_ADDRESS_STATE_OR_PROVINCE_ID = "customer.address.stateOrProvince";
 
+      /**
+       * Wicket markup id of the postal code input field.
+       */
       private static final String CUSTOMER_ADDRESS_POSTAL_CODE_ID = "customer.address.postalCode";
 
+      /**
+       * Wicket markup id of the city name input field.
+       */
       private static final String CUSTOMER_ADDRESS_CITY_NAME_ID = "customer.address.cityName";
 
+      /**
+       * Wicket markup id of the country input field.
+       */
       private static final String CUSTOMER_ADDRESS_COUNTRY_ID = "customer.address.country";
 
+      /**
+       * Wicket markup id of the street2 input field.
+       */
       private static final String CUSTOMER_ADDRESS_STREET2_ID = "customer.address.street2";
 
+      /**
+       * Wicket markup id of the street1 input field.
+       */
       private static final String CUSTOMER_ADDRESS_STREET1_ID = "customer.address.street1";
 
+      /**
+       * Wicket markup id of the phone input field.
+       */
       private static final String CUSTOMER_ADDRESS_PHONE_ID = "customer.address.phone";
 
+      /**
+       * Wicket markup id of the last name input field.
+       */
       private static final String CUSTOMER_LAST_NAME_ID = "customer.lastName";
 
+      /**
+       * Wicket markup id of the first name input field.
+       */
       private static final String CUSTOMER_FIRST_NAME_ID = "customer.firstName";
 
+      /**
+       * Wicket markup id of the buyer email input field.
+       */
       private static final String CUSTOMER_BUYER_EMAIL_ID = "customer.buyerEmail";
 
+      /**
+       * Serial version UID.
+       */
       private static final long serialVersionUID = 5886294846061574581L;
 
+      /**
+       * Wicket markup id of the save button.
+       */
       private static final String SAVE_ID = "save";
 
+      /**
+       * Wicket markup id of the feedback panel.
+       */
       private static final String FEEDBACK_ID = "feedback";
 
+      /**
+       * Customer registration form holding the input components.
+       */
       private final BootstrapForm<Contract> accountEditForm;
 
+      /**
+       * Save button for submitting and validating the customer registration form.
+       */
       private final SaveAjaxButton saveAjaxButton;
 
+      /**
+       * Feedback panel for showing feedback text to the customer in case when getting error or
+       * warning notifications.
+       */
       private final NotificationPanel feedbackPanel;
 
+      /**
+       * Required text field holding the filled in buyer email address.
+       */
       private final RequiredTextField<String> customerBuyerEmailTextField;
 
+      /**
+       * Required text field holding the filled in first name text.
+       */
       private final RequiredTextField<String> customerFirstNameTextField;
 
+      /**
+       * Required text field holding the filled in last name text.
+       */
       private final RequiredTextField<String> customerLastNameTextField;
 
+      /**
+       * Optional text field holding the filled in phone number.
+       */
       private final TextField<String> customerAddressPhoneTextField;
 
+      /**
+       * Required text field holding the filled in street1 text.
+       */
       private final RequiredTextField<String> customerAddressStreet1TextField;
 
+      /**
+       * Optional text field holding the filled in street2 text.
+       */
       private final TextField<String> customerAddressStreet2TextField;
 
+      /**
+       * Text field holding the filled in country text.
+       */
       private final TextField<String> customerAddressCountryTextField;
 
+      /**
+       * Text field holding the filled in city name text with type ahead functionality.
+       */
       private final Typeahead<String> customerAddressCityNameTextField;
 
+      /**
+       * Required text field holding the filled in postal code text.
+       */
       private final RequiredTextField<String> customerAddressPostalCodeTextField;
 
+      /**
+       * Select field holding the filled in states / provinces.
+       */
       private final BootstrapSelect<State> customerAddressStateOrProvinceDropDownChoice;
 
       /**
@@ -343,12 +461,18 @@ public class AccountLoginOrEditPanel extends Panel {
         customerAddressCityNameTextField = new Typeahead<String>(CUSTOMER_ADDRESS_CITY_NAME_ID, null, config);
         customerAddressPostalCodeTextField = new RequiredTextField<String>(CUSTOMER_ADDRESS_POSTAL_CODE_ID);
         customerAddressStateOrProvinceDropDownChoice =
-            new BootstrapSelect<State>(CUSTOMER_ADDRESS_STATE_OR_PROVINCE_ID, getStatesOfBrazil(), new ChoiceRenderer<State>("name", ""));
+            new BootstrapSelect<State>(CUSTOMER_ADDRESS_STATE_OR_PROVINCE_ID, getStatesOfCountry(), new ChoiceRenderer<State>("name", ""));
       }
 
-      // FIXME Get this information from http://www.geonames.org/ to support state formats
-      public List<State> getStatesOfBrazil() {
+      /**
+       * Method to get the a {@link List} of country {@link State}s holding the country state code
+       * and -name.
+       *
+       * @return The list of all {@link State} entities of an country.
+       */
+      public List<State> getStatesOfCountry() {
         final List<State> states = new ArrayList<>();
+        // FIXME Get this information from http://www.geonames.org/ to support state formats.
         final String[][] statesOfBrazil = new String[][] {{"AC", "Acre"}, {"AL", "Alagoas"}, {"AP", "Amapá"}, {"AM", "Amazonas"}, {"BA", "Bahia"}, {"CE", "Ceará"},
             {"ES", "Espírito Santo"}, {"GO", "Goiás"}, {"MA", "Maranhão"}, {"MT", "Mato Grosso"}, {"MS", "Mato Grosso do Sul"}, {"MG", "Minas Gerais"}, {"PA", "Pará"},
             {"PB", "Paraíba"}, {"PR", "Paraná"}, {"PE", "Pernambuco"}, {"PI", "Piauí"}, {"RJ", "Rio de Janeiro"}, {"RN", "Rio Grande do Norte"}, {"RS", "Rio Grande do Sul"},
@@ -403,14 +527,29 @@ public class AccountLoginOrEditPanel extends Panel {
       }
     }
 
+    /**
+     * Wicket markup id of the account edit container.
+     */
     private static final String ACCOUNT_EDIT_CONTAINER_ID = "accountEditContainer";
 
+    /**
+     * Wicket markup id of the account account login or edit fragment.
+     */
     private static final String ACCOUNT_LOGIN_OR_EDIT_FRAGMENT_ID = "accountLoginOrEditFragment";
 
+    /**
+     * Wicket markup id of the account account edit fragment.
+     */
     private static final String ACCOUNT_EDIT_FRAGMENT_MARKUP_ID = "accountEditFragment";
 
+    /**
+     * Serial version UID of class {@link AccountEditFragment}.
+     */
     private static final long serialVersionUID = 1948798072333311170L;
 
+    /**
+     * Web markup container grouping the actual registration form components.
+     */
     private final AccountEditContainer accountEditContainer;
 
     /**
@@ -432,21 +571,55 @@ public class AccountLoginOrEditPanel extends Panel {
     }
   }
 
+  /**
+   * {@link AccountLoginFragment} is presenting a login form where the {@link Customer} can select
+   * the prefered OAUTH2 provider to verify his credentials to login.
+   *
+   * @author "Bernard Arjan Draaisma"
+   * @version 1.0
+   */
   @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
   class AccountLoginFragment extends Fragment {
 
+    /**
+     * {@link AccountLoginContainer} is a web markup container grouping the actual login form
+     * components.
+     *
+     * @author "Bernard Arjan Draaisma"
+     * @version 1.0
+     */
     @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
     class AccountLoginContainer extends WebMarkupContainer {
 
+      /**
+       * {@link FacebookAjaxLink} is a button that authenticated the {@link Customer} to the
+       * Facebook OAUTH2.0 provider.
+       *
+       * @author "Bernard Arjan Draaisma"
+       * @version 1.0
+       */
       @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
       class FacebookAjaxLink extends AjaxLink<String> {
 
+        /**
+         * Serial version UID of class {@link FacebookAjaxLink}.
+         */
         private static final long serialVersionUID = -8317730269644885290L;
 
+        /**
+         * Constructor that initialize the {@link FacebookAjaxLink} presenting the login button
+         * where the {@link Customer} can authenticated with to the Facebook OAUTH2.0 provider.
+         *
+         * @param id The component id.
+         * @param model The component's {@link String} model.
+         */
         public FacebookAjaxLink(final String id, final IModel<String> model) {
           super(id, model);
         }
 
+        /**
+         * {@inheritDoc}.
+         */
         @Override
         public void onClick(final AjaxRequestTarget target) {
           try {
@@ -466,15 +639,35 @@ public class AccountLoginOrEditPanel extends Panel {
         }
       }
 
+      /**
+       * {@link GoogleAjaxLink} is a button that authenticated the {@link Customer} to the Google
+       * OAUTH2.0 provider.
+       *
+       * @author "Bernard Arjan Draaisma"
+       * @version 1.0
+       */
       @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
       class GoogleAjaxLink extends AjaxLink<String> {
 
+        /**
+         * Serial version UID of class {@link GoogleAjaxLink}.
+         */
         private static final long serialVersionUID = -8317730269644885290L;
 
+        /**
+         * Constructor that initialize the {@link GoogleAjaxLink} presenting the login button where
+         * the {@link Customer} can authenticated with the Facebook OAUTH2.0 provider.
+         *
+         * @param id The component id.
+         * @param model The component's {@link String} model.
+         */
         public GoogleAjaxLink(final String id, final IModel<String> model) {
           super(id, model);
         }
 
+        /**
+         * {@inheritDoc}.
+         */
         @Override
         public void onClick(final AjaxRequestTarget target) {
           try {
@@ -494,15 +687,35 @@ public class AccountLoginOrEditPanel extends Panel {
         }
       }
 
+      /**
+       * {@link MicrosoftAjaxLink} is a button that authenticated the {@link Customer} to the
+       * Microsoft OAUTH2.0 provider.
+       *
+       * @author "Bernard Arjan Draaisma"
+       * @version 1.0
+       */
       @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
       class MicrosoftAjaxLink extends AjaxLink<String> {
 
+        /**
+         * Serial version UID of class {@link MicrosoftAjaxLink}.
+         */
         private static final long serialVersionUID = -8317730269644885290L;
 
+        /**
+         * Constructor that initialize the {@link MicrosoftAjaxLink} presenting the login button
+         * where the {@link Customer} can authenticated with to the Microsoft OAUTH2.0 provider.
+         *
+         * @param id The component id.
+         * @param model The component's {@link String} model.
+         */
         public MicrosoftAjaxLink(final String id, final IModel<String> model) {
           super(id, model);
         }
 
+        /**
+         * {@inheritDoc}.
+         */
         @Override
         public void onClick(final AjaxRequestTarget target) {
           try {
@@ -522,15 +735,35 @@ public class AccountLoginOrEditPanel extends Panel {
         }
       }
 
+      /**
+       * {@link PayPalAjaxLink} is a button that authenticated the {@link Customer} to the PayPal
+       * OAUTH2.0 provider.
+       *
+       * @author "Bernard Arjan Draaisma"
+       * @version 1.0
+       */
       @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
       class PayPalAjaxLink extends AjaxLink<String> {
 
+        /**
+         * Serial version UID of class {@link PayPalAjaxLink}.
+         */
         private static final long serialVersionUID = -8317730269644885290L;
 
+        /**
+         * Constructor that initialize the {@link PayPalAjaxLink} presenting the login button where
+         * the {@link Customer} can authenticated with to the PayPal OAUTH2.0 provider.
+         *
+         * @param id The component id.
+         * @param model The component's {@link String} model.
+         */
         public PayPalAjaxLink(final String id, final IModel<String> model) {
           super(id, model);
         }
 
+        /**
+         * {@inheritDoc}.
+         */
         @Override
         public void onClick(final AjaxRequestTarget target) {
           try {
@@ -550,33 +783,83 @@ public class AccountLoginOrEditPanel extends Panel {
         }
       }
 
+      /**
+       * Prefix of a system property to get the login redirect value.
+       */
       private static final String LOGIN_REDIRECT_PREFIX_PROPERTY = ".login.redirect";
 
+      /**
+       * Prefix of a system property to get the login redirect value.
+       */
       private static final String GNUOB_PREFIX_PROPERTY = "gnuob.";
 
+      /**
+       * Wicket markup id of the Microsoft login button.
+       */
       private static final String MICROSOFT_ID = "microsoft";
 
+      /**
+       * Wicket markup id of the PayPal login button.
+       */
       private static final String PAYPAL_ID = "paypal";
 
+      /**
+       * Wicket markup id of the Google login button.
+       */
       private static final String GOOGLE_ID = "google";
 
+      /**
+       * Wicket markup id of the Facebook login button.
+       */
       private static final String FACEBOOK_ID = "facebook";
 
+      /**
+       * Serial version UID of class {@link AccountLoginContainer}.
+       */
       private static final long serialVersionUID = -4245331044839125796L;
 
+      /**
+       * Wicket markup id of the account login form.
+       */
       private static final String ACCOUNT_LOGIN_FORM_COMPONENT_ID = "accountLoginForm";
 
+      /**
+       * Customer login form holding the login button components.
+       */
       private final BootstrapForm<Contract> accountLoginForm;
 
+      /**
+       * Facebook login button for submitting and redirecting the customer to the Facebook OAUTH2.0
+       * provider.
+       */
       private final FacebookAjaxLink facebookAjaxLink;
 
+      /**
+       * Google login button for submitting and redirecting the customer to the Google OAUTH2.0
+       * provider.
+       */
       private final GoogleAjaxLink googleAjaxLink;
 
+      /**
+       * PayPal login button for submitting and redirecting the customer to the PayPal OAUTH2.0
+       * provider.
+       */
       private final PayPalAjaxLink payPalAjaxLink;
 
+      /**
+       * Microsoft login button for submitting and redirecting the customer to the Microsoft
+       * OAUTH2.0 provider.
+       */
       private final MicrosoftAjaxLink microsoftAjaxLink;
 
-      public AccountLoginContainer(final String id, final IModel<Category> model) {
+      /**
+       * Constructor that initialize the {@link AccountLoginContainer} and initialize the actual
+       * login form with his login button components
+       *
+       * @param id The component id.
+       * @param model The component's {@link Contract} model.
+       */
+      public AccountLoginContainer(final String id, final IModel<Contract> model) {
         super(id, model);
         accountLoginForm =
             new BootstrapForm<Contract>(ACCOUNT_LOGIN_FORM_COMPONENT_ID, new CompoundPropertyModel<Contract>((IModel<Contract>) AccountLoginContainer.this.getDefaultModel()));
@@ -586,6 +869,9 @@ public class AccountLoginOrEditPanel extends Panel {
         microsoftAjaxLink = new MicrosoftAjaxLink(MICROSOFT_ID, Model.of(OAuthUtils.ACCOUNTS_MICROSOFT_COM));
       }
 
+      /**
+       * {@inheritDoc}.
+       */
       @Override
       protected void onInitialize() {
         accountLoginForm.add(googleAjaxLink.setOutputMarkupId(true));
@@ -598,21 +884,43 @@ public class AccountLoginOrEditPanel extends Panel {
       }
     }
 
+    /**
+     * Wicket markup id of the account login or edit fragment.
+     */
     private static final String ACCOUNT_LOGIN_OR_EDIT_FRAGMENT_ID = "accountLoginOrEditFragment";
 
+    /**
+     * Wicket markup id of the account login fragment.
+     */
     private static final String ACCOUNT_LOGIN_FRAGMENT_MARKUP_ID = "accountLoginFragment";
 
+    /**
+     * Wicket markup id of the account login container.
+     */
     private static final String ACCOUNT_LOGIN_CONTAINER_ID = "accountLoginContainer";
 
+    /**
+     * Serial version UID of class {@link AccountLoginFragment}.
+     */
     private static final long serialVersionUID = 1193409377850497931L;
 
+    /**
+     * Web markup container grouping the actual login form components.
+     */
     private final AccountLoginContainer accountLoginContainer;
 
+    /**
+     * Constructor that initialize the {@link AccountLoginFragment} presenting the login form where
+     * the {@link Customer} can authenticated with a prefered OAUTH2.0 provider.
+     */
     public AccountLoginFragment() {
       super(ACCOUNT_LOGIN_OR_EDIT_FRAGMENT_ID, ACCOUNT_LOGIN_FRAGMENT_MARKUP_ID, AccountLoginOrEditPanel.this, AccountLoginOrEditPanel.this.getDefaultModel());
-      accountLoginContainer = new AccountLoginContainer(ACCOUNT_LOGIN_CONTAINER_ID, (IModel<Category>) AccountLoginFragment.this.getDefaultModel());
+      accountLoginContainer = new AccountLoginContainer(ACCOUNT_LOGIN_CONTAINER_ID, (IModel<Contract>) AccountLoginFragment.this.getDefaultModel());
     }
 
+    /**
+     * {@inheritDoc}.
+     */
     @Override
     protected void onInitialize() {
       add(accountLoginContainer.setOutputMarkupId(true));
@@ -620,23 +928,48 @@ public class AccountLoginOrEditPanel extends Panel {
     }
   }
 
+  /**
+   * The logger used by {@link AccountLoginOrEditPanel}
+   */
   private static final Logger LOGGER = LoggerFactory.getLogger(AccountLoginOrEditPanel.class);
 
+  /**
+   * Serial version UID of class {@link AccountLoginOrEditPanel}.
+   */
   private static final long serialVersionUID = -4406441947235524118L;
 
+  /**
+   * Reference to the {@link Shopper} data provider instance of {@link ShopperDataProvider}.
+   */
   @SpringBean(name = ShopperDataProvider.SHOPPER_DATA_PROVIDER_NAME, required = true)
   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
+  /**
+   * Reference to the {@link Contract} data provider instance of {@link ContractDataProvider}.
+   */
   @SpringBean(name = ContractDataProvider.CONTRACT_DATA_PROVIDER_NAME, required = true)
   private transient GenericTypeDataProvider<Contract> contractDataProvider;
 
+  /**
+   * Reference to the {@link PostalCode} data provider instance of {@link PostalCodeDataProvider}.
+   */
   @SpringBean(name = PostalCodeDataProvider.POSTAL_CODE_DATA_PROVIDER_NAME, required = true)
   private transient GenericTypeDataProvider<PostalCode> postalCodeDataProvider;
 
+  /**
+   * Constructor that initialize the {@link AccountLoginOrEditPanel} presenting or the registration
+   * form fragment or the login form fragment.
+   *
+   * @param id The component id.
+   * @param model The component's {@link Contract} model.
+   */
   public AccountLoginOrEditPanel(final String id, final IModel<Contract> model) {
     super(id, model);
   }
 
+  /**
+   * {@inheritDoc}.
+   */
   @Override
   protected void onInitialize() {
     contractDataProvider.setUser(AppServletContainerAuthenticatedWebSession.getUserName());

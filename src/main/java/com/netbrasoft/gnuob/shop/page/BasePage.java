@@ -41,6 +41,7 @@ import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
 
 import de.agilecoders.wicket.core.Bootstrap;
+import de.agilecoders.wicket.core.settings.IBootstrapSettings;
 import de.agilecoders.wicket.extensions.markup.html.bootstrap.confirmation.ConfirmationBehavior;
 import de.agilecoders.wicket.extensions.markup.html.bootstrap.references.JQueryCookieJsReference;
 
@@ -97,6 +98,13 @@ public abstract class BasePage extends WebPage implements IAjaxIndicatorAware {
     }
   }
 
+  private void configureActiveTheme() {
+    final String site = getRequest().getClientUrl().getHost();
+    final String title = site.replaceFirst("www.", "").split("\\.")[0].replace("-", "");
+    final IBootstrapSettings settings = Bootstrap.getSettings(getApplication());
+    settings.getActiveThemeProvider().setActiveTheme(WordUtils.capitalize(title));
+  }
+
   @Override
   public String getAjaxIndicatorMarkupId() {
     return VEIL_HEX_LOADING;
@@ -125,21 +133,32 @@ public abstract class BasePage extends WebPage implements IAjaxIndicatorAware {
         OAuthUtils.getClientSecret(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI));
   }
 
-  @Override
-  protected void onInitialize() {
+  private void initializeContractDataProvider() {
     contractDataProvider.setUser(AppServletContainerAuthenticatedWebSession.getUserName());
     contractDataProvider.setPassword(AppServletContainerAuthenticatedWebSession.getPassword());
     contractDataProvider.setSite(AppServletContainerAuthenticatedWebSession.getSite());
     contractDataProvider.setType(new Contract());
     contractDataProvider.getType().setActive(true);
     contractDataProvider.setOrderBy(OrderBy.NONE);
+  }
 
+  private void initializePageTitle() {
     final String site = getRequest().getClientUrl().getHost();
     final String title = site.replaceFirst("www.", "").split("\\.")[0];
-
     add(new Label(GNUOB_SITE_TITLE_PROPERTY, System.getProperty(GNUOB_SITE_TITLE_PROPERTY, WordUtils.capitalize(title))));
-    add(new HeaderResponseContainer(NETBRASOFT_SHOPPING_JAVASCRIPT_CONTAINER_ID, NETBRASOFT_SHOPPING_JAVASCRIPT_CONTAINER_ID));
+  }
 
+  @Override
+  protected void onConfigure() {
+    configureActiveTheme();
+    super.onConfigure();
+  }
+
+  @Override
+  protected void onInitialize() {
+    initializeContractDataProvider();
+    initializePageTitle();
+    add(new HeaderResponseContainer(NETBRASOFT_SHOPPING_JAVASCRIPT_CONTAINER_ID, NETBRASOFT_SHOPPING_JAVASCRIPT_CONTAINER_ID));
     authenticateShopper();
     super.onInitialize();
   }
