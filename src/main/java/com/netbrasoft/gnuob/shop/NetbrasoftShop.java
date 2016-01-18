@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Netbrasoft
+ * Copyright 2016 Netbrasoft
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -63,7 +63,8 @@ public class NetbrasoftShop extends ServletContainerAuthenticatedWebApplication 
    * JavaScript resource filter name that is configured inside the Bootstrap settings for grouping
    * all the used JavaScript libraries together in one single mark up container on every page.
    */
-  private static final String NETBRASOFT_SHOPPING_JAVASCRIPT_CONTAINER_NAME = "netbrasoft-shopping-javascript-container";
+  private static final String NETBRASOFT_SHOPPING_JAVASCRIPT_CONTAINER_NAME =
+      "netbrasoft-shopping-javascript-container";
 
   /**
    * Default Content Delivery Network URL where used web-jars can be found.
@@ -140,17 +141,21 @@ public class NetbrasoftShop extends ServletContainerAuthenticatedWebApplication 
   @Override
   protected void init() {
     super.init();
-    final NetbrasoftShopThemeProvider netbrasoftShopThemeProvider = new NetbrasoftShopThemeProvider(NetbrasoftShopTheme.Localhost);
+    final NetbrasoftShopThemeProvider netbrasoftShopThemeProvider =
+        new NetbrasoftShopThemeProvider(NetbrasoftShopTheme.Localhost);
     final CookieThemeProvider activeThemeProvider = new CookieThemeProvider();
     final BootstrapSettings bootstrapSettings = new BootstrapSettings();
     final WebjarsSettings webjarsSettings = new WebjarsSettings();
     final SpringComponentInjector springComponentInjector = new SpringComponentInjector(this);
-    bootstrapSettings.useCdnResources(Boolean.valueOf(System.getProperty(GNUOB_SITE_CDN_ENABLED_PROPERTY, FALSE_DEFAULT_VALUE)));
+    bootstrapSettings.useCdnResources(
+        Boolean.valueOf(System.getProperty(GNUOB_SITE_CDN_ENABLED_PROPERTY, FALSE_DEFAULT_VALUE)));
     bootstrapSettings.setJsResourceFilterName(NETBRASOFT_SHOPPING_JAVASCRIPT_CONTAINER_NAME);
     bootstrapSettings.setThemeProvider(netbrasoftShopThemeProvider);
     bootstrapSettings.setActiveThemeProvider(activeThemeProvider);
-    webjarsSettings.cdnUrl(System.getProperty(GNUOB_SITE_CDN_URL_PROPERTY, CDNJS_CLOUDFLARE_COM_80_DEFAULT_VALUE));
-    webjarsSettings.useCdnResources(Boolean.valueOf(System.getProperty(GNUOB_SITE_CDN_ENABLED_PROPERTY, FALSE_DEFAULT_VALUE)));
+    webjarsSettings.cdnUrl(
+        System.getProperty(GNUOB_SITE_CDN_URL_PROPERTY, CDNJS_CLOUDFLARE_COM_80_DEFAULT_VALUE));
+    webjarsSettings.useCdnResources(
+        Boolean.valueOf(System.getProperty(GNUOB_SITE_CDN_ENABLED_PROPERTY, FALSE_DEFAULT_VALUE)));
     Bootstrap.install(this, bootstrapSettings);
     WicketWebjars.install(this, webjarsSettings);
     setHeaderResponseDecorator(new RenderJavaScriptToFooterHeaderResponseDecorator());
@@ -159,7 +164,8 @@ public class NetbrasoftShop extends ServletContainerAuthenticatedWebApplication 
     getApplicationSettings().setInternalErrorPage(InternalErrorPage.class);
     getApplicationSettings().setAccessDeniedPage(AccessDeniedPage.class);
     getApplicationSettings().setPageExpiredErrorPage(PageExpiredErrorPage.class);
-    getSecuritySettings().setCryptFactory(new CachingSunJceCryptFactory(System.getProperty(GNUOB_SITE_ENCRYPTION_KEY_PROPERTY, SecuritySettings.DEFAULT_ENCRYPTION_KEY)));
+    getSecuritySettings().setCryptFactory(new CachingSunJceCryptFactory(System
+        .getProperty(GNUOB_SITE_ENCRYPTION_KEY_PROPERTY, SecuritySettings.DEFAULT_ENCRYPTION_KEY)));
     if (getConfigurationType() == RuntimeConfigurationType.DEVELOPMENT) {
       mountPage(INSPECTOR_PAGE_HTML, InspectorPage.class);
       getDebugSettings().setDevelopmentUtilitiesEnabled(true);

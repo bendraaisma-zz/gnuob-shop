@@ -1,20 +1,36 @@
+/*
+ * Copyright 2016 Netbrasoft
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
 package com.netbrasoft.gnuob.shop.category;
+
+import static java.util.stream.Collectors.toList;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
+import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
+import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.Loop;
 import org.apache.wicket.markup.html.list.LoopItem;
 import org.apache.wicket.markup.html.panel.Fragment;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
@@ -49,7 +65,6 @@ import com.netbrasoft.gnuob.shop.shopper.ShopperDataProvider;
 
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapAjaxLink;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.Buttons;
-import de.agilecoders.wicket.core.markup.html.bootstrap.button.Buttons.Size;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.Buttons.Type;
 import de.agilecoders.wicket.core.markup.html.bootstrap.carousel.CarouselImage;
 import de.agilecoders.wicket.core.markup.html.bootstrap.carousel.ICarouselImage;
@@ -63,7 +78,7 @@ import de.agilecoders.wicket.core.markup.html.bootstrap.navigation.BootstrapPagi
 
 @SuppressWarnings("unchecked")
 @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
-public class CategoryViewPanel extends Panel {
+public class CategoryViewPanel extends BreadCrumbPanel {
 
   @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
   class ProductViewFragment extends Fragment {
@@ -115,13 +130,8 @@ public class CategoryViewPanel extends Panel {
         }
 
         private List<ICarouselImage> convertContentsToCarouselImages(final List<Content> contents) {
-          final List<ICarouselImage> carouselImages = new ArrayList<ICarouselImage>();
-          for (final Content content : contents) {
-            if (MediaType.HTML_UTF_8.is(MediaType.parse(content.getFormat()))) {
-              carouselImages.add(new CarouselImage(new String(content.getContent())));
-            }
-          }
-          return carouselImages;
+          return contents.stream().filter(content -> MediaType.HTML_UTF_8.is(MediaType.parse(content.getFormat()))).map(Content::getContent)
+              .map(content -> new CarouselImage(new String(content))).collect(toList());
         }
 
         @Override
@@ -148,8 +158,8 @@ public class CategoryViewPanel extends Panel {
               return (IConverter<C>) new CurrencyConverter();
             }
           };
-          final PurchaseBootstrapAjaxLink purchaseBootstrapAjaxLink =
-              new PurchaseBootstrapAjaxLink(PURCHASE_ID, item.getModel(), Type.Primary, Model.of(CategoryViewPanel.this.getString(NetbrasoftShopMessageKeyConstants.PURCHASE_MESSAGE_KEY)));
+          final PurchaseBootstrapAjaxLink purchaseBootstrapAjaxLink = new PurchaseBootstrapAjaxLink(PURCHASE_ID, item.getModel(), Type.Primary,
+              Model.of(CategoryViewPanel.this.getString(NetbrasoftShopMessageKeyConstants.PURCHASE_MESSAGE_KEY)));
           final PopoverConfig popoverConfig = new PopoverConfig();
           final PopoverBehavior popoverBehavior = new PopoverBehavior(Model.of(CategoryViewPanel.this.getString(NetbrasoftShopMessageKeyConstants.DESCRIPTION_MESSAGE_KEY)),
               Model.of(item.getModelObject().getDescription()), popoverConfig);
@@ -247,8 +257,7 @@ public class CategoryViewPanel extends Panel {
 
         @Override
         protected void populateItem(final Item<SubCategory> item) {
-          item.setModel(new CompoundPropertyModel<SubCategory>(item.getModelObject()));
-          item.add(new Label(CONTENT_ID, new AbstractReadOnlyModel<String>() {
+          final Label contentLabel = new Label(CONTENT_ID, new AbstractReadOnlyModel<String>() {
 
             private static final long serialVersionUID = 4751535250171413561L;
 
@@ -260,24 +269,12 @@ public class CategoryViewPanel extends Panel {
               }
               return stringBuilder.toString();
             }
-          }).setEscapeModelStrings(false));
-          item.add(new AjaxEventBehavior(CLICK_EVENT) {
-
-            private static final long serialVersionUID = 3898435649434303190L;
-
-            @Override
-            protected void onEvent(final AjaxRequestTarget target) {
-              selectedModel = (IModel<SubCategory>) item.getDefaultModel();
-              selectedModelList = Model.ofList(((SubCategory) item.getDefaultModelObject()).getSubCategories());
-              subCategoryMenuBootstrapListView.setDefaultModel(Model.ofList(((SubCategory) item.getDefaultModelObject()).getSubCategories()));
-              productDataProvider.setType(new Product());
-              productDataProvider.getType().setActive(true);
-              productDataProvider.getType().getSubCategories().add((SubCategory) item.getDefaultModelObject());
-              CategoryViewPanel.this.removeAll();
-              CategoryViewPanel.this.add(new ProductViewFragment().setOutputMarkupId(true));
-              target.add(CategoryViewPanel.this);
-            }
           });
+          final CategoryBreadCrumbAjaxEventBehavior categoryBreadCrumbAjaxEventBehavior =
+              new CategoryBreadCrumbAjaxEventBehavior(CLICK_EVENT, CategoryViewPanel.this, item.getModel());
+          item.setModel(new CompoundPropertyModel<SubCategory>(item.getModelObject()));
+          item.add(contentLabel.setEscapeModelStrings(false));
+          item.add(categoryBreadCrumbAjaxEventBehavior);
         }
       }
 
@@ -364,26 +361,9 @@ public class CategoryViewPanel extends Panel {
 
       @Override
       protected void populateItem(final ListItem<SubCategory> item) {
-        final BootstrapAjaxLink<String> bootstrapAjaxLink =
-            new BootstrapAjaxLink<String>(LINK_ID, Model.of(item.getModel().getObject().getName()), Buttons.Type.Link, Model.of(item.getModel().getObject().getName())) {
-
-              private static final long serialVersionUID = -1216788078532675590L;
-
-              @Override
-              public void onClick(final AjaxRequestTarget target) {
-                selectedModel = (IModel<SubCategory>) item.getDefaultModel();
-                selectedModelList = Model.ofList(((SubCategory) item.getDefaultModelObject()).getSubCategories());
-                SubCategoryMenuBootstrapListView.this.setDefaultModel(Model.ofList(((SubCategory) item.getDefaultModelObject()).getSubCategories()));
-                productDataProvider.setType(new Product());
-                productDataProvider.getType().setActive(true);
-                productDataProvider.getType().getSubCategories().add((SubCategory) item.getDefaultModelObject());
-                CategoryViewPanel.this.removeAll();
-                CategoryViewPanel.this.add(new ProductViewFragment().setOutputMarkupId(true));
-                target.add(CategoryViewPanel.this);
-              }
-            };
-        item.setModel(new CompoundPropertyModel<SubCategory>(item.getModelObject()));
-        item.add(bootstrapAjaxLink.setSize(Size.Small).setOutputMarkupId(true));
+        final CategoryBreadCrumbBootstrapAjaxLink categoryBreadCrumbBootstrapAjaxLink =
+            new CategoryBreadCrumbBootstrapAjaxLink(LINK_ID, CategoryViewPanel.this, item.getModel(), Buttons.Type.Link, Model.of(item.getModel().getObject().getName()));
+        item.add(categoryBreadCrumbBootstrapAjaxLink.setOutputMarkupId(true));
       }
     }
 
@@ -428,8 +408,7 @@ public class CategoryViewPanel extends Panel {
 
         @Override
         protected void populateItem(final Item<SubCategory> item) {
-          item.setModel(new CompoundPropertyModel<SubCategory>(item.getModelObject()));
-          item.add(new Label(CONTENT_ID, new AbstractReadOnlyModel<String>() {
+          final Label contentLabel = new Label(CONTENT_ID, new AbstractReadOnlyModel<String>() {
 
             private static final long serialVersionUID = 4751535250171413561L;
 
@@ -441,24 +420,12 @@ public class CategoryViewPanel extends Panel {
               }
               return stringBuilder.toString();
             }
-          }).setEscapeModelStrings(false));
-          item.add(new AjaxEventBehavior(CLICK_EVENT) {
-
-            private static final long serialVersionUID = 3898435649434303190L;
-
-            @Override
-            protected void onEvent(final AjaxRequestTarget target) {
-              selectedModel = (IModel<SubCategory>) item.getDefaultModel();
-              selectedModelList = Model.ofList(((SubCategory) item.getDefaultModelObject()).getSubCategories());
-              subCategoryMenuBootstrapListView.setDefaultModel(Model.ofList(((SubCategory) item.getDefaultModelObject()).getSubCategories()));
-              productDataProvider.setType(new Product());
-              productDataProvider.getType().setActive(true);
-              productDataProvider.getType().getSubCategories().add((SubCategory) item.getDefaultModelObject());
-              CategoryViewPanel.this.removeAll();
-              CategoryViewPanel.this.add(new ProductViewFragment().setOutputMarkupId(true));
-              target.add(CategoryViewPanel.this);
-            }
           });
+          final CategoryBreadCrumbAjaxEventBehavior categoryBreadCrumbAjaxEventBehavior =
+              new CategoryBreadCrumbAjaxEventBehavior(CLICK_EVENT, CategoryViewPanel.this, item.getModel());
+          item.setModel(new CompoundPropertyModel<SubCategory>(item.getModelObject()));
+          item.add(contentLabel.setEscapeModelStrings(false));
+          item.add(categoryBreadCrumbAjaxEventBehavior);
         }
       }
 
@@ -520,19 +487,25 @@ public class CategoryViewPanel extends Panel {
   private static final long serialVersionUID = -9083340164646887954L;
 
   @SpringBean(name = ProductDataProvider.PRODUCT_DATA_PROVIDER_NAME, required = true)
-  private transient GenericTypeDataProvider<Product> productDataProvider;
+  private GenericTypeDataProvider<Product> productDataProvider;
 
   @SpringBean(name = ShopperDataProvider.SHOPPER_DATA_PROVIDER_NAME, required = true)
-  private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
+  private GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
-  private IModel<SubCategory> selectedModel;
+  private final IModel<SubCategory> selectedModel;
 
-  private IModel<List<SubCategory>> selectedModelList;
+  private final IModel<List<SubCategory>> selectedModelList;
 
-  public CategoryViewPanel(final String id, final IModel<Category> model) {
-    super(id, model);
-    selectedModel = Model.of(((Category) CategoryViewPanel.this.getDefaultModelObject()).getSubCategories().iterator().next());
-    selectedModelList = Model.ofList(((Category) CategoryViewPanel.this.getDefaultModelObject()).getSubCategories());
+  public CategoryViewPanel(final String id, final IBreadCrumbModel breadCrumbModel, final IModel<Category> model) {
+    this(id, breadCrumbModel, model, null, Model.ofList(model.getObject().getSubCategories()));
+  }
+
+  public CategoryViewPanel(final String id, final IBreadCrumbModel breadCrumbModel, final IModel<Category> model, final IModel<SubCategory> selectedModel,
+      final IModel<List<SubCategory>> selectedModelList) {
+    super(id, breadCrumbModel, model);
+    this.selectedModel = selectedModel;
+    this.selectedModelList = selectedModelList;
+    breadCrumbModel.setActive(CategoryViewPanel.this);
   }
 
   private List<SubCategory> createFlatSubCategoryList(final List<SubCategory> subCategories) {
@@ -544,12 +517,28 @@ public class CategoryViewPanel extends Panel {
   }
 
   @Override
+  public IModel<String> getTitle() {
+    if (selectedModel == null) {
+      return Model.of(((IModel<Category>) CategoryViewPanel.this.getDefaultModel()).getObject().getName());
+    }
+    return Model.of(selectedModel.getObject().getName());
+  }
+
+  @Override
+  protected void onConfigure() {
+    productDataProvider.setType(new Product());
+    productDataProvider.getType().setActive(true);
+    if (selectedModel != null) {
+      productDataProvider.getType().getSubCategories().add(selectedModel.getObject());
+    }
+    super.onConfigure();
+  }
+
+  @Override
   protected void onInitialize() {
     productDataProvider.setUser(AppServletContainerAuthenticatedWebSession.getUserName());
     productDataProvider.setPassword(AppServletContainerAuthenticatedWebSession.getPassword());
     productDataProvider.setSite(AppServletContainerAuthenticatedWebSession.getSite());
-    productDataProvider.setType(new Product());
-    productDataProvider.getType().setActive(true);
     super.onInitialize();
   }
 }
