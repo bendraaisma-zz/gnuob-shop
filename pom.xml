@@ -6,7 +6,7 @@
    <modelVersion>4.0.0</modelVersion>
    <groupId>com.netbrasoft</groupId>
    <artifactId>gnuob-shop</artifactId>
-   <version>0.0.4-SNAPSHOT</version>
+   <version>0.0.9-SNAPSHOT</version>
    <packaging>war</packaging>
    <name>GNU Open Business Platform Shopping</name>
    <description>GNU Open Business Platform is a open source business framework</description>
@@ -43,8 +43,8 @@
       <version.wicket-source.plugin>7.0.0</version.wicket-source.plugin>
       <version.springframework.plugin>4.1.7.RELEASE</version.springframework.plugin>
       <version.surefire.plugin>2.17</version.surefire.plugin>
-      <version.gnuob-api>0.0.8-SNAPSHOT</version.gnuob-api>
-      <version.gnuob-login>0.0.2-SNAPSHOT</version.gnuob-login>
+      <version.gnuob-api>0.0.9-SNAPSHOT</version.gnuob-api>
+      <version.gnuob-login>0.0.9-SNAPSHOT</version.gnuob-login>
       <version.javasimon>4.1.1</version.javasimon>
       <version.wicket-dnd>0.6.0</version.wicket-dnd>
       <version.wicket-bootstrap>0.10.6</version.wicket-bootstrap>
