@@ -1,5 +1,7 @@
 package com.netbrasoft.gnuob.shop.page;
 
+import static com.netbrasoft.gnuob.api.generic.NetbrasoftApiConstants.ORDER_DATA_PROVIDER_NAME;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -20,9 +22,8 @@ import org.wicketstuff.wicket.mount.core.annotation.MountPath;
 
 import com.netbrasoft.gnuob.api.Order;
 import com.netbrasoft.gnuob.api.OrderBy;
-import com.netbrasoft.gnuob.api.order.GenericOrderCheckoutDataProvider;
-import com.netbrasoft.gnuob.api.order.OrderDataProvider;
-import com.netbrasoft.gnuob.api.order.OrderDataProvider.CheckOut;
+import com.netbrasoft.gnuob.api.order.IGenericOrderCheckoutDataProvider;
+import com.netbrasoft.gnuob.api.order.OrderDataProvider.PaymentProviderEnum;
 import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
 
 @MountPath(PayPalNotificationPage.PAYPAL_NOTIFICATIONS_VALUE)
@@ -56,8 +57,8 @@ public class PayPalNotificationPage extends BasePage {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(PayPalNotificationPage.class);
 
-  @SpringBean(name = OrderDataProvider.ORDER_DATA_PROVIDER_NAME, required = true)
-  private GenericOrderCheckoutDataProvider<Order> orderDataProvider;
+  @SpringBean(name = ORDER_DATA_PROVIDER_NAME, required = true)
+  private IGenericOrderCheckoutDataProvider<Order> orderDataProvider;
 
   private void doPayPalNotification() {
     final HttpServletRequest request = (HttpServletRequest) getRequest().getContainerRequest();
@@ -68,10 +69,11 @@ public class PayPalNotificationPage extends BasePage {
         final StringBuilder payload = new StringBuilder();
         payload.append(CMD_NOTIFY_VALIDATE);
         for (final Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
-          payload.append("&").append(entry.getKey()).append("=").append(URLEncoder.encode(entry.getValue()[0], parameterMap.get(CHARSET)[0]));
+          payload.append("&").append(entry.getKey()).append("=")
+              .append(URLEncoder.encode(entry.getValue()[0], parameterMap.get(CHARSET)[0]));
         }
-        final HttpsURLConnection connection =
-            (HttpsURLConnection) new URL(System.getProperty(PAYPAL_COM_CGI_BIN_WEBSCR_PROPERTY, PAYPAL_COM_CGI_BIN_WEBSCR_VALUE)).openConnection();
+        final HttpsURLConnection connection = (HttpsURLConnection) new URL(
+            System.getProperty(PAYPAL_COM_CGI_BIN_WEBSCR_PROPERTY, PAYPAL_COM_CGI_BIN_WEBSCR_VALUE)).openConnection();
         connection.setDoOutput(true);
         connection.setDoInput(true);
         connection.setConnectTimeout(5000);
@@ -79,17 +81,20 @@ public class PayPalNotificationPage extends BasePage {
         connection.setRequestMethod(POST);
         connection.setRequestProperty(CONTENT_TYPE, APPLICATION_X_WWW_FORM_URLENCODED);
         connection.setRequestProperty(CONTENT_LENGTH, String.valueOf(payload.toString().length()));
-        connection.setRequestProperty(HOST, new URL(System.getProperty(PAYPAL_COM_CGI_BIN_WEBSCR_PROPERTY, PAYPAL_COM_CGI_BIN_WEBSCR_VALUE)).getHost());
+        connection.setRequestProperty(HOST,
+            new URL(System.getProperty(PAYPAL_COM_CGI_BIN_WEBSCR_PROPERTY, PAYPAL_COM_CGI_BIN_WEBSCR_VALUE)).getHost());
         final OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
         writer.write(payload.toString());
         writer.flush();
         writer.close();
         if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 300) {
-          final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8.name()));
+          final BufferedReader reader =
+              new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8.name()));
           final String response = reader.readLine();
           reader.close();
           if (VERIFIED.equals(response)) {
             Order order = new Order();
+            order.setActive(true);
             order.setNotificationId(parameterMap.get(TXN_ID)[0]);
             order = orderDataProvider.doNotification(order);
           } else {
@@ -112,7 +117,8 @@ public class PayPalNotificationPage extends BasePage {
   protected void onInitialize() {
     if (!isSignedIn()) {
       final String site = getRequest().getClientUrl().getHost();
-      signIn(System.getProperty("gnuob." + site + ".username", "guest"), System.getProperty("gnuob." + site + ".password", "guest"));
+      signIn(System.getProperty("gnuob." + site + ".username", "guest"),
+          System.getProperty("gnuob." + site + ".password", "guest"));
     }
     orderDataProvider.setUser(AppServletContainerAuthenticatedWebSession.getUserName());
     orderDataProvider.setPassword(AppServletContainerAuthenticatedWebSession.getPassword());
@@ -120,7 +126,7 @@ public class PayPalNotificationPage extends BasePage {
     orderDataProvider.setType(new Order());
     orderDataProvider.getType().setActive(true);
     orderDataProvider.setOrderBy(OrderBy.NONE);
-    orderDataProvider.setCheckOut(CheckOut.PAY_PAL);
+    orderDataProvider.setPaymentProvider(PaymentProviderEnum.PAY_PAL);
     super.onInitialize();
     doPayPalNotification();
   }

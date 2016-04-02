@@ -1,5 +1,8 @@
 package com.netbrasoft.gnuob.shop.wishlist;
 
+import static com.netbrasoft.gnuob.api.generic.NetbrasoftApiConstants.OFFER_DATA_PROVIDER_NAME;
+import static com.netbrasoft.gnuob.api.generic.NetbrasoftApiConstants.PRODUCT_DATA_PROVIDER_NAME;
+
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.List;
@@ -34,11 +37,9 @@ import com.netbrasoft.gnuob.api.OrderBy;
 import com.netbrasoft.gnuob.api.OrderRecord;
 import com.netbrasoft.gnuob.api.Product;
 import com.netbrasoft.gnuob.api.SubOption;
-import com.netbrasoft.gnuob.api.generic.GenericTypeDataProvider;
+import com.netbrasoft.gnuob.api.generic.IGenericTypeDataProvider;
 import com.netbrasoft.gnuob.api.generic.converter.CurrencyConverter;
-import com.netbrasoft.gnuob.api.offer.OfferDataProvider;
-import com.netbrasoft.gnuob.api.product.ProductDataProvider;
-import com.netbrasoft.gnuob.shop.NetbrasoftShopMessageKeyConstants;
+import com.netbrasoft.gnuob.shop.NetbrasoftShopConstants;
 import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
 import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import com.netbrasoft.gnuob.shop.page.SpecificationPage;
@@ -82,7 +83,8 @@ public class WishListEmptyOrEditPanel extends Panel {
 
               private static final long serialVersionUID = -3090506205170780941L;
 
-              public SaveAjaxButton(final String id, final IModel<String> model, final Form<Offer> form, final Type type) {
+              public SaveAjaxButton(final String id, final IModel<String> model, final Form<Offer> form,
+                  final Type type) {
                 super(id, model, form, type);
                 setSize(Buttons.Size.Small);
               }
@@ -92,7 +94,8 @@ public class WishListEmptyOrEditPanel extends Panel {
                 final Offer sourceOffer = (Offer) form.getDefaultModelObject();
                 final Order targetOrder = new Order();
 
-                BeanUtils.copyProperties(sourceOffer, targetOrder, ID_IGNORE_PROPERTIES, VERSION_IGNORE_PROPERTIES, "permission");
+                BeanUtils.copyProperties(sourceOffer, targetOrder, ID_IGNORE_PROPERTIES, VERSION_IGNORE_PROPERTIES,
+                    "permission");
                 for (final OfferRecord sourceOfferRecord : sourceOffer.getRecords()) {
                   final OrderRecord targetOrderRecord = new OrderRecord();
                   BeanUtils.copyProperties(sourceOfferRecord, targetOrderRecord);
@@ -141,7 +144,8 @@ public class WishListEmptyOrEditPanel extends Panel {
 
                 private int index = 0;
 
-                protected WishListDataview(final String id, final IDataProvider<OfferRecord> dataProvider, final long itemsPerPage) {
+                protected WishListDataview(final String id, final IDataProvider<OfferRecord> dataProvider,
+                    final long itemsPerPage) {
                   super(id, dataProvider, itemsPerPage);
                 }
 
@@ -149,7 +153,8 @@ public class WishListEmptyOrEditPanel extends Panel {
                   final StringBuilder optionStringBuilder = new StringBuilder();
 
                   for (final Option option : options) {
-                    optionStringBuilder.append(option.getValue()).append(": ").append(option.getSubOptions().iterator().next().getValue()).append(" ");
+                    optionStringBuilder.append(option.getValue()).append(": ")
+                        .append(option.getSubOptions().iterator().next().getValue()).append(" ");
                   }
                   return optionStringBuilder.toString();
                 }
@@ -169,7 +174,8 @@ public class WishListEmptyOrEditPanel extends Panel {
                   if (!model.getObject().getRecords().isEmpty()) {
                     wishListViewOrEditPanel.removeAll();
                     wishListViewOrEditPanel.setSelectedModel(Model.of(model.getObject().getRecords().get(index)));
-                    wishListViewOrEditPanel.add(wishListViewOrEditPanel.new WishListOfferRecordEditFragment()).setOutputMarkupId(true);
+                    wishListViewOrEditPanel.add(wishListViewOrEditPanel.new WishListOfferRecordEditFragment())
+                        .setOutputMarkupId(true);
                   }
                   super.onConfigure();
                 }
@@ -186,13 +192,17 @@ public class WishListEmptyOrEditPanel extends Panel {
                   final BigDecimal productTax = item.getModelObject().getProduct().getTax();
                   final BigDecimal productDiscount = item.getModelObject().getProduct().getDiscount();
                   final BigDecimal quantity = BigDecimal.valueOf(item.getModelObject().getQuantity().intValue());
-                  final BigDecimal itemTotal = productAmount.add(productTax).subtract(productDiscount).multiply(quantity);
+                  final BigDecimal itemTotal =
+                      productAmount.add(productTax).subtract(productDiscount).multiply(quantity);
                   final BigDecimal amountTotal = productAmount.add(productTax).multiply(quantity);
                   final Label nameLabel = new Label(NAME_ID);
-                  final Label optionsLabel = new Label(OPTIONS_ID, Model.of(getOptions(item.getModelObject().getOptions())));
+                  final Label optionsLabel =
+                      new Label(OPTIONS_ID, Model.of(getOptions(item.getModelObject().getOptions())));
                   final Label quantityLabel = new Label(QUANTITY_ID);
-                  final Label itemTotalLabel = new Label(ITEM_TOTAL_ID, Model.of(NumberFormat.getCurrencyInstance().format(itemTotal)));
-                  final Label amountLabel = new Label(AMOUNT_TOTAL_ID, Model.of(NumberFormat.getCurrencyInstance().format(amountTotal)));
+                  final Label itemTotalLabel =
+                      new Label(ITEM_TOTAL_ID, Model.of(NumberFormat.getCurrencyInstance().format(itemTotal)));
+                  final Label amountLabel =
+                      new Label(AMOUNT_TOTAL_ID, Model.of(NumberFormat.getCurrencyInstance().format(amountTotal)));
                   final AjaxEventBehavior ajaxEventBehavior = new AjaxEventBehavior(CLICK_EVENT) {
 
                     private static final long serialVersionUID = 1L;
@@ -203,7 +213,8 @@ public class WishListEmptyOrEditPanel extends Panel {
                       wishListViewOrEditPanel.setSelectedModel(item.getModel());
                       wishListViewOrEditPanel.removeAll();
                       target.add(wishListDataviewContainer.setOutputMarkupId(true));
-                      target.add(wishListViewOrEditPanel.add(wishListViewOrEditPanel.new WishListOfferRecordEditFragment()).setOutputMarkupId(true));
+                      target.add(wishListViewOrEditPanel
+                          .add(wishListViewOrEditPanel.new WishListOfferRecordEditFragment()).setOutputMarkupId(true));
                     }
                   };
                   item.setModel(new CompoundPropertyModel<OfferRecord>(item.getModelObject()));
@@ -235,7 +246,8 @@ public class WishListEmptyOrEditPanel extends Panel {
                     return ((Offer) WishListDataviewContainer.this.getDefaultModelObject()).getRecords();
                   }
                 };
-                wishListDataview = new WishListDataview(WISH_LIST_DATAVIEW_ID, offerRecordDataProvider, Integer.MAX_VALUE);
+                wishListDataview =
+                    new WishListDataview(WISH_LIST_DATAVIEW_ID, offerRecordDataProvider, Integer.MAX_VALUE);
               }
 
               @Override
@@ -300,10 +312,12 @@ public class WishListEmptyOrEditPanel extends Panel {
                   return (IConverter<C>) new CurrencyConverter();
                 }
               };
-              saveAjaxButton =
-                  new SaveAjaxButton(SAVE_ID, Model.of(WishListEmptyOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.CHECKOUT_MESSAGE_KEY)), wishListEditForm, Type.Primary);
+              saveAjaxButton = new SaveAjaxButton(SAVE_ID,
+                  Model.of(WishListEmptyOrEditPanel.this.getString(NetbrasoftShopConstants.CHECKOUT_MESSAGE_KEY)),
+                  wishListEditForm, Type.Primary);
               feedbackPanel = new NotificationPanel(FEEDBACK_ID);
-              wishListDataviewContainer = new WishListDataviewContainer(WISH_LIST_DATAVIEW_CONTAINER_ID, (IModel<Offer>) WishListEditTable.this.getDefaultModel());
+              wishListDataviewContainer = new WishListDataviewContainer(WISH_LIST_DATAVIEW_CONTAINER_ID,
+                  (IModel<Offer>) WishListEditTable.this.getDefaultModel());
             }
 
             @Override
@@ -338,9 +352,12 @@ public class WishListEmptyOrEditPanel extends Panel {
 
           public WishListEditContainer(final String id, final IModel<Offer> model) {
             super(id, model);
-            wishListEditForm = new BootstrapForm<Offer>(WISH_LIST_EDIT_FORM_ID, new CompoundPropertyModel<Offer>((IModel<Offer>) WishListEditContainer.this.getDefaultModel()));
-            wishListViewOrEditPanel = new WishListViewOrEditPanel(WISH_LIST_VIEW_OR_EDIT_PANEL_ID, (IModel<Offer>) WishListEditContainer.this.getDefaultModel());
-            wishListEditTable = new WishListEditTable(WISH_LIST_EDIT_TABLE_ID, (IModel<Offer>) WishListEditContainer.this.getDefaultModel());
+            wishListEditForm = new BootstrapForm<Offer>(WISH_LIST_EDIT_FORM_ID,
+                new CompoundPropertyModel<Offer>((IModel<Offer>) WishListEditContainer.this.getDefaultModel()));
+            wishListViewOrEditPanel = new WishListViewOrEditPanel(WISH_LIST_VIEW_OR_EDIT_PANEL_ID,
+                (IModel<Offer>) WishListEditContainer.this.getDefaultModel());
+            wishListEditTable = new WishListEditTable(WISH_LIST_EDIT_TABLE_ID,
+                (IModel<Offer>) WishListEditContainer.this.getDefaultModel());
             offerIdLabel = new Label(OFFER_ID_ID);
           }
 
@@ -365,7 +382,8 @@ public class WishListEmptyOrEditPanel extends Panel {
 
         @Override
         protected void populateItem(final Item<Offer> item) {
-          final WishListEditContainer wishListEditContainer = new WishListEditContainer(WISH_LIST_EDIT_CONTAINER_ID, item.getModel());
+          final WishListEditContainer wishListEditContainer =
+              new WishListEditContainer(WISH_LIST_EDIT_CONTAINER_ID, item.getModel());
           item.add(wishListEditContainer.setOutputMarkupId(true));
         }
       }
@@ -399,8 +417,10 @@ public class WishListEmptyOrEditPanel extends Panel {
     private final WishListsDataviewContainer wishListsDataviewContainer;
 
     public WishtListEditFragment() {
-      super(WISH_LIST_EMPTY_OR_EDIT_FRAGMENT_ID, WISH_LIST_EDIT_FRAGMENT_MARKUP_ID, WishListEmptyOrEditPanel.this, WishListEmptyOrEditPanel.this.getDefaultModel());
-      wishListsDataviewContainer = new WishListsDataviewContainer(WISH_LISTS_DATAVIEW_CONTAINER_ID, (IModel<Offer>) WishtListEditFragment.this.getDefaultModel());
+      super(WISH_LIST_EMPTY_OR_EDIT_FRAGMENT_ID, WISH_LIST_EDIT_FRAGMENT_MARKUP_ID, WishListEmptyOrEditPanel.this,
+          WishListEmptyOrEditPanel.this.getDefaultModel());
+      wishListsDataviewContainer = new WishListsDataviewContainer(WISH_LISTS_DATAVIEW_CONTAINER_ID,
+          (IModel<Offer>) WishtListEditFragment.this.getDefaultModel());
     }
 
     @Override
@@ -420,7 +440,8 @@ public class WishListEmptyOrEditPanel extends Panel {
     private static final long serialVersionUID = 5058607382122871571L;
 
     public WishtListEmptyFragment() {
-      super(WISH_LIST_EMPTY_OR_EDIT_FRAGMENT_ID, WISH_LIST_EMPTY_FRAGMENT_MARKUP_ID, WishListEmptyOrEditPanel.this, WishListEmptyOrEditPanel.this.getDefaultModel());
+      super(WISH_LIST_EMPTY_OR_EDIT_FRAGMENT_ID, WISH_LIST_EMPTY_FRAGMENT_MARKUP_ID, WishListEmptyOrEditPanel.this,
+          WishListEmptyOrEditPanel.this.getDefaultModel());
     }
   }
 
@@ -429,11 +450,11 @@ public class WishListEmptyOrEditPanel extends Panel {
   @SpringBean(name = ShopperDataProvider.SHOPPER_DATA_PROVIDER_NAME, required = true)
   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
-  @SpringBean(name = OfferDataProvider.OFFER_DATA_PROVIDER_NAME, required = true)
-  private transient GenericTypeDataProvider<Offer> offerDataProvider;
+  @SpringBean(name = OFFER_DATA_PROVIDER_NAME, required = true)
+  private transient IGenericTypeDataProvider<Offer> offerDataProvider;
 
-  @SpringBean(name = ProductDataProvider.PRODUCT_DATA_PROVIDER_NAME, required = true)
-  private transient GenericTypeDataProvider<Product> productDataProvider;
+  @SpringBean(name = PRODUCT_DATA_PROVIDER_NAME, required = true)
+  private transient IGenericTypeDataProvider<Product> productDataProvider;
 
   public WishListEmptyOrEditPanel(final String id, final IModel<Offer> model) {
     super(id, model);

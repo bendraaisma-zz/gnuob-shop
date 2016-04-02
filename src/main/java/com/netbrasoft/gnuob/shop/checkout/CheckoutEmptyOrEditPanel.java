@@ -1,5 +1,8 @@
 package com.netbrasoft.gnuob.shop.checkout;
 
+import static com.netbrasoft.gnuob.api.generic.NetbrasoftApiConstants.ORDER_DATA_PROVIDER_NAME;
+import static com.netbrasoft.gnuob.api.generic.NetbrasoftApiConstants.PRODUCT_DATA_PROVIDER_NAME;
+
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.List;
@@ -30,11 +33,9 @@ import com.netbrasoft.gnuob.api.Order;
 import com.netbrasoft.gnuob.api.OrderBy;
 import com.netbrasoft.gnuob.api.OrderRecord;
 import com.netbrasoft.gnuob.api.Product;
-import com.netbrasoft.gnuob.api.generic.GenericTypeDataProvider;
+import com.netbrasoft.gnuob.api.generic.IGenericTypeDataProvider;
 import com.netbrasoft.gnuob.api.generic.converter.CurrencyConverter;
-import com.netbrasoft.gnuob.api.order.OrderDataProvider;
-import com.netbrasoft.gnuob.api.product.ProductDataProvider;
-import com.netbrasoft.gnuob.shop.NetbrasoftShopMessageKeyConstants;
+import com.netbrasoft.gnuob.shop.NetbrasoftShopConstants;
 import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
 import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import com.netbrasoft.gnuob.shop.page.SpecificationPage;
@@ -94,7 +95,8 @@ public class CheckoutEmptyOrEditPanel extends Panel {
 
                 private int index = 0;
 
-                protected CheckoutDataview(final String id, final IDataProvider<OrderRecord> dataProvider, final long itemsPerPage) {
+                protected CheckoutDataview(final String id, final IDataProvider<OrderRecord> dataProvider,
+                    final long itemsPerPage) {
                   super(id, dataProvider, itemsPerPage);
                 }
 
@@ -102,7 +104,8 @@ public class CheckoutEmptyOrEditPanel extends Panel {
                   final StringBuilder optionStringBuilder = new StringBuilder();
 
                   for (final Option option : options) {
-                    optionStringBuilder.append(option.getValue()).append(": ").append(option.getSubOptions().iterator().next().getValue()).append(" ");
+                    optionStringBuilder.append(option.getValue()).append(": ")
+                        .append(option.getSubOptions().iterator().next().getValue()).append(" ");
                   }
                   return optionStringBuilder.toString();
                 }
@@ -122,7 +125,8 @@ public class CheckoutEmptyOrEditPanel extends Panel {
                   if (!model.getObject().getRecords().isEmpty()) {
                     checkoutViewOrEditPanel.removeAll();
                     checkoutViewOrEditPanel.setSelectedModel(Model.of(model.getObject().getRecords().get(index)));
-                    checkoutViewOrEditPanel.add(checkoutViewOrEditPanel.new CheckoutOrderRecordEditFragment()).setOutputMarkupId(true);
+                    checkoutViewOrEditPanel.add(checkoutViewOrEditPanel.new CheckoutOrderRecordEditFragment())
+                        .setOutputMarkupId(true);
                   }
                   super.onConfigure();
                 }
@@ -139,13 +143,17 @@ public class CheckoutEmptyOrEditPanel extends Panel {
                   final BigDecimal productTax = item.getModelObject().getProduct().getTax();
                   final BigDecimal productDiscount = item.getModelObject().getProduct().getDiscount();
                   final BigDecimal quantity = BigDecimal.valueOf(item.getModelObject().getQuantity().intValue());
-                  final BigDecimal itemTotal = productAmount.add(productTax).subtract(productDiscount).multiply(quantity);
+                  final BigDecimal itemTotal =
+                      productAmount.add(productTax).subtract(productDiscount).multiply(quantity);
                   final BigDecimal amountTotal = productAmount.add(productTax).multiply(quantity);
                   final Label nameLabel = new Label(NAME_ID);
-                  final Label optionsLabel = new Label(OPTIONS_ID, Model.of(getOptions(item.getModelObject().getOptions())));
+                  final Label optionsLabel =
+                      new Label(OPTIONS_ID, Model.of(getOptions(item.getModelObject().getOptions())));
                   final Label quantityLabel = new Label(QUANTITY_ID);
-                  final Label itemTotalLabel = new Label(ITEM_TOTAL_ID, Model.of(NumberFormat.getCurrencyInstance().format(itemTotal)));
-                  final Label amountLabel = new Label(AMOUNT_TOTAL_ID, Model.of(NumberFormat.getCurrencyInstance().format(amountTotal)));
+                  final Label itemTotalLabel =
+                      new Label(ITEM_TOTAL_ID, Model.of(NumberFormat.getCurrencyInstance().format(itemTotal)));
+                  final Label amountLabel =
+                      new Label(AMOUNT_TOTAL_ID, Model.of(NumberFormat.getCurrencyInstance().format(amountTotal)));
                   final AjaxEventBehavior ajaxEventBehavior = new AjaxEventBehavior(CLICK_EVENT) {
 
                     private static final long serialVersionUID = 1L;
@@ -156,7 +164,8 @@ public class CheckoutEmptyOrEditPanel extends Panel {
                       checkoutViewOrEditPanel.setSelectedModel(item.getModel());
                       checkoutViewOrEditPanel.removeAll();
                       target.add(checkoutDataviewContainer.setOutputMarkupId(true));
-                      target.add(checkoutViewOrEditPanel.add(checkoutViewOrEditPanel.new CheckoutOrderRecordEditFragment()).setOutputMarkupId(true));
+                      target.add(checkoutViewOrEditPanel
+                          .add(checkoutViewOrEditPanel.new CheckoutOrderRecordEditFragment()).setOutputMarkupId(true));
                     }
                   };
                   item.setModel(new CompoundPropertyModel<OrderRecord>(item.getModelObject()));
@@ -188,7 +197,8 @@ public class CheckoutEmptyOrEditPanel extends Panel {
                     return ((Order) CheckoutDataviewContainer.this.getDefaultModelObject()).getRecords();
                   }
                 };
-                checkoutDataview = new CheckoutDataview(CHECKOUT_DATAVIEW_ID, orderRecordDataProvider, Integer.MAX_VALUE);
+                checkoutDataview =
+                    new CheckoutDataview(CHECKOUT_DATAVIEW_ID, orderRecordDataProvider, Integer.MAX_VALUE);
               }
 
               @Override
@@ -203,7 +213,8 @@ public class CheckoutEmptyOrEditPanel extends Panel {
 
               private static final long serialVersionUID = -3090506205170780941L;
 
-              public SaveAjaxButton(final String id, final IModel<String> model, final Form<Order> form, final Type type) {
+              public SaveAjaxButton(final String id, final IModel<String> model, final Form<Order> form,
+                  final Type type) {
                 super(id, model, form, type);
                 setSize(Buttons.Size.Small);
               }
@@ -271,10 +282,12 @@ public class CheckoutEmptyOrEditPanel extends Panel {
                   return (IConverter<C>) new CurrencyConverter();
                 }
               };
-              saveAjaxButton =
-                  new SaveAjaxButton(SAVE_ID, Model.of(CheckoutEmptyOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.CHECKOUT_MESSAGE_KEY)), checkoutEditForm, Type.Primary);
+              saveAjaxButton = new SaveAjaxButton(SAVE_ID,
+                  Model.of(CheckoutEmptyOrEditPanel.this.getString(NetbrasoftShopConstants.CHECKOUT_MESSAGE_KEY)),
+                  checkoutEditForm, Type.Primary);
               feedbackPanel = new NotificationPanel(FEEDBACK_ID);
-              checkoutDataviewContainer = new CheckoutDataviewContainer(CHECKOUT_DATAVIEW_CONTAINER_ID, (IModel<Order>) CheckoutEditTable.this.getDefaultModel());
+              checkoutDataviewContainer = new CheckoutDataviewContainer(CHECKOUT_DATAVIEW_CONTAINER_ID,
+                  (IModel<Order>) CheckoutEditTable.this.getDefaultModel());
             }
 
             @Override
@@ -309,9 +322,12 @@ public class CheckoutEmptyOrEditPanel extends Panel {
 
           public CheckoutEditContainer(final String id, final IModel<Order> model) {
             super(id, model);
-            checkoutEditForm = new BootstrapForm<Order>(CHECKOUT_EDIT_FORM_ID, new CompoundPropertyModel<Order>((IModel<Order>) CheckoutEditContainer.this.getDefaultModel()));
-            checkoutViewOrEditPanel = new CheckoutViewOrEditPanel(CHECKOUT_VIEW_OR_EDIT_PANEL_ID, (IModel<Order>) CheckoutEditContainer.this.getDefaultModel());
-            checkoutEditTable = new CheckoutEditTable(CHECKOUT_EDIT_TABLE_ID, (IModel<Order>) CheckoutEditContainer.this.getDefaultModel());
+            checkoutEditForm = new BootstrapForm<Order>(CHECKOUT_EDIT_FORM_ID,
+                new CompoundPropertyModel<Order>((IModel<Order>) CheckoutEditContainer.this.getDefaultModel()));
+            checkoutViewOrEditPanel = new CheckoutViewOrEditPanel(CHECKOUT_VIEW_OR_EDIT_PANEL_ID,
+                (IModel<Order>) CheckoutEditContainer.this.getDefaultModel());
+            checkoutEditTable = new CheckoutEditTable(CHECKOUT_EDIT_TABLE_ID,
+                (IModel<Order>) CheckoutEditContainer.this.getDefaultModel());
             orderIdLabel = new Label(OFFER_ID_ID);
           }
 
@@ -336,7 +352,8 @@ public class CheckoutEmptyOrEditPanel extends Panel {
 
         @Override
         protected void populateItem(final Item<Order> item) {
-          final CheckoutEditContainer checkoutEditContainer = new CheckoutEditContainer(CHECKOUT_EDIT_CONTAINER_ID, item.getModel());
+          final CheckoutEditContainer checkoutEditContainer =
+              new CheckoutEditContainer(CHECKOUT_EDIT_CONTAINER_ID, item.getModel());
           item.add(checkoutEditContainer.setOutputMarkupId(true));
         }
       }
@@ -370,8 +387,10 @@ public class CheckoutEmptyOrEditPanel extends Panel {
     private final CheckoutsDataviewContainer checkoutsDataviewContainer;
 
     public CheckoutEditFragment() {
-      super(CHECKOUT_EMPTY_OR_EDIT_FRAGMENT_ID, CHECKOUT_EDIT_FRAGMENT_MARKUP_ID, CheckoutEmptyOrEditPanel.this, CheckoutEmptyOrEditPanel.this.getDefaultModel());
-      checkoutsDataviewContainer = new CheckoutsDataviewContainer(CHECKOUTS_DATAVIEW_CONTAINER_ID, (IModel<Order>) CheckoutEditFragment.this.getDefaultModel());
+      super(CHECKOUT_EMPTY_OR_EDIT_FRAGMENT_ID, CHECKOUT_EDIT_FRAGMENT_MARKUP_ID, CheckoutEmptyOrEditPanel.this,
+          CheckoutEmptyOrEditPanel.this.getDefaultModel());
+      checkoutsDataviewContainer = new CheckoutsDataviewContainer(CHECKOUTS_DATAVIEW_CONTAINER_ID,
+          (IModel<Order>) CheckoutEditFragment.this.getDefaultModel());
     }
 
     @Override
@@ -391,7 +410,8 @@ public class CheckoutEmptyOrEditPanel extends Panel {
     private static final long serialVersionUID = 5058607382122871571L;
 
     public CheckoutEmptyFragment() {
-      super(CHECKOUT_EMPTY_OR_EDIT_FRAGMENT_ID, CHECKOUT_EMPTY_FRAGMENT_MARKUP_ID, CheckoutEmptyOrEditPanel.this, CheckoutEmptyOrEditPanel.this.getDefaultModel());
+      super(CHECKOUT_EMPTY_OR_EDIT_FRAGMENT_ID, CHECKOUT_EMPTY_FRAGMENT_MARKUP_ID, CheckoutEmptyOrEditPanel.this,
+          CheckoutEmptyOrEditPanel.this.getDefaultModel());
     }
   }
 
@@ -400,11 +420,11 @@ public class CheckoutEmptyOrEditPanel extends Panel {
   @SpringBean(name = ShopperDataProvider.SHOPPER_DATA_PROVIDER_NAME, required = true)
   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
-  @SpringBean(name = OrderDataProvider.ORDER_DATA_PROVIDER_NAME, required = true)
-  private transient GenericTypeDataProvider<Order> orderDataProvider;
+  @SpringBean(name = ORDER_DATA_PROVIDER_NAME, required = true)
+  private transient IGenericTypeDataProvider<Order> orderDataProvider;
 
-  @SpringBean(name = ProductDataProvider.PRODUCT_DATA_PROVIDER_NAME, required = true)
-  private transient GenericTypeDataProvider<Product> productDataProvider;
+  @SpringBean(name = PRODUCT_DATA_PROVIDER_NAME, required = true)
+  private transient IGenericTypeDataProvider<Product> productDataProvider;
 
   public CheckoutEmptyOrEditPanel(final String id, final IModel<Order> model) {
     super(id, model);

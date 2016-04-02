@@ -1,5 +1,7 @@
 package com.netbrasoft.gnuob.shop.specification;
 
+import static com.netbrasoft.gnuob.api.generic.NetbrasoftApiConstants.PRODUCT_DATA_PROVIDER_NAME;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,10 +25,9 @@ import com.netbrasoft.gnuob.api.Content;
 import com.netbrasoft.gnuob.api.Order;
 import com.netbrasoft.gnuob.api.OrderRecord;
 import com.netbrasoft.gnuob.api.Product;
-import com.netbrasoft.gnuob.api.generic.GenericTypeDataProvider;
+import com.netbrasoft.gnuob.api.generic.IGenericTypeDataProvider;
 import com.netbrasoft.gnuob.api.generic.converter.CurrencyConverter;
-import com.netbrasoft.gnuob.api.product.ProductDataProvider;
-import com.netbrasoft.gnuob.shop.NetbrasoftShopMessageKeyConstants;
+import com.netbrasoft.gnuob.shop.NetbrasoftShopConstants;
 import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
 import com.netbrasoft.gnuob.shop.product.ProductCarousel;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
@@ -72,12 +73,14 @@ public class SpecificationViewOrEditPanel extends Panel {
 
         @Override
         protected void populateItem(final LoopItem item) {
-          final IconBehavior iconBehavior = new IconBehavior(item.getIndex() < minModel.getObject() ? GlyphIconType.star : GlyphIconType.starempty);
+          final IconBehavior iconBehavior =
+              new IconBehavior(item.getIndex() < minModel.getObject() ? GlyphIconType.star : GlyphIconType.starempty);
           item.add(iconBehavior);
         }
       }
 
-      private static final String SPECIFICATION_OFFER_RECORD_EDIT_FORM_COMPONENT_ID = "specificationOfferRecordEditForm";
+      private static final String SPECIFICATION_OFFER_RECORD_EDIT_FORM_COMPONENT_ID =
+          "specificationOfferRecordEditForm";
 
       private static final String PRODUCT_CAROUSEL_ID = "productCarousel";
 
@@ -111,8 +114,9 @@ public class SpecificationViewOrEditPanel extends Panel {
 
       public SpecificationOfferRecordEditContainer(final String id, final IModel<Order> model) {
         super(id, model);
-        specificationOfferRecordEditForm = new BootstrapForm<OrderRecord>(SPECIFICATION_OFFER_RECORD_EDIT_FORM_COMPONENT_ID,
-            new CompoundPropertyModel<OrderRecord>(Model.of(SpecificationViewOrEditPanel.this.selectedModel.getObject())));
+        specificationOfferRecordEditForm = new BootstrapForm<OrderRecord>(
+            SPECIFICATION_OFFER_RECORD_EDIT_FORM_COMPONENT_ID, new CompoundPropertyModel<OrderRecord>(
+                Model.of(SpecificationViewOrEditPanel.this.selectedModel.getObject())));
         nameLabel = new Label(NAME_ID);
         productStockQuantityLabel = new Label(PRODUCT_STOCK_QUANTITY_ID);
         amountLabel = new Label(AMOUNT_ID) {
@@ -129,14 +133,15 @@ public class SpecificationViewOrEditPanel extends Panel {
           private static final long serialVersionUID = -4143367505737220689L;
 
           @Override
-          @SuppressWarnings("hiding")
           public <C> IConverter<C> getConverter(final Class<C> type) {
             return (IConverter<C>) new CurrencyConverter();
           }
         };
-        productCarousel = new ProductCarousel(PRODUCT_CAROUSEL_ID,
-            Model.ofList(convertContentsToCarouselImages(SpecificationViewOrEditPanel.this.selectedModel.getObject().getProduct().getContents())));
-        ratingLoop = new RatingLoop(RATING_ID, Model.of(SpecificationViewOrEditPanel.this.selectedModel.getObject().getProduct().getRating()), Model.of(FIVE_STARS_RATING));
+        productCarousel = new ProductCarousel(PRODUCT_CAROUSEL_ID, Model.ofList(convertContentsToCarouselImages(
+            SpecificationViewOrEditPanel.this.selectedModel.getObject().getProduct().getContents())));
+        ratingLoop = new RatingLoop(RATING_ID,
+            Model.of(SpecificationViewOrEditPanel.this.selectedModel.getObject().getProduct().getRating()),
+            Model.of(FIVE_STARS_RATING));
 
       }
 
@@ -153,8 +158,10 @@ public class SpecificationViewOrEditPanel extends Panel {
       @Override
       protected void onInitialize() {
         final PopoverConfig popoverConfig = new PopoverConfig();
-        final PopoverBehavior popoverBehavior = new PopoverBehavior(Model.of(SpecificationViewOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.DESCRIPTION_MESSAGE_KEY)),
-            Model.of(SpecificationViewOrEditPanel.this.selectedModel.getObject().getProduct().getDescription()), popoverConfig);
+        final PopoverBehavior popoverBehavior = new PopoverBehavior(
+            Model.of(SpecificationViewOrEditPanel.this.getString(NetbrasoftShopConstants.DESCRIPTION_MESSAGE_KEY)),
+            Model.of(SpecificationViewOrEditPanel.this.selectedModel.getObject().getProduct().getDescription()),
+            popoverConfig);
         popoverConfig.withHoverTrigger();
         popoverConfig.withPlacement(Placement.left);
         productCarousel.add(popoverBehavior);
@@ -172,19 +179,22 @@ public class SpecificationViewOrEditPanel extends Panel {
 
     private static final String SPECIFICATION_OFFER_RECORD_EDIT_CONTAINER_ID = "specificationOfferRecordEditContainer";
 
-    private static final String SPECIFICATION_OFFER_RECORD_EDIT_FRAGMENT_MARKUP_ID = "specificationOfferRecordEditFragment";
+    private static final String SPECIFICATION_OFFER_RECORD_EDIT_FRAGMENT_MARKUP_ID =
+        "specificationOfferRecordEditFragment";
 
-    private static final String SPECIFICATION_OFFER_RECORD_VIEW_OR_EDIT_FRAGMENT_ID = "specificationOfferRecordViewOrEditFragment";
+    private static final String SPECIFICATION_OFFER_RECORD_VIEW_OR_EDIT_FRAGMENT_ID =
+        "specificationOfferRecordViewOrEditFragment";
 
     private static final long serialVersionUID = 2090636400657143172L;
 
     private final SpecificationOfferRecordEditContainer specificationOfferRecordEditContainer;
 
     public SpecificationOfferRecordEditFragment() {
-      super(SPECIFICATION_OFFER_RECORD_VIEW_OR_EDIT_FRAGMENT_ID, SPECIFICATION_OFFER_RECORD_EDIT_FRAGMENT_MARKUP_ID, SpecificationViewOrEditPanel.this,
-          SpecificationViewOrEditPanel.this.getDefaultModel());
+      super(SPECIFICATION_OFFER_RECORD_VIEW_OR_EDIT_FRAGMENT_ID, SPECIFICATION_OFFER_RECORD_EDIT_FRAGMENT_MARKUP_ID,
+          SpecificationViewOrEditPanel.this, SpecificationViewOrEditPanel.this.getDefaultModel());
       specificationOfferRecordEditContainer =
-          new SpecificationOfferRecordEditContainer(SPECIFICATION_OFFER_RECORD_EDIT_CONTAINER_ID, (IModel<Order>) SpecificationOfferRecordEditFragment.this.getDefaultModel());
+          new SpecificationOfferRecordEditContainer(SPECIFICATION_OFFER_RECORD_EDIT_CONTAINER_ID,
+              (IModel<Order>) SpecificationOfferRecordEditFragment.this.getDefaultModel());
     }
 
     @Override
@@ -196,8 +206,8 @@ public class SpecificationViewOrEditPanel extends Panel {
 
   private static final long serialVersionUID = 559425501078519811L;
 
-  @SpringBean(name = ProductDataProvider.PRODUCT_DATA_PROVIDER_NAME, required = true)
-  private transient GenericTypeDataProvider<Product> productDataProvider;
+  @SpringBean(name = PRODUCT_DATA_PROVIDER_NAME, required = true)
+  private transient IGenericTypeDataProvider<Product> productDataProvider;
 
   private IModel<OrderRecord> selectedModel;
 

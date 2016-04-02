@@ -1,5 +1,7 @@
 package com.netbrasoft.gnuob.shop.wishlist;
 
+import static com.netbrasoft.gnuob.api.generic.NetbrasoftApiConstants.PRODUCT_DATA_PROVIDER_NAME;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,10 +26,9 @@ import com.netbrasoft.gnuob.api.Offer;
 import com.netbrasoft.gnuob.api.OfferRecord;
 import com.netbrasoft.gnuob.api.Order;
 import com.netbrasoft.gnuob.api.Product;
-import com.netbrasoft.gnuob.api.generic.GenericTypeDataProvider;
+import com.netbrasoft.gnuob.api.generic.IGenericTypeDataProvider;
 import com.netbrasoft.gnuob.api.generic.converter.CurrencyConverter;
-import com.netbrasoft.gnuob.api.product.ProductDataProvider;
-import com.netbrasoft.gnuob.shop.NetbrasoftShopMessageKeyConstants;
+import com.netbrasoft.gnuob.shop.NetbrasoftShopConstants;
 import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
 import com.netbrasoft.gnuob.shop.product.ProductCarousel;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
@@ -73,7 +74,8 @@ public class WishListViewOrEditPanel extends Panel {
 
         @Override
         protected void populateItem(final LoopItem item) {
-          final IconBehavior iconBehavior = new IconBehavior(item.getIndex() < minModel.getObject() ? GlyphIconType.star : GlyphIconType.starempty);
+          final IconBehavior iconBehavior =
+              new IconBehavior(item.getIndex() < minModel.getObject() ? GlyphIconType.star : GlyphIconType.starempty);
           item.add(iconBehavior);
         }
       }
@@ -134,9 +136,11 @@ public class WishListViewOrEditPanel extends Panel {
             return (IConverter<C>) new CurrencyConverter();
           }
         };
-        productCarousel = new ProductCarousel(PRODUCT_CAROUSEL_ID,
-            Model.ofList(convertContentsToCarouselImages(WishListViewOrEditPanel.this.selectedModel.getObject().getProduct().getContents())));
-        ratingLoop = new RatingLoop(RATING_ID, Model.of(WishListViewOrEditPanel.this.selectedModel.getObject().getProduct().getRating()), Model.of(FIVE_STARS_RATING));
+        productCarousel = new ProductCarousel(PRODUCT_CAROUSEL_ID, Model.ofList(convertContentsToCarouselImages(
+            WishListViewOrEditPanel.this.selectedModel.getObject().getProduct().getContents())));
+        ratingLoop = new RatingLoop(RATING_ID,
+            Model.of(WishListViewOrEditPanel.this.selectedModel.getObject().getProduct().getRating()),
+            Model.of(FIVE_STARS_RATING));
 
       }
 
@@ -153,8 +157,10 @@ public class WishListViewOrEditPanel extends Panel {
       @Override
       protected void onInitialize() {
         final PopoverConfig popoverConfig = new PopoverConfig();
-        final PopoverBehavior popoverBehavior = new PopoverBehavior(Model.of(WishListViewOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.DESCRIPTION_MESSAGE_KEY)),
-            Model.of(WishListViewOrEditPanel.this.selectedModel.getObject().getProduct().getDescription()), popoverConfig);
+        final PopoverBehavior popoverBehavior = new PopoverBehavior(
+            Model.of(WishListViewOrEditPanel.this.getString(NetbrasoftShopConstants.DESCRIPTION_MESSAGE_KEY)),
+            Model.of(WishListViewOrEditPanel.this.selectedModel.getObject().getProduct().getDescription()),
+            popoverConfig);
         popoverConfig.withHoverTrigger();
         popoverConfig.withPlacement(Placement.left);
         productCarousel.add(popoverBehavior);
@@ -174,17 +180,18 @@ public class WishListViewOrEditPanel extends Panel {
 
     private static final String WISH_LIST_OFFER_RECORD_EDIT_FRAGMENT_MARKUP_ID = "wishListOfferRecordEditFragment";
 
-    private static final String WISH_LIST_OFFER_RECORD_VIEW_OR_EDIT_FRAGMENT_ID = "wishListOfferRecordViewOrEditFragment";
+    private static final String WISH_LIST_OFFER_RECORD_VIEW_OR_EDIT_FRAGMENT_ID =
+        "wishListOfferRecordViewOrEditFragment";
 
     private static final long serialVersionUID = 2090636400657143172L;
 
     private final WishListOfferRecordEditContainer wishListOfferRecordEditContainer;
 
     public WishListOfferRecordEditFragment() {
-      super(WISH_LIST_OFFER_RECORD_VIEW_OR_EDIT_FRAGMENT_ID, WISH_LIST_OFFER_RECORD_EDIT_FRAGMENT_MARKUP_ID, WishListViewOrEditPanel.this,
-          WishListViewOrEditPanel.this.getDefaultModel());
-      wishListOfferRecordEditContainer =
-          new WishListOfferRecordEditContainer(WISH_LIST_OFFER_RECORD_EDIT_CONTAINER_ID, (IModel<Order>) WishListOfferRecordEditFragment.this.getDefaultModel());
+      super(WISH_LIST_OFFER_RECORD_VIEW_OR_EDIT_FRAGMENT_ID, WISH_LIST_OFFER_RECORD_EDIT_FRAGMENT_MARKUP_ID,
+          WishListViewOrEditPanel.this, WishListViewOrEditPanel.this.getDefaultModel());
+      wishListOfferRecordEditContainer = new WishListOfferRecordEditContainer(WISH_LIST_OFFER_RECORD_EDIT_CONTAINER_ID,
+          (IModel<Order>) WishListOfferRecordEditFragment.this.getDefaultModel());
     }
 
     @Override
@@ -196,8 +203,8 @@ public class WishListViewOrEditPanel extends Panel {
 
   private static final long serialVersionUID = 559425501078519811L;
 
-  @SpringBean(name = ProductDataProvider.PRODUCT_DATA_PROVIDER_NAME, required = true)
-  private transient GenericTypeDataProvider<Product> productDataProvider;
+  @SpringBean(name = PRODUCT_DATA_PROVIDER_NAME, required = true)
+  private transient IGenericTypeDataProvider<Product> productDataProvider;
 
   private IModel<OfferRecord> selectedModel;
 

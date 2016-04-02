@@ -1,5 +1,7 @@
 package com.netbrasoft.gnuob.shop.category;
 
+import static com.netbrasoft.gnuob.api.generic.NetbrasoftApiConstants.CATEGORY_DATA_PROVIDER_NAME;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -14,9 +16,8 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import com.netbrasoft.gnuob.api.Category;
 import com.netbrasoft.gnuob.api.OrderBy;
-import com.netbrasoft.gnuob.api.category.CategoryDataProvider;
-import com.netbrasoft.gnuob.api.generic.GenericTypeDataProvider;
-import com.netbrasoft.gnuob.shop.NetbrasoftShopMessageKeyConstants;
+import com.netbrasoft.gnuob.api.generic.IGenericTypeDataProvider;
+import com.netbrasoft.gnuob.shop.NetbrasoftShopConstants;
 import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
 import com.netbrasoft.gnuob.shop.page.tab.ContactTab;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
@@ -50,8 +51,8 @@ public class CategoryMainMenuPanel extends Panel {
 
   private final MainMenuTabbedPanel mainMenuTabbedPanel;
 
-  @SpringBean(name = CategoryDataProvider.CATEGORY_DATA_PROVIDER_NAME, required = true)
-  private transient GenericTypeDataProvider<Category> categoryDataProvider;
+  @SpringBean(name = CATEGORY_DATA_PROVIDER_NAME, required = true)
+  private transient IGenericTypeDataProvider<Category> categoryDataProvider;
 
   public CategoryMainMenuPanel(final String id, final IModel<Category> model) {
     super(id, model);
@@ -60,8 +61,10 @@ public class CategoryMainMenuPanel extends Panel {
 
   @Override
   protected void onInitialize() {
-    final CategoryHomeTab categoryHomeTab = new CategoryHomeTab(Model.of(CategoryMainMenuPanel.this.getString(NetbrasoftShopMessageKeyConstants.HOME_MESSAGE_KEY)));
-    final ContactTab contactTab = new ContactTab(Model.of(CategoryMainMenuPanel.this.getString(NetbrasoftShopMessageKeyConstants.CONTACT_MESSAGE_KEY)));
+    final CategoryHomeTab categoryHomeTab =
+        new CategoryHomeTab(Model.of(CategoryMainMenuPanel.this.getString(NetbrasoftShopConstants.HOME_MESSAGE_KEY)));
+    final ContactTab contactTab =
+        new ContactTab(Model.of(CategoryMainMenuPanel.this.getString(NetbrasoftShopConstants.CONTACT_MESSAGE_KEY)));
 
     categoryDataProvider.setUser(AppServletContainerAuthenticatedWebSession.getUserName());
     categoryDataProvider.setPassword(AppServletContainerAuthenticatedWebSession.getPassword());

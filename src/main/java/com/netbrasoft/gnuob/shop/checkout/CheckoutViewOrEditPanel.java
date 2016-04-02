@@ -1,5 +1,7 @@
 package com.netbrasoft.gnuob.shop.checkout;
 
+import static com.netbrasoft.gnuob.api.generic.NetbrasoftApiConstants.PRODUCT_DATA_PROVIDER_NAME;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,10 +25,9 @@ import com.netbrasoft.gnuob.api.Content;
 import com.netbrasoft.gnuob.api.Order;
 import com.netbrasoft.gnuob.api.OrderRecord;
 import com.netbrasoft.gnuob.api.Product;
-import com.netbrasoft.gnuob.api.generic.GenericTypeDataProvider;
+import com.netbrasoft.gnuob.api.generic.IGenericTypeDataProvider;
 import com.netbrasoft.gnuob.api.generic.converter.CurrencyConverter;
-import com.netbrasoft.gnuob.api.product.ProductDataProvider;
-import com.netbrasoft.gnuob.shop.NetbrasoftShopMessageKeyConstants;
+import com.netbrasoft.gnuob.shop.NetbrasoftShopConstants;
 import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
 import com.netbrasoft.gnuob.shop.product.ProductCarousel;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
@@ -72,7 +73,8 @@ public class CheckoutViewOrEditPanel extends Panel {
 
         @Override
         protected void populateItem(final LoopItem item) {
-          final IconBehavior iconBehavior = new IconBehavior(item.getIndex() < minModel.getObject() ? GlyphIconType.star : GlyphIconType.starempty);
+          final IconBehavior iconBehavior =
+              new IconBehavior(item.getIndex() < minModel.getObject() ? GlyphIconType.star : GlyphIconType.starempty);
           item.add(iconBehavior);
         }
       }
@@ -133,9 +135,11 @@ public class CheckoutViewOrEditPanel extends Panel {
             return (IConverter<C>) new CurrencyConverter();
           }
         };
-        productCarousel = new ProductCarousel(PRODUCT_CAROUSEL_ID,
-            Model.ofList(convertContentsToCarouselImages(CheckoutViewOrEditPanel.this.selectedModel.getObject().getProduct().getContents())));
-        ratingLoop = new RatingLoop(RATING_ID, Model.of(CheckoutViewOrEditPanel.this.selectedModel.getObject().getProduct().getRating()), Model.of(FIVE_STARS_RATING));
+        productCarousel = new ProductCarousel(PRODUCT_CAROUSEL_ID, Model.ofList(convertContentsToCarouselImages(
+            CheckoutViewOrEditPanel.this.selectedModel.getObject().getProduct().getContents())));
+        ratingLoop = new RatingLoop(RATING_ID,
+            Model.of(CheckoutViewOrEditPanel.this.selectedModel.getObject().getProduct().getRating()),
+            Model.of(FIVE_STARS_RATING));
       }
 
       private List<ICarouselImage> convertContentsToCarouselImages(final List<Content> contents) {
@@ -151,8 +155,10 @@ public class CheckoutViewOrEditPanel extends Panel {
       @Override
       protected void onInitialize() {
         final PopoverConfig popoverConfig = new PopoverConfig();
-        final PopoverBehavior popoverBehavior = new PopoverBehavior(Model.of(CheckoutViewOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.DESCRIPTION_MESSAGE_KEY)),
-            Model.of(CheckoutViewOrEditPanel.this.selectedModel.getObject().getProduct().getDescription()), popoverConfig);
+        final PopoverBehavior popoverBehavior = new PopoverBehavior(
+            Model.of(CheckoutViewOrEditPanel.this.getString(NetbrasoftShopConstants.DESCRIPTION_MESSAGE_KEY)),
+            Model.of(CheckoutViewOrEditPanel.this.selectedModel.getObject().getProduct().getDescription()),
+            popoverConfig);
         popoverConfig.withHoverTrigger();
         popoverConfig.withPlacement(Placement.left);
         productCarousel.add(popoverBehavior);
@@ -172,17 +178,18 @@ public class CheckoutViewOrEditPanel extends Panel {
 
     private static final String CHECKOUT_OFFER_RECORD_EDIT_FRAGMENT_MARKUP_ID = "checkoutOrderRecordEditFragment";
 
-    private static final String CHECKOUT_OFFER_RECORD_VIEW_OR_EDIT_FRAGMENT_ID = "checkoutOrderRecordViewOrEditFragment";
+    private static final String CHECKOUT_OFFER_RECORD_VIEW_OR_EDIT_FRAGMENT_ID =
+        "checkoutOrderRecordViewOrEditFragment";
 
     private static final long serialVersionUID = 2090636400657143172L;
 
     private final CheckoutOrderRecordEditContainer checkoutOrderRecordEditContainer;
 
     public CheckoutOrderRecordEditFragment() {
-      super(CHECKOUT_OFFER_RECORD_VIEW_OR_EDIT_FRAGMENT_ID, CHECKOUT_OFFER_RECORD_EDIT_FRAGMENT_MARKUP_ID, CheckoutViewOrEditPanel.this,
-          CheckoutViewOrEditPanel.this.getDefaultModel());
-      checkoutOrderRecordEditContainer =
-          new CheckoutOrderRecordEditContainer(CHECKOUT_OFFER_RECORD_EDIT_CONTAINER_ID, (IModel<Order>) CheckoutOrderRecordEditFragment.this.getDefaultModel());
+      super(CHECKOUT_OFFER_RECORD_VIEW_OR_EDIT_FRAGMENT_ID, CHECKOUT_OFFER_RECORD_EDIT_FRAGMENT_MARKUP_ID,
+          CheckoutViewOrEditPanel.this, CheckoutViewOrEditPanel.this.getDefaultModel());
+      checkoutOrderRecordEditContainer = new CheckoutOrderRecordEditContainer(CHECKOUT_OFFER_RECORD_EDIT_CONTAINER_ID,
+          (IModel<Order>) CheckoutOrderRecordEditFragment.this.getDefaultModel());
     }
 
     @Override
@@ -194,8 +201,8 @@ public class CheckoutViewOrEditPanel extends Panel {
 
   private static final long serialVersionUID = 559425501078519811L;
 
-  @SpringBean(name = ProductDataProvider.PRODUCT_DATA_PROVIDER_NAME, required = true)
-  private transient GenericTypeDataProvider<Product> productDataProvider;
+  @SpringBean(name = PRODUCT_DATA_PROVIDER_NAME, required = true)
+  private transient IGenericTypeDataProvider<Product> productDataProvider;
 
   private IModel<OrderRecord> selectedModel;
 

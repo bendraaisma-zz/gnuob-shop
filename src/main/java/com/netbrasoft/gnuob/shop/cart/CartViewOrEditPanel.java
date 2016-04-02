@@ -1,5 +1,7 @@
 package com.netbrasoft.gnuob.shop.cart;
 
+import static com.netbrasoft.gnuob.api.generic.NetbrasoftApiConstants.PRODUCT_DATA_PROVIDER_NAME;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -35,10 +37,9 @@ import com.netbrasoft.gnuob.api.OfferRecord;
 import com.netbrasoft.gnuob.api.Option;
 import com.netbrasoft.gnuob.api.Product;
 import com.netbrasoft.gnuob.api.SubOption;
-import com.netbrasoft.gnuob.api.generic.GenericTypeDataProvider;
+import com.netbrasoft.gnuob.api.generic.IGenericTypeDataProvider;
 import com.netbrasoft.gnuob.api.generic.converter.CurrencyConverter;
-import com.netbrasoft.gnuob.api.product.ProductDataProvider;
-import com.netbrasoft.gnuob.shop.NetbrasoftShopMessageKeyConstants;
+import com.netbrasoft.gnuob.shop.NetbrasoftShopConstants;
 import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
 import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import com.netbrasoft.gnuob.shop.product.ProductCarousel;
@@ -109,7 +110,8 @@ public class CartViewOrEditPanel extends Panel {
 
             private final IModel<Option> parentModel;
 
-            public SubOptionSelect(final String id, final IModel<Option> parentModel, final IModel<SubOption> model, final IModel<? extends List<? extends SubOption>> choices,
+            public SubOptionSelect(final String id, final IModel<Option> parentModel, final IModel<SubOption> model,
+                final IModel<? extends List<? extends SubOption>> choices,
                 final IChoiceRenderer<? super SubOption> renderer) {
               super(id, model, choices, renderer);
               this.parentModel = parentModel;
@@ -145,8 +147,9 @@ public class CartViewOrEditPanel extends Panel {
               }
             }
 
-            final SubOptionSelect optionDropDownChoice = new SubOptionSelect(OPTION_ID, item.getModel(), Model.of(subOptionModel),
-                Model.ofList(((Option) item.getDefaultModelObject()).getSubOptions()), new ChoiceRenderer<SubOption>(DESCRIPTION_DISPLAY_EXPRESSION, VALUE_ID_EXPRESSION));
+            final SubOptionSelect optionDropDownChoice = new SubOptionSelect(OPTION_ID, item.getModel(),
+                Model.of(subOptionModel), Model.ofList(((Option) item.getDefaultModelObject()).getSubOptions()),
+                new ChoiceRenderer<SubOption>(DESCRIPTION_DISPLAY_EXPRESSION, VALUE_ID_EXPRESSION));
             item.add(optionDropDownChoice.setOutputMarkupId(true));
           }
         }
@@ -189,7 +192,8 @@ public class CartViewOrEditPanel extends Panel {
 
         private static final long serialVersionUID = 5079756014198001992L;
 
-        public QuantitySelect(final String id, final IModel<BigInteger> model, final IModel<? extends List<? extends BigInteger>> choices) {
+        public QuantitySelect(final String id, final IModel<BigInteger> model,
+            final IModel<? extends List<? extends BigInteger>> choices) {
           super(id, model, choices);
         }
 
@@ -201,7 +205,8 @@ public class CartViewOrEditPanel extends Panel {
 
             @Override
             protected void onUpdate(final AjaxRequestTarget target) {
-              CartViewOrEditPanel.this.selectedModel.getObject().setQuantity((BigInteger) QuantitySelect.this.getDefaultModelObject());
+              CartViewOrEditPanel.this.selectedModel.getObject()
+                  .setQuantity((BigInteger) QuantitySelect.this.getDefaultModelObject());
               shopperDataProvider.find(new Shopper()).calculateCart();
               target.appendJavaScript(LOCATION_RELOAD_JAVA_SCRIPT);
             }
@@ -225,7 +230,8 @@ public class CartViewOrEditPanel extends Panel {
 
         @Override
         protected void populateItem(final LoopItem item) {
-          final IconBehavior iconBehavior = new IconBehavior(item.getIndex() < minModel.getObject() ? GlyphIconType.star : GlyphIconType.starempty);
+          final IconBehavior iconBehavior =
+              new IconBehavior(item.getIndex() < minModel.getObject() ? GlyphIconType.star : GlyphIconType.starempty);
           item.add(iconBehavior);
         }
       }
@@ -252,13 +258,12 @@ public class CartViewOrEditPanel extends Panel {
 
       private static final long serialVersionUID = -1556817303531395170L;
 
-      //@formatter:off
-      private final List<BigInteger> quantityChoices = Arrays.asList(
-          BigInteger.valueOf(1), BigInteger.valueOf(2), BigInteger.valueOf(3), BigInteger.valueOf(4),
-          BigInteger.valueOf(5), BigInteger.valueOf(6), BigInteger.valueOf(7), BigInteger.valueOf(8),
-          BigInteger.valueOf(9), BigInteger.valueOf(10), BigInteger.valueOf(15), BigInteger.valueOf(20),
-          BigInteger.valueOf(25), BigInteger.valueOf(50));
-      //@formatter:on
+      // @formatter:off
+      private final List<BigInteger> quantityChoices = Arrays.asList(BigInteger.valueOf(1), BigInteger.valueOf(2),
+          BigInteger.valueOf(3), BigInteger.valueOf(4), BigInteger.valueOf(5), BigInteger.valueOf(6),
+          BigInteger.valueOf(7), BigInteger.valueOf(8), BigInteger.valueOf(9), BigInteger.valueOf(10),
+          BigInteger.valueOf(15), BigInteger.valueOf(20), BigInteger.valueOf(25), BigInteger.valueOf(50));
+      // @formatter:on
 
       private final OptionDataviewContainer optionDataviewContainer;
 
@@ -302,11 +307,14 @@ public class CartViewOrEditPanel extends Panel {
             return (IConverter<C>) new CurrencyConverter();
           }
         };
-        productCarousel =
-            new ProductCarousel(PRODUCT_CAROUSEL_ID, Model.ofList(convertContentsToCarouselImages(CartViewOrEditPanel.this.selectedModel.getObject().getProduct().getContents())));
-        ratingLoop = new RatingLoop(RATING_ID, Model.of(CartViewOrEditPanel.this.selectedModel.getObject().getProduct().getRating()), Model.of(FIVE_STARS_RATING));
+        productCarousel = new ProductCarousel(PRODUCT_CAROUSEL_ID, Model.ofList(convertContentsToCarouselImages(
+            CartViewOrEditPanel.this.selectedModel.getObject().getProduct().getContents())));
+        ratingLoop = new RatingLoop(RATING_ID,
+            Model.of(CartViewOrEditPanel.this.selectedModel.getObject().getProduct().getRating()),
+            Model.of(FIVE_STARS_RATING));
         quantitySelect = new QuantitySelect(QUANTITY_ID, null, Model.ofList(quantityChoices));
-        optionDataviewContainer = new OptionDataviewContainer(OPTION_DATAVIEW_CONTAINER_ID, (IModel<Offer>) CartOfferRecordEditContainer.this.getDefaultModel());
+        optionDataviewContainer = new OptionDataviewContainer(OPTION_DATAVIEW_CONTAINER_ID,
+            (IModel<Offer>) CartOfferRecordEditContainer.this.getDefaultModel());
       }
 
       private List<ICarouselImage> convertContentsToCarouselImages(final List<Content> contents) {
@@ -322,7 +330,8 @@ public class CartViewOrEditPanel extends Panel {
       @Override
       protected void onInitialize() {
         final PopoverConfig popoverConfig = new PopoverConfig();
-        final PopoverBehavior popoverBehavior = new PopoverBehavior(Model.of(CartViewOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.DESCRIPTION_MESSAGE_KEY)),
+        final PopoverBehavior popoverBehavior = new PopoverBehavior(
+            Model.of(CartViewOrEditPanel.this.getString(NetbrasoftShopConstants.DESCRIPTION_MESSAGE_KEY)),
             Model.of(CartViewOrEditPanel.this.selectedModel.getObject().getProduct().getDescription()), popoverConfig);
         popoverConfig.withHoverTrigger();
         popoverConfig.withPlacement(Placement.left);
@@ -352,8 +361,10 @@ public class CartViewOrEditPanel extends Panel {
     private final CartOfferRecordEditContainer cartOfferRecordEditContainer;
 
     public CartOfferRecordEditFragment() {
-      super(CART_OFFER_RECORD_VIEW_OR_EDIT_FRAGMENT_ID, CART_OFFER_RECORD_EDIT_FRAGMENT_MARKUP_ID, CartViewOrEditPanel.this, CartViewOrEditPanel.this.getDefaultModel());
-      cartOfferRecordEditContainer = new CartOfferRecordEditContainer(CART_OFFER_RECORD_EDIT_CONTAINER_ID, (IModel<Offer>) CartOfferRecordEditFragment.this.getDefaultModel());
+      super(CART_OFFER_RECORD_VIEW_OR_EDIT_FRAGMENT_ID, CART_OFFER_RECORD_EDIT_FRAGMENT_MARKUP_ID,
+          CartViewOrEditPanel.this, CartViewOrEditPanel.this.getDefaultModel());
+      cartOfferRecordEditContainer = new CartOfferRecordEditContainer(CART_OFFER_RECORD_EDIT_CONTAINER_ID,
+          (IModel<Offer>) CartOfferRecordEditFragment.this.getDefaultModel());
     }
 
     @Override
@@ -368,8 +379,8 @@ public class CartViewOrEditPanel extends Panel {
   @SpringBean(name = ShopperDataProvider.SHOPPER_DATA_PROVIDER_NAME, required = true)
   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
-  @SpringBean(name = ProductDataProvider.PRODUCT_DATA_PROVIDER_NAME, required = true)
-  private transient GenericTypeDataProvider<Product> productDataProvider;
+  @SpringBean(name = PRODUCT_DATA_PROVIDER_NAME, required = true)
+  private transient IGenericTypeDataProvider<Product> productDataProvider;
 
   private IModel<OfferRecord> selectedModel;
 

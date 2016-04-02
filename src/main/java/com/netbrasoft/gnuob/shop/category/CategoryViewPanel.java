@@ -11,9 +11,9 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-
 package com.netbrasoft.gnuob.shop.category;
 
+import static com.netbrasoft.gnuob.api.generic.NetbrasoftApiConstants.PRODUCT_DATA_PROVIDER_NAME;
 import static java.util.stream.Collectors.toList;
 
 import java.math.BigInteger;
@@ -51,10 +51,9 @@ import com.netbrasoft.gnuob.api.Option;
 import com.netbrasoft.gnuob.api.Product;
 import com.netbrasoft.gnuob.api.SubCategory;
 import com.netbrasoft.gnuob.api.SubOption;
-import com.netbrasoft.gnuob.api.generic.GenericTypeDataProvider;
+import com.netbrasoft.gnuob.api.generic.IGenericTypeDataProvider;
 import com.netbrasoft.gnuob.api.generic.converter.CurrencyConverter;
-import com.netbrasoft.gnuob.api.product.ProductDataProvider;
-import com.netbrasoft.gnuob.shop.NetbrasoftShopMessageKeyConstants;
+import com.netbrasoft.gnuob.shop.NetbrasoftShopConstants;
 import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
 import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import com.netbrasoft.gnuob.shop.page.CartPage;
@@ -102,7 +101,8 @@ public class CategoryViewPanel extends BreadCrumbPanel {
 
           @Override
           protected void populateItem(final LoopItem item) {
-            final IconBehavior iconBehavior = new IconBehavior(item.getIndex() < minModel.getObject() ? GlyphIconType.star : GlyphIconType.starempty);
+            final IconBehavior iconBehavior =
+                new IconBehavior(item.getIndex() < minModel.getObject() ? GlyphIconType.star : GlyphIconType.starempty);
             item.add(iconBehavior);
           }
         }
@@ -130,17 +130,20 @@ public class CategoryViewPanel extends BreadCrumbPanel {
         }
 
         private List<ICarouselImage> convertContentsToCarouselImages(final List<Content> contents) {
-          return contents.stream().filter(content -> MediaType.HTML_UTF_8.is(MediaType.parse(content.getFormat()))).map(Content::getContent)
-              .map(content -> new CarouselImage(new String(content))).collect(toList());
+          return contents.stream().filter(content -> MediaType.HTML_UTF_8.is(MediaType.parse(content.getFormat())))
+              .map(Content::getContent).map(content -> new CarouselImage(new String(content))).collect(toList());
         }
 
         @Override
         protected void populateItem(final Item<Product> item) {
           final Label nameLabel = new Label(NAME_ID);
           final Label stockQuantityLabel = new Label(STOCK_QUANTITY_ID);
-          final ProductCarousel productCarousel = new ProductCarousel(PRODUCT_CAROUSEL_ID, Model.ofList(convertContentsToCarouselImages(item.getModelObject().getContents())));
-          final RatingLoop ratingLoop = new RatingLoop(RATING_ID, Model.of(((Product) item.getDefaultModelObject()).getRating()), Model.of(FIVE_STARS_RATING));
-          final Label amountWithDiscountLabel = new Label(AMOUNT_WITH_DISCOUNT_ID, Model.of(item.getModelObject().getAmount().subtract(item.getModelObject().getDiscount()))) {
+          final ProductCarousel productCarousel = new ProductCarousel(PRODUCT_CAROUSEL_ID,
+              Model.ofList(convertContentsToCarouselImages(item.getModelObject().getContents())));
+          final RatingLoop ratingLoop = new RatingLoop(RATING_ID,
+              Model.of(((Product) item.getDefaultModelObject()).getRating()), Model.of(FIVE_STARS_RATING));
+          final Label amountWithDiscountLabel = new Label(AMOUNT_WITH_DISCOUNT_ID,
+              Model.of(item.getModelObject().getAmount().subtract(item.getModelObject().getDiscount()))) {
 
             private static final long serialVersionUID = 2992356937203130959L;
 
@@ -158,10 +161,12 @@ public class CategoryViewPanel extends BreadCrumbPanel {
               return (IConverter<C>) new CurrencyConverter();
             }
           };
-          final PurchaseBootstrapAjaxLink purchaseBootstrapAjaxLink = new PurchaseBootstrapAjaxLink(PURCHASE_ID, item.getModel(), Type.Primary,
-              Model.of(CategoryViewPanel.this.getString(NetbrasoftShopMessageKeyConstants.PURCHASE_MESSAGE_KEY)));
+          final PurchaseBootstrapAjaxLink purchaseBootstrapAjaxLink =
+              new PurchaseBootstrapAjaxLink(PURCHASE_ID, item.getModel(), Type.Primary,
+                  Model.of(CategoryViewPanel.this.getString(NetbrasoftShopConstants.PURCHASE_MESSAGE_KEY)));
           final PopoverConfig popoverConfig = new PopoverConfig();
-          final PopoverBehavior popoverBehavior = new PopoverBehavior(Model.of(CategoryViewPanel.this.getString(NetbrasoftShopMessageKeyConstants.DESCRIPTION_MESSAGE_KEY)),
+          final PopoverBehavior popoverBehavior = new PopoverBehavior(
+              Model.of(CategoryViewPanel.this.getString(NetbrasoftShopConstants.DESCRIPTION_MESSAGE_KEY)),
               Model.of(item.getModelObject().getDescription()), popoverConfig);
           popoverConfig.withHoverTrigger();
           popoverConfig.withPlacement(Placement.bottom);
@@ -186,7 +191,8 @@ public class CategoryViewPanel extends BreadCrumbPanel {
 
         private static final long serialVersionUID = 1393894351888380103L;
 
-        public PurchaseBootstrapAjaxLink(final String id, final IModel<Product> model, final Type type, final IModel<String> labelModel) {
+        public PurchaseBootstrapAjaxLink(final String id, final IModel<Product> model, final Type type,
+            final IModel<String> labelModel) {
           super(id, model, type, labelModel);
           setSize(Buttons.Size.Small);
         }
@@ -203,11 +209,13 @@ public class CategoryViewPanel extends BreadCrumbPanel {
           for (final Option rootOption : product.getOptions()) {
             if (!rootOption.isDisabled()) {
               final Option offerRecordRootOption = new Option();
-              BeanUtils.copyProperties(rootOption, offerRecordRootOption, ID_IGNORE_PROPERTIES, VERSION_IGNORE_PROPERTIES);
+              BeanUtils.copyProperties(rootOption, offerRecordRootOption, ID_IGNORE_PROPERTIES,
+                  VERSION_IGNORE_PROPERTIES);
               for (final SubOption childSubOption : rootOption.getSubOptions()) {
                 if (!childSubOption.isDisabled()) {
                   final SubOption offerRecordChildSubOption = new SubOption();
-                  BeanUtils.copyProperties(childSubOption, offerRecordChildSubOption, ID_IGNORE_PROPERTIES, VERSION_IGNORE_PROPERTIES);
+                  BeanUtils.copyProperties(childSubOption, offerRecordChildSubOption, ID_IGNORE_PROPERTIES,
+                      VERSION_IGNORE_PROPERTIES);
                   offerRecordRootOption.getSubOptions().add(offerRecordChildSubOption);
                   break;
                 }
@@ -251,7 +259,8 @@ public class CategoryViewPanel extends BreadCrumbPanel {
 
         private static final long serialVersionUID = 2776123630121635305L;
 
-        private SubCategoryDataview(final String id, final IDataProvider<SubCategory> dataProvider, final long itemsPerPage) {
+        private SubCategoryDataview(final String id, final IDataProvider<SubCategory> dataProvider,
+            final long itemsPerPage) {
           super(id, dataProvider, itemsPerPage);
         }
 
@@ -295,7 +304,8 @@ public class CategoryViewPanel extends BreadCrumbPanel {
             return createFlatSubCategoryList(selectedModelList.getObject());
           }
         };
-        subCategoryDataview = new SubCategoryDataview(SUB_CATEGORY_DATAVIEW_ID, subCategoryDataProvider, Integer.MAX_VALUE);
+        subCategoryDataview =
+            new SubCategoryDataview(SUB_CATEGORY_DATAVIEW_ID, subCategoryDataProvider, Integer.MAX_VALUE);
       }
 
       @Override
@@ -328,13 +338,18 @@ public class CategoryViewPanel extends BreadCrumbPanel {
     private final BootstrapPagingNavigator productPagingNavigator;
 
     public ProductViewFragment() {
-      super(SUB_CATEGORY_PRODUCT_VIEW_FRAGMENT_ID, PRODUCT_VIEW_FRAGMENT_MARKUP_ID, CategoryViewPanel.this, CategoryViewPanel.this.getDefaultModel());
+      super(SUB_CATEGORY_PRODUCT_VIEW_FRAGMENT_ID, PRODUCT_VIEW_FRAGMENT_MARKUP_ID, CategoryViewPanel.this,
+          CategoryViewPanel.this.getDefaultModel());
       final ArrayList<SubCategory> subCategoryList = new ArrayList<SubCategory>();
       subCategoryList.add(selectedModel.getObject());
-      subCategoryMenuBootstrapListView = new SubCategoryMenuBootstrapListView(SUB_CATEGORY_MENU_BOOTSTRAP_LIST_VIEW_ID, Model.ofList(subCategoryList));
-      subCategoryDataviewContainer = new SubCategoryDataviewContainer(SUB_CATEGORY_DATAVIEW_CONTAINER_ID, (IModel<Category>) ProductViewFragment.this.getDefaultModel());
-      productDataviewContainer = new ProductDataviewContainer(PRODUCT_DATAVIEW_CONTAINER_ID, (IModel<Category>) ProductViewFragment.this.getDefaultModel());
-      productPagingNavigator = new BootstrapPagingNavigator(PRODUCT_PAGING_NAVIGATOR_MARKUP_ID, productDataviewContainer.productDataView);
+      subCategoryMenuBootstrapListView =
+          new SubCategoryMenuBootstrapListView(SUB_CATEGORY_MENU_BOOTSTRAP_LIST_VIEW_ID, Model.ofList(subCategoryList));
+      subCategoryDataviewContainer = new SubCategoryDataviewContainer(SUB_CATEGORY_DATAVIEW_CONTAINER_ID,
+          (IModel<Category>) ProductViewFragment.this.getDefaultModel());
+      productDataviewContainer = new ProductDataviewContainer(PRODUCT_DATAVIEW_CONTAINER_ID,
+          (IModel<Category>) ProductViewFragment.this.getDefaultModel());
+      productPagingNavigator =
+          new BootstrapPagingNavigator(PRODUCT_PAGING_NAVIGATOR_MARKUP_ID, productDataviewContainer.productDataView);
     }
 
     @Override
@@ -362,7 +377,8 @@ public class CategoryViewPanel extends BreadCrumbPanel {
       @Override
       protected void populateItem(final ListItem<SubCategory> item) {
         final CategoryBreadCrumbBootstrapAjaxLink categoryBreadCrumbBootstrapAjaxLink =
-            new CategoryBreadCrumbBootstrapAjaxLink(LINK_ID, CategoryViewPanel.this, item.getModel(), Buttons.Type.Link, Model.of(item.getModel().getObject().getName()));
+            new CategoryBreadCrumbBootstrapAjaxLink(LINK_ID, CategoryViewPanel.this, item.getModel(), Buttons.Type.Link,
+                Model.of(item.getModel().getObject().getName()));
         item.add(categoryBreadCrumbBootstrapAjaxLink.setOutputMarkupId(true));
       }
     }
@@ -380,8 +396,8 @@ public class CategoryViewPanel extends BreadCrumbPanel {
     @Override
     protected void populateItem(final ListItem<SubCategory> item) {
       final Label nameLabel = new Label(NAME_ID);
-      final SubCategoryBootstrapListView subCategoryBootstrapListView =
-          new SubCategoryBootstrapListView(SUB_CATEGORY_BOOTSTRAP_LIST_VIEW_ID, Model.ofList(item.getModelObject().getSubCategories()));
+      final SubCategoryBootstrapListView subCategoryBootstrapListView = new SubCategoryBootstrapListView(
+          SUB_CATEGORY_BOOTSTRAP_LIST_VIEW_ID, Model.ofList(item.getModelObject().getSubCategories()));
       item.setModel(new CompoundPropertyModel<SubCategory>(item.getModelObject()));
       item.add(nameLabel);
       item.add(subCategoryBootstrapListView);
@@ -402,7 +418,8 @@ public class CategoryViewPanel extends BreadCrumbPanel {
 
         private static final long serialVersionUID = 2776123630121635305L;
 
-        private SubCategoryDataview(final String id, final IDataProvider<SubCategory> dataProvider, final long itemsPerPage) {
+        private SubCategoryDataview(final String id, final IDataProvider<SubCategory> dataProvider,
+            final long itemsPerPage) {
           super(id, dataProvider, itemsPerPage);
         }
 
@@ -446,7 +463,8 @@ public class CategoryViewPanel extends BreadCrumbPanel {
             return createFlatSubCategoryList(selectedModelList.getObject());
           }
         };
-        subCategoryDataview = new SubCategoryDataview(SUB_CATEGORY_DATAVIEW_ID, subCategoryDataProvider, Integer.MAX_VALUE);
+        subCategoryDataview =
+            new SubCategoryDataview(SUB_CATEGORY_DATAVIEW_ID, subCategoryDataProvider, Integer.MAX_VALUE);
       }
 
       @Override
@@ -471,9 +489,12 @@ public class CategoryViewPanel extends BreadCrumbPanel {
     private final SubCategoryDataviewContainer subCategoryDataviewContainer;
 
     public SubCategoryViewFragment() {
-      super(SUB_CATEGORY_PRODUCT_VIEW_FRAGMENT_ID, SUB_CATEGORY_VIEW_FRAGMENT_MARKUP_ID, CategoryViewPanel.this, CategoryViewPanel.this.getDefaultModel());
-      subCategoryMenuBootstrapListView = new SubCategoryMenuBootstrapListView(SUB_CATEGORY_MENU_BOOTSTRAP_LIST_VIEW_ID, Model.ofList(selectedModelList.getObject()));
-      subCategoryDataviewContainer = new SubCategoryDataviewContainer(SUB_CATEGORY_DATAVIEW_CONTAINER_ID, (IModel<Category>) SubCategoryViewFragment.this.getDefaultModel());
+      super(SUB_CATEGORY_PRODUCT_VIEW_FRAGMENT_ID, SUB_CATEGORY_VIEW_FRAGMENT_MARKUP_ID, CategoryViewPanel.this,
+          CategoryViewPanel.this.getDefaultModel());
+      subCategoryMenuBootstrapListView = new SubCategoryMenuBootstrapListView(SUB_CATEGORY_MENU_BOOTSTRAP_LIST_VIEW_ID,
+          Model.ofList(selectedModelList.getObject()));
+      subCategoryDataviewContainer = new SubCategoryDataviewContainer(SUB_CATEGORY_DATAVIEW_CONTAINER_ID,
+          (IModel<Category>) SubCategoryViewFragment.this.getDefaultModel());
     }
 
     @Override
@@ -486,8 +507,8 @@ public class CategoryViewPanel extends BreadCrumbPanel {
 
   private static final long serialVersionUID = -9083340164646887954L;
 
-  @SpringBean(name = ProductDataProvider.PRODUCT_DATA_PROVIDER_NAME, required = true)
-  private GenericTypeDataProvider<Product> productDataProvider;
+  @SpringBean(name = PRODUCT_DATA_PROVIDER_NAME, required = true)
+  private IGenericTypeDataProvider<Product> productDataProvider;
 
   @SpringBean(name = ShopperDataProvider.SHOPPER_DATA_PROVIDER_NAME, required = true)
   private GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
@@ -500,8 +521,8 @@ public class CategoryViewPanel extends BreadCrumbPanel {
     this(id, breadCrumbModel, model, null, Model.ofList(model.getObject().getSubCategories()));
   }
 
-  public CategoryViewPanel(final String id, final IBreadCrumbModel breadCrumbModel, final IModel<Category> model, final IModel<SubCategory> selectedModel,
-      final IModel<List<SubCategory>> selectedModelList) {
+  public CategoryViewPanel(final String id, final IBreadCrumbModel breadCrumbModel, final IModel<Category> model,
+      final IModel<SubCategory> selectedModel, final IModel<List<SubCategory>> selectedModelList) {
     super(id, breadCrumbModel, model);
     this.selectedModel = selectedModel;
     this.selectedModelList = selectedModelList;

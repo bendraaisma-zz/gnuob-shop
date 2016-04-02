@@ -10,7 +10,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
-import com.netbrasoft.gnuob.shop.NetbrasoftShopMessageKeyConstants;
+import com.netbrasoft.gnuob.shop.NetbrasoftShopConstants;
 import com.netbrasoft.gnuob.shop.page.tab.AccountTab;
 import com.netbrasoft.gnuob.shop.page.tab.CheckoutTab;
 import com.netbrasoft.gnuob.shop.page.tab.HomeTab;
@@ -53,10 +53,10 @@ public class WishListMainMenuPanel extends Panel {
 
   @Override
   protected void onInitialize() {
-    final HomeTab homeTab = new HomeTab(Model.of(WishListMainMenuPanel.this.getString(NetbrasoftShopMessageKeyConstants.HOME_MESSAGE_KEY)));
-    final AccountTab accountTab = new AccountTab(Model.of(WishListMainMenuPanel.this.getString(NetbrasoftShopMessageKeyConstants.ACCOUNT_MESSAGE_KEY)));
-    final WishListTab wishListTab = new WishListTab(Model.of(WishListMainMenuPanel.this.getString(NetbrasoftShopMessageKeyConstants.WISH_LIST_MESSAGE_KEY)));
-    final CheckoutTab checkoutTab = new CheckoutTab(Model.of(WishListMainMenuPanel.this.getString(NetbrasoftShopMessageKeyConstants.CHECKOUT_MESSAGE_KEY)));
+    final HomeTab homeTab = new HomeTab(Model.of(WishListMainMenuPanel.this.getString(NetbrasoftShopConstants.HOME_MESSAGE_KEY)));
+    final AccountTab accountTab = new AccountTab(Model.of(WishListMainMenuPanel.this.getString(NetbrasoftShopConstants.ACCOUNT_MESSAGE_KEY)));
+    final WishListTab wishListTab = new WishListTab(Model.of(WishListMainMenuPanel.this.getString(NetbrasoftShopConstants.WISH_LIST_MESSAGE_KEY)));
+    final CheckoutTab checkoutTab = new CheckoutTab(Model.of(WishListMainMenuPanel.this.getString(NetbrasoftShopConstants.CHECKOUT_MESSAGE_KEY)));
 
     mainMenuTabbedPanel.getTabs().add(homeTab);
     mainMenuTabbedPanel.getTabs().add(accountTab);

@@ -10,7 +10,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
-import com.netbrasoft.gnuob.shop.NetbrasoftShopMessageKeyConstants;
+import com.netbrasoft.gnuob.shop.NetbrasoftShopConstants;
 import com.netbrasoft.gnuob.shop.page.tab.ConfirmationTab;
 import com.netbrasoft.gnuob.shop.page.tab.HomeTab;
 import com.netbrasoft.gnuob.shop.page.tab.SpecificationTab;
@@ -52,10 +52,10 @@ public class CartMainMenuPanel extends Panel {
 
   @Override
   protected void onInitialize() {
-    final HomeTab homeTab = new HomeTab(Model.of(CartMainMenuPanel.this.getString(NetbrasoftShopMessageKeyConstants.HOME_MESSAGE_KEY)));
-    final CartTab cartTab = new CartTab(Model.of(CartMainMenuPanel.this.getString(NetbrasoftShopMessageKeyConstants.CART_MESSAGE_KEY)));
-    final SpecificationTab specificationTab = new SpecificationTab(Model.of(CartMainMenuPanel.this.getString(NetbrasoftShopMessageKeyConstants.SPECIFICATION_MESSAGE_KEY)));
-    final ConfirmationTab confirmationTab = new ConfirmationTab(Model.of(CartMainMenuPanel.this.getString(NetbrasoftShopMessageKeyConstants.CONFIRMATION_MESSAGE_KEY)));
+    final HomeTab homeTab = new HomeTab(Model.of(CartMainMenuPanel.this.getString(NetbrasoftShopConstants.HOME_MESSAGE_KEY)));
+    final CartTab cartTab = new CartTab(Model.of(CartMainMenuPanel.this.getString(NetbrasoftShopConstants.CART_MESSAGE_KEY)));
+    final SpecificationTab specificationTab = new SpecificationTab(Model.of(CartMainMenuPanel.this.getString(NetbrasoftShopConstants.SPECIFICATION_MESSAGE_KEY)));
+    final ConfirmationTab confirmationTab = new ConfirmationTab(Model.of(CartMainMenuPanel.this.getString(NetbrasoftShopConstants.CONFIRMATION_MESSAGE_KEY)));
     mainMenuTabbedPanel.getTabs().add(homeTab);
     mainMenuTabbedPanel.getTabs().add(cartTab);
     mainMenuTabbedPanel.getTabs().add(specificationTab);

@@ -1,4 +1,22 @@
+/*
+ * Copyright 2016 Netbrasoft
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
 package com.netbrasoft.gnuob.shop.specification;
+
+import static com.netbrasoft.gnuob.api.generic.NetbrasoftApiConstants.CONTRACT_DATA_PROVIDER_NAME;
+import static com.netbrasoft.gnuob.api.generic.NetbrasoftApiConstants.ORDER_DATA_PROVIDER_NAME;
+import static com.netbrasoft.gnuob.api.generic.NetbrasoftApiConstants.POSTAL_CODE_DATA_PROVIDER_NAME;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
@@ -44,14 +62,11 @@ import com.netbrasoft.gnuob.api.Order;
 import com.netbrasoft.gnuob.api.OrderBy;
 import com.netbrasoft.gnuob.api.OrderRecord;
 import com.netbrasoft.gnuob.api.PostalCode;
-import com.netbrasoft.gnuob.api.contract.ContractDataProvider;
-import com.netbrasoft.gnuob.api.customer.PostalCodeDataProvider;
-import com.netbrasoft.gnuob.api.generic.GenericTypeDataProvider;
+import com.netbrasoft.gnuob.api.generic.IGenericTypeDataProvider;
 import com.netbrasoft.gnuob.api.generic.converter.CurrencyConverter;
-import com.netbrasoft.gnuob.api.order.GenericOrderCheckoutDataProvider;
-import com.netbrasoft.gnuob.api.order.OrderDataProvider;
-import com.netbrasoft.gnuob.api.order.OrderDataProvider.CheckOut;
-import com.netbrasoft.gnuob.shop.NetbrasoftShopMessageKeyConstants;
+import com.netbrasoft.gnuob.api.order.IGenericOrderCheckoutDataProvider;
+import com.netbrasoft.gnuob.api.order.OrderDataProvider.PaymentProviderEnum;
+import com.netbrasoft.gnuob.shop.NetbrasoftShopConstants;
 import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
 import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
@@ -105,7 +120,8 @@ public class SpecificationEmptyOrEditPanel extends Panel {
           final List<String> cityNames = new ArrayList<String>();
           postalCodeDataProvider.getType().setPlaceName(input + "%");
           postalCodeDataProvider.setOrderBy(OrderBy.PLACE_NAME_A_Z);
-          for (final Iterator<? extends PostalCode> iterator = postalCodeDataProvider.iterator(0, 5); iterator.hasNext();) {
+          for (final Iterator<? extends PostalCode> iterator = postalCodeDataProvider.iterator(0, 5); iterator
+              .hasNext();) {
             cityNames.add(iterator.next().getPlaceName());
           }
           return cityNames;
@@ -125,9 +141,11 @@ public class SpecificationEmptyOrEditPanel extends Panel {
 
           private static final String VEIL_CART_LOADING = "veil-cart-loading";
 
-          private static final String PAYPAL_CHECKOUT_URL_PROPERTY_VALUE = "https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=";
+          private static final String PAYPAL_CHECKOUT_URL_PROPERTY_VALUE =
+              "https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=";
 
-          private static final String PAGSEGURO_CHECKOUT_URL_PROPERTY_VALUE = "https://sandbox.pagseguro.uol.com.br/v2/checkout/payment.html?code=";
+          private static final String PAGSEGURO_CHECKOUT_URL_PROPERTY_VALUE =
+              "https://sandbox.pagseguro.uol.com.br/v2/checkout/payment.html?code=";
 
           private static final String PAYPAL_CHECKOUT_URL_PROPERTY = "paypal.checkout.url";
 
@@ -135,10 +153,12 @@ public class SpecificationEmptyOrEditPanel extends Panel {
 
           private static final long serialVersionUID = 2695394292963384938L;
 
-          public SaveAjaxButton(final String id, final IModel<String> model, final Form<Order> form, final Buttons.Type type) {
+          public SaveAjaxButton(final String id, final IModel<String> model, final Form<Order> form,
+              final Buttons.Type type) {
             super(id, model, form, type);
             setSize(Buttons.Size.Small);
-            add(new LoadingBehavior(Model.of(SpecificationEmptyOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.DIRECTING_TO_PAYMENT_PROVIDER_MESSAGE_KEY))));
+            add(new LoadingBehavior(Model.of(SpecificationEmptyOrEditPanel.this
+                .getString(NetbrasoftShopConstants.DIRECTING_TO_PAYMENT_PROVIDER_MESSAGE_KEY))));
           }
 
           @Override
@@ -150,8 +170,8 @@ public class SpecificationEmptyOrEditPanel extends Panel {
           protected void onError(final AjaxRequestTarget target, final Form<?> form) {
             form.add(new TooltipValidation());
             target.add(form);
-            target.add(SaveAjaxButton.this
-                .add(new LoadingBehavior(Model.of(SpecificationEmptyOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.DIRECTING_TO_PAYMENT_PROVIDER_MESSAGE_KEY)))));
+            target.add(SaveAjaxButton.this.add(new LoadingBehavior(Model.of(SpecificationEmptyOrEditPanel.this
+                .getString(NetbrasoftShopConstants.DIRECTING_TO_PAYMENT_PROVIDER_MESSAGE_KEY)))));
           }
 
           @Override
@@ -160,18 +180,20 @@ public class SpecificationEmptyOrEditPanel extends Panel {
             ((Order) form.getDefaultModelObject()).getShipment().getAddress().setCountry(BR_COUNTRY_CODE);
 
             if (((Order) form.getDefaultModelObject()).getId() == 0) {
-              SpecificationEditTable.this
-                  .setDefaultModelObject(orderDataProvider.doCheckout(orderDataProvider.findById(orderDataProvider.persist((Order) form.getDefaultModelObject()))));
+              SpecificationEditTable.this.setDefaultModelObject(orderDataProvider.doCheckout(
+                  orderDataProvider.findById(orderDataProvider.persist((Order) form.getDefaultModelObject()))));
             } else {
-              SpecificationEditTable.this
-                  .setDefaultModelObject(orderDataProvider.doCheckout(orderDataProvider.findById(orderDataProvider.merge((Order) form.getDefaultModelObject()))));
+              SpecificationEditTable.this.setDefaultModelObject(orderDataProvider.doCheckout(
+                  orderDataProvider.findById(orderDataProvider.merge((Order) form.getDefaultModelObject()))));
             }
-            if (CheckOut.PAGSEGURO.equals(orderDataProvider.getCheckOut())) {
-              throw new RedirectToUrlException(System.getProperty(PAGSEGURO_CHECKOUT_URL_PROPERTY, PAGSEGURO_CHECKOUT_URL_PROPERTY_VALUE)
-                  + ((Order) SpecificationEditTable.this.getDefaultModelObject()).getToken());
+            if (PaymentProviderEnum.PAGSEGURO.equals(orderDataProvider.getPaymentProvider())) {
+              throw new RedirectToUrlException(
+                  System.getProperty(PAGSEGURO_CHECKOUT_URL_PROPERTY, PAGSEGURO_CHECKOUT_URL_PROPERTY_VALUE)
+                      + ((Order) SpecificationEditTable.this.getDefaultModelObject()).getToken());
             } else { // PayPal
               throw new RedirectToUrlException(
-                  System.getProperty(PAYPAL_CHECKOUT_URL_PROPERTY, PAYPAL_CHECKOUT_URL_PROPERTY_VALUE) + ((Order) SpecificationEditTable.this.getDefaultModelObject()).getToken());
+                  System.getProperty(PAYPAL_CHECKOUT_URL_PROPERTY, PAYPAL_CHECKOUT_URL_PROPERTY_VALUE)
+                      + ((Order) SpecificationEditTable.this.getDefaultModelObject()).getToken());
             }
           }
         }
@@ -201,15 +223,16 @@ public class SpecificationEmptyOrEditPanel extends Panel {
 
             private int index = 0;
 
-            protected SpecificationDataView(final String id, final IDataProvider<OrderRecord> dataProvider, final long itemsPerPage) {
+            protected SpecificationDataView(final String id, final IDataProvider<OrderRecord> dataProvider,
+                final long itemsPerPage) {
               super(id, dataProvider, itemsPerPage);
             }
 
             private String getOptions(final List<Option> options) {
               final StringBuilder optionStringBuilder = new StringBuilder();
-
               for (final Option option : options) {
-                optionStringBuilder.append(option.getValue()).append(": ").append(option.getSubOptions().iterator().next().getValue()).append(" ");
+                optionStringBuilder.append(option.getValue()).append(": ")
+                    .append(option.getSubOptions().iterator().next().getValue()).append(" ");
               }
               return optionStringBuilder.toString();
             }
@@ -229,7 +252,9 @@ public class SpecificationEmptyOrEditPanel extends Panel {
               if (!model.getObject().getRecords().isEmpty()) {
                 specificationViewOrEditPanel.removeAll();
                 specificationViewOrEditPanel.setSelectedModel(Model.of(model.getObject().getRecords().get(index)));
-                specificationViewOrEditPanel.add(specificationViewOrEditPanel.new SpecificationOfferRecordEditFragment()).setOutputMarkupId(true);
+                specificationViewOrEditPanel
+                    .add(specificationViewOrEditPanel.new SpecificationOfferRecordEditFragment())
+                    .setOutputMarkupId(true);
               }
               super.onConfigure();
             }
@@ -244,10 +269,13 @@ public class SpecificationEmptyOrEditPanel extends Panel {
               final BigDecimal amountTotal = productAmount.add(productTax).multiply(quantity);
 
               final Label nameLabel = new Label(NAME_ID);
-              final Label optionsLabel = new Label(OPTIONS_ID, Model.of(getOptions(item.getModelObject().getOptions())));
+              final Label optionsLabel =
+                  new Label(OPTIONS_ID, Model.of(getOptions(item.getModelObject().getOptions())));
               final Label quantityLabel = new Label(QUANTITY_ID);
-              final Label itemTotalLabel = new Label(ITEM_TOTAL_ID, Model.of(NumberFormat.getCurrencyInstance().format(itemTotal)));
-              final Label amountLabel = new Label(AMOUNT_TOTAL_ID, Model.of(NumberFormat.getCurrencyInstance().format(amountTotal)));
+              final Label itemTotalLabel =
+                  new Label(ITEM_TOTAL_ID, Model.of(NumberFormat.getCurrencyInstance().format(itemTotal)));
+              final Label amountLabel =
+                  new Label(AMOUNT_TOTAL_ID, Model.of(NumberFormat.getCurrencyInstance().format(amountTotal)));
               final AjaxEventBehavior ajaxEventBehavior = new AjaxEventBehavior(CLICK_EVENT) {
 
                 private static final long serialVersionUID = 1L;
@@ -258,7 +286,9 @@ public class SpecificationEmptyOrEditPanel extends Panel {
                   specificationViewOrEditPanel.setSelectedModel(item.getModel());
                   specificationViewOrEditPanel.removeAll();
                   target.add(specificationDataviewContainer.setOutputMarkupId(true));
-                  target.add(specificationViewOrEditPanel.add(specificationViewOrEditPanel.new SpecificationOfferRecordEditFragment()).setOutputMarkupId(true));
+                  target.add(specificationViewOrEditPanel
+                      .add(specificationViewOrEditPanel.new SpecificationOfferRecordEditFragment())
+                      .setOutputMarkupId(true));
                 }
               };
 
@@ -291,7 +321,8 @@ public class SpecificationEmptyOrEditPanel extends Panel {
                 return ((Order) SpecificationDataviewContainer.this.getDefaultModelObject()).getRecords();
               }
             };
-            specificationDataView = new SpecificationDataView(SPECIFICATION_DATAVIEW_ID, specificationListDataProvider, Integer.MAX_VALUE);
+            specificationDataView =
+                new SpecificationDataView(SPECIFICATION_DATAVIEW_ID, specificationListDataProvider, Integer.MAX_VALUE);
           }
 
           @Override
@@ -352,9 +383,11 @@ public class SpecificationEmptyOrEditPanel extends Panel {
               return (IConverter<C>) new CurrencyConverter();
             }
           };
-          saveAjaxButton =
-              new SaveAjaxButton(SAVE_ID, Model.of(SpecificationEmptyOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.PAY_MESSAGE_KEY)), specificationEditForm, Type.Primary);
-          specificationDataviewContainer = new SpecificationDataviewContainer(SPECIFICATION_DATAVIEW_CONTAINER_ID, (IModel<Order>) SpecificationEditTable.this.getDefaultModel());
+          saveAjaxButton = new SaveAjaxButton(SAVE_ID,
+              Model.of(SpecificationEmptyOrEditPanel.this.getString(NetbrasoftShopConstants.PAY_MESSAGE_KEY)),
+              specificationEditForm, Type.Primary);
+          specificationDataviewContainer = new SpecificationDataviewContainer(SPECIFICATION_DATAVIEW_CONTAINER_ID,
+              (IModel<Order>) SpecificationEditTable.this.getDefaultModel());
         }
 
         @Override
@@ -450,7 +483,7 @@ public class SpecificationEmptyOrEditPanel extends Panel {
 
       private final BootstrapForm<Order> specificationEditForm;
 
-      private final RadioGroup<CheckOut> paymentOptions;
+      private final RadioGroup<PaymentProviderEnum> paymentOptions;
 
       private final SpecificationEditTable specificationEditTable;
 
@@ -458,42 +491,53 @@ public class SpecificationEmptyOrEditPanel extends Panel {
 
       public SpecificationEditContainer(final String id, final IModel<Order> model) {
         super(id, model);
-        final BloodhoundPlaceNames invoiceAddressCityBloodhoundPlaceNames = new BloodhoundPlaceNames(REMOTE_NAME, new BloodhoundConfig());
-        final TypeaheadConfig<String> invoiceAddressCityNameConfig = new TypeaheadConfig<>(new DataSet<>(invoiceAddressCityBloodhoundPlaceNames));
-        final BloodhoundPlaceNames shipmentAddressCityBloodhoundPlaceNames = new BloodhoundPlaceNames(REMOTE_NAME, new BloodhoundConfig());
-        final TypeaheadConfig<String> shipmentAddressCityNameConfig = new TypeaheadConfig<>(new DataSet<>(shipmentAddressCityBloodhoundPlaceNames));
+        final BloodhoundPlaceNames invoiceAddressCityBloodhoundPlaceNames =
+            new BloodhoundPlaceNames(REMOTE_NAME, new BloodhoundConfig());
+        final TypeaheadConfig<String> invoiceAddressCityNameConfig =
+            new TypeaheadConfig<>(new DataSet<>(invoiceAddressCityBloodhoundPlaceNames));
+        final BloodhoundPlaceNames shipmentAddressCityBloodhoundPlaceNames =
+            new BloodhoundPlaceNames(REMOTE_NAME, new BloodhoundConfig());
+        final TypeaheadConfig<String> shipmentAddressCityNameConfig =
+            new TypeaheadConfig<>(new DataSet<>(shipmentAddressCityBloodhoundPlaceNames));
 
-        specificationEditForm =
-            new BootstrapForm<Order>(SPECIFICATION_EDIT_FORM_COMPONENT_ID, new CompoundPropertyModel<Order>((IModel<Order>) SpecificationEditContainer.this.getDefaultModel()));
+        specificationEditForm = new BootstrapForm<Order>(SPECIFICATION_EDIT_FORM_COMPONENT_ID,
+            new CompoundPropertyModel<Order>((IModel<Order>) SpecificationEditContainer.this.getDefaultModel()));
         contractCustomerBuyerEmailTextField = new RequiredTextField<String>(CONTRACT_CUSTOMER_BUYER_EMAIL_ID);
         contractCustomerFirstNameTextField = new RequiredTextField<String>(CONTRACT_CUSTOMER_FIRST_NAME_ID);
         contractCustomerLastNameTextField = new RequiredTextField<String>(CONTRACT_CUSTOMER_LAST_NAME_ID);
         shipmentAddressStreet1TextField = new RequiredTextField<String>(SHIPMENT_ADDRESS_STREET1_ID);
         shipmentAddressStreet2TextField = new TextField<String>(SHIPMENT_ADDRESS_STREET2_ID);
         shipmentAddressCountryTextField = new TextField<String>(SHIPMENT_ADDRESS_COUNTRY_ID, Model.of("Brasil"));
-        shipmentAddressCityNameTextField = new Typeahead<String>(SHIPMENT_ADDRESS_CITY_NAME_ID, null, shipmentAddressCityNameConfig);
+        shipmentAddressCityNameTextField =
+            new Typeahead<String>(SHIPMENT_ADDRESS_CITY_NAME_ID, null, shipmentAddressCityNameConfig);
         shipmentAddressPostalCodeTextField = new RequiredTextField<String>(SHIPMENT_ADDRESS_POSTAL_CODE_ID);
-        shipmentAddressStateOrProvinceDropDownChoice =
-            new BootstrapSelect<State>(SHIPMENT_ADDRESS_STATE_OR_PROVINCE_ID, getStatesOfBrazil(), new ChoiceRenderer<State>(NAME_DISPLAY_EXPRESSION, ""));
+        shipmentAddressStateOrProvinceDropDownChoice = new BootstrapSelect<State>(SHIPMENT_ADDRESS_STATE_OR_PROVINCE_ID,
+            getStatesOfBrazil(), new ChoiceRenderer<State>(NAME_DISPLAY_EXPRESSION, ""));
         invoiceAddressStreet1TextField = new RequiredTextField<String>(INVOICE_ADDRESS_STREET1_ID);
         invoiceAddressStreet2TextField = new TextField<String>(INVOICE_ADDRESS_STREET2_ID);
         invoiceAddressCountryTextField = new TextField<String>(INVOICE_ADDRESS_COUNTRY_ID, Model.of("Brasil"));
-        invoiceAddressCityNameTextField = new Typeahead<String>(INVOICE_ADDRESS_CITY_NAME_ID, null, invoiceAddressCityNameConfig);
+        invoiceAddressCityNameTextField =
+            new Typeahead<String>(INVOICE_ADDRESS_CITY_NAME_ID, null, invoiceAddressCityNameConfig);
         invoiceAddressPostalCodeTextField = new RequiredTextField<String>(INVOICE_ADDRESS_POSTAL_CODE_ID);
-        invoiceAddressStateOrProvinceDropDownChoice =
-            new BootstrapSelect<State>(INVOICE_ADDRESS_STATE_OR_PROVINCE_ID, getStatesOfBrazil(), new ChoiceRenderer<State>(NAME_DISPLAY_EXPRESSION, ""));
-        paymentOptions = new RadioGroup<CheckOut>(PAYMENT_OPTION_ID, new Model<CheckOut>(orderDataProvider.getCheckOut()));
-        specificationViewOrEditPanel = new SpecificationViewOrEditPanel(SPECIFICATION_VIEW_OR_EDIT_PANEL_ID, (IModel<Order>) SpecificationEditContainer.this.getDefaultModel());
-        specificationEditTable = new SpecificationEditTable(SPECIFICATION_EDIT_TABLE_ID, (IModel<Order>) SpecificationEditContainer.this.getDefaultModel());
+        invoiceAddressStateOrProvinceDropDownChoice = new BootstrapSelect<State>(INVOICE_ADDRESS_STATE_OR_PROVINCE_ID,
+            getStatesOfBrazil(), new ChoiceRenderer<State>(NAME_DISPLAY_EXPRESSION, ""));
+        paymentOptions = new RadioGroup<PaymentProviderEnum>(PAYMENT_OPTION_ID,
+            new Model<PaymentProviderEnum>(orderDataProvider.getPaymentProvider()));
+        specificationViewOrEditPanel = new SpecificationViewOrEditPanel(SPECIFICATION_VIEW_OR_EDIT_PANEL_ID,
+            (IModel<Order>) SpecificationEditContainer.this.getDefaultModel());
+        specificationEditTable = new SpecificationEditTable(SPECIFICATION_EDIT_TABLE_ID,
+            (IModel<Order>) SpecificationEditContainer.this.getDefaultModel());
       }
 
       // FIXME Get this information from http://www.geonames.org/ to support state formats
       public List<State> getStatesOfBrazil() {
         final List<State> states = new ArrayList<>();
-        final String[][] statesOfBrazil = new String[][] {{"AC", "Acre"}, {"AL", "Alagoas"}, {"AP", "Amapá"}, {"AM", "Amazonas"}, {"BA", "Bahia"}, {"CE", "Ceará"},
-            {"ES", "Espírito Santo"}, {"GO", "Goiás"}, {"MA", "Maranhão"}, {"MT", "Mato Grosso"}, {"MS", "Mato Grosso do Sul"}, {"MG", "Minas Gerais"}, {"PA", "Pará"},
-            {"PB", "Paraíba"}, {"PR", "Paraná"}, {"PE", "Pernambuco"}, {"PI", "Piauí"}, {"RJ", "Rio de Janeiro"}, {"RN", "Rio Grande do Norte"}, {"RS", "Rio Grande do Sul"},
-            {"RO", "Rondônia"}, {"RR", "Roraima"}, {"SC", "Santa Catarina"}, {"SP", "São Paulo"}, {"SE", "Sergipe"}, {"TO", "Tocantins"}};
+        final String[][] statesOfBrazil = new String[][] {{"AC", "Acre"}, {"AL", "Alagoas"}, {"AP", "Amapá"},
+            {"AM", "Amazonas"}, {"BA", "Bahia"}, {"CE", "Ceará"}, {"ES", "Espírito Santo"}, {"GO", "Goiás"},
+            {"MA", "Maranhão"}, {"MT", "Mato Grosso"}, {"MS", "Mato Grosso do Sul"}, {"MG", "Minas Gerais"},
+            {"PA", "Pará"}, {"PB", "Paraíba"}, {"PR", "Paraná"}, {"PE", "Pernambuco"}, {"PI", "Piauí"},
+            {"RJ", "Rio de Janeiro"}, {"RN", "Rio Grande do Norte"}, {"RS", "Rio Grande do Sul"}, {"RO", "Rondônia"},
+            {"RR", "Roraima"}, {"SC", "Santa Catarina"}, {"SP", "São Paulo"}, {"SE", "Sergipe"}, {"TO", "Tocantins"}};
 
         for (final String[] state : statesOfBrazil) {
           states.add(new State(state[0], state[1]));
@@ -503,49 +547,65 @@ public class SpecificationEmptyOrEditPanel extends Panel {
 
       @Override
       protected void onInitialize() {
-        final AjaxFormChoiceComponentUpdatingBehavior ajaxFormChoiceComponentUpdatingBehavior = new AjaxFormChoiceComponentUpdatingBehavior() {
+        final AjaxFormChoiceComponentUpdatingBehavior ajaxFormChoiceComponentUpdatingBehavior =
+            new AjaxFormChoiceComponentUpdatingBehavior() {
 
-          private static final long serialVersionUID = 1337286606852919595L;
+              private static final long serialVersionUID = 1337286606852919595L;
 
-          @Override
-          protected void onUpdate(final AjaxRequestTarget target) {
-            orderDataProvider.setCheckOut((CheckOut) paymentOptions.getDefaultModelObject());
-          }
-        };
-        final Radio<CheckOut> pagseguroRadio = new Radio<CheckOut>(PAGSEGURO_ID, new Model<CheckOut>(CheckOut.PAGSEGURO));
-        final Radio<CheckOut> payPalRadio = new Radio<CheckOut>(PAY_PAL_ID, new Model<CheckOut>(CheckOut.PAY_PAL));
+              @Override
+              protected void onUpdate(final AjaxRequestTarget target) {
+                orderDataProvider.setPaymentProvider((PaymentProviderEnum) paymentOptions.getDefaultModelObject());
+              }
+            };
+        final Radio<PaymentProviderEnum> pagseguroRadio =
+            new Radio<PaymentProviderEnum>(PAGSEGURO_ID, new Model<PaymentProviderEnum>(PaymentProviderEnum.PAGSEGURO));
+        final Radio<PaymentProviderEnum> payPalRadio =
+            new Radio<PaymentProviderEnum>(PAY_PAL_ID, new Model<PaymentProviderEnum>(PaymentProviderEnum.PAY_PAL));
 
-        contractCustomerBuyerEmailTextField.setLabel(Model.of(SpecificationEmptyOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.BUYER_EMAIL_MESSAGE_KEY)));
+        contractCustomerBuyerEmailTextField.setLabel(
+            Model.of(SpecificationEmptyOrEditPanel.this.getString(NetbrasoftShopConstants.BUYER_EMAIL_MESSAGE_KEY)));
         contractCustomerBuyerEmailTextField.add(EmailAddressValidator.getInstance());
         contractCustomerBuyerEmailTextField.add(StringValidator.maximumLength(60));
-        contractCustomerFirstNameTextField.setLabel(Model.of(SpecificationEmptyOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.FIRST_NAME_MESSAGE_KEY)));
+        contractCustomerFirstNameTextField.setLabel(
+            Model.of(SpecificationEmptyOrEditPanel.this.getString(NetbrasoftShopConstants.FIRST_NAME_MESSAGE_KEY)));
         contractCustomerFirstNameTextField.add(StringValidator.maximumLength(40));
-        contractCustomerLastNameTextField.setLabel(Model.of(SpecificationEmptyOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.LAST_NAME_MESSAGE_KEY)));
+        contractCustomerLastNameTextField.setLabel(
+            Model.of(SpecificationEmptyOrEditPanel.this.getString(NetbrasoftShopConstants.LAST_NAME_MESSAGE_KEY)));
         contractCustomerLastNameTextField.add(StringValidator.maximumLength(40));
-        shipmentAddressStreet1TextField.setLabel(Model.of(SpecificationEmptyOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.STREET1_MESSAGE_KEY)));
+        shipmentAddressStreet1TextField.setLabel(
+            Model.of(SpecificationEmptyOrEditPanel.this.getString(NetbrasoftShopConstants.STREET1_MESSAGE_KEY)));
         shipmentAddressStreet1TextField.add(StringValidator.maximumLength(40));
         shipmentAddressStreet2TextField.add(StringValidator.maximumLength(40));
-        shipmentAddressCountryTextField.setLabel(Model.of(SpecificationEmptyOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.COUNTRY_NAME_MESSAGE_KEY)));
+        shipmentAddressCountryTextField.setLabel(
+            Model.of(SpecificationEmptyOrEditPanel.this.getString(NetbrasoftShopConstants.COUNTRY_NAME_MESSAGE_KEY)));
         shipmentAddressCountryTextField.setEnabled(false);
         shipmentAddressCityNameTextField.setRequired(true);
-        shipmentAddressCityNameTextField.setLabel(Model.of(SpecificationEmptyOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.CITY_NAME_MESSAGE_KEY)));
+        shipmentAddressCityNameTextField.setLabel(
+            Model.of(SpecificationEmptyOrEditPanel.this.getString(NetbrasoftShopConstants.CITY_NAME_MESSAGE_KEY)));
         shipmentAddressCityNameTextField.add(StringValidator.maximumLength(40)).setOutputMarkupId(true);
-        shipmentAddressPostalCodeTextField.setLabel(Model.of(SpecificationEmptyOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.POSTAL_CODE_MESSAGE_KEY)));
+        shipmentAddressPostalCodeTextField.setLabel(
+            Model.of(SpecificationEmptyOrEditPanel.this.getString(NetbrasoftShopConstants.POSTAL_CODE_MESSAGE_KEY)));
         shipmentAddressPostalCodeTextField.add(new PatternValidator(PATTERN_0_9_5_0_9_3));
         shipmentAddressStateOrProvinceDropDownChoice.setRequired(true);
-        shipmentAddressStateOrProvinceDropDownChoice.setLabel(Model.of(SpecificationEmptyOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.STATE_OR_PROVINCE_MESSAGE_KEY)));
-        invoiceAddressStreet1TextField.setLabel(Model.of(SpecificationEmptyOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.STREET1_MESSAGE_KEY)));
+        shipmentAddressStateOrProvinceDropDownChoice.setLabel(Model
+            .of(SpecificationEmptyOrEditPanel.this.getString(NetbrasoftShopConstants.STATE_OR_PROVINCE_MESSAGE_KEY)));
+        invoiceAddressStreet1TextField.setLabel(
+            Model.of(SpecificationEmptyOrEditPanel.this.getString(NetbrasoftShopConstants.STREET1_MESSAGE_KEY)));
         invoiceAddressStreet1TextField.add(StringValidator.maximumLength(40));
         invoiceAddressStreet2TextField.add(StringValidator.maximumLength(40));
-        invoiceAddressCountryTextField.setLabel(Model.of(SpecificationEmptyOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.COUNTRY_NAME_MESSAGE_KEY)));
+        invoiceAddressCountryTextField.setLabel(
+            Model.of(SpecificationEmptyOrEditPanel.this.getString(NetbrasoftShopConstants.COUNTRY_NAME_MESSAGE_KEY)));
         invoiceAddressCountryTextField.setEnabled(false);
         invoiceAddressCityNameTextField.setRequired(true);
-        invoiceAddressCityNameTextField.setLabel(Model.of(SpecificationEmptyOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.CITY_NAME_MESSAGE_KEY)));
+        invoiceAddressCityNameTextField.setLabel(
+            Model.of(SpecificationEmptyOrEditPanel.this.getString(NetbrasoftShopConstants.CITY_NAME_MESSAGE_KEY)));
         invoiceAddressCityNameTextField.add(StringValidator.maximumLength(40)).setOutputMarkupId(true);
-        invoiceAddressPostalCodeTextField.setLabel(Model.of(SpecificationEmptyOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.POSTAL_CODE_MESSAGE_KEY)));
+        invoiceAddressPostalCodeTextField.setLabel(
+            Model.of(SpecificationEmptyOrEditPanel.this.getString(NetbrasoftShopConstants.POSTAL_CODE_MESSAGE_KEY)));
         invoiceAddressPostalCodeTextField.add(new PatternValidator(PATTERN_0_9_5_0_9_3));
         invoiceAddressStateOrProvinceDropDownChoice.setRequired(true);
-        invoiceAddressStateOrProvinceDropDownChoice.setLabel(Model.of(SpecificationEmptyOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.STATE_OR_PROVINCE_MESSAGE_KEY)));
+        invoiceAddressStateOrProvinceDropDownChoice.setLabel(Model
+            .of(SpecificationEmptyOrEditPanel.this.getString(NetbrasoftShopConstants.STATE_OR_PROVINCE_MESSAGE_KEY)));
         paymentOptions.add(pagseguroRadio);
         paymentOptions.add(payPalRadio);
         paymentOptions.add(ajaxFormChoiceComponentUpdatingBehavior);
@@ -566,7 +626,8 @@ public class SpecificationEmptyOrEditPanel extends Panel {
         specificationEditForm.add(invoiceAddressStateOrProvinceDropDownChoice.setOutputMarkupId(true));
         specificationEditForm.add(paymentOptions);
         specificationEditForm.add(new FormBehavior(FormType.Horizontal));
-        specificationEditForm.add(specificationViewOrEditPanel.add(specificationViewOrEditPanel.new SpecificationOfferRecordEditFragment()).setOutputMarkupId(true));
+        specificationEditForm.add(specificationViewOrEditPanel
+            .add(specificationViewOrEditPanel.new SpecificationOfferRecordEditFragment()).setOutputMarkupId(true));
         specificationEditForm.add(specificationEditTable.add(new TableBehavior()).setOutputMarkupId(true));
         add(specificationEditForm.setOutputMarkupId(true));
         super.onInitialize();
@@ -606,9 +667,10 @@ public class SpecificationEmptyOrEditPanel extends Panel {
     private final SpecificationEditContainer specificationEditContainer;
 
     public SpecificationEditFragment() {
-      super(SPECIFICATION_EMPTY_OR_EDIT_FRAGMENT_ID, SPECIFICATION_EDIT_FRAGMENT_MARKUP_ID, SpecificationEmptyOrEditPanel.this,
-          SpecificationEmptyOrEditPanel.this.getDefaultModel());
-      specificationEditContainer = new SpecificationEditContainer(SPECIFICATION_EDIT_CONTAINER_ID, (IModel<Order>) SpecificationEditFragment.this.getDefaultModel());
+      super(SPECIFICATION_EMPTY_OR_EDIT_FRAGMENT_ID, SPECIFICATION_EDIT_FRAGMENT_MARKUP_ID,
+          SpecificationEmptyOrEditPanel.this, SpecificationEmptyOrEditPanel.this.getDefaultModel());
+      specificationEditContainer = new SpecificationEditContainer(SPECIFICATION_EDIT_CONTAINER_ID,
+          (IModel<Order>) SpecificationEditFragment.this.getDefaultModel());
     }
 
     @Override
@@ -625,14 +687,14 @@ public class SpecificationEmptyOrEditPanel extends Panel {
   @SpringBean(name = ShopperDataProvider.SHOPPER_DATA_PROVIDER_NAME, required = true)
   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
-  @SpringBean(name = ContractDataProvider.CONTRACT_DATA_PROVIDER_NAME, required = true)
-  private transient GenericTypeDataProvider<Contract> contractDataProvider;
+  @SpringBean(name = CONTRACT_DATA_PROVIDER_NAME, required = true)
+  private transient IGenericTypeDataProvider<Contract> contractDataProvider;
 
-  @SpringBean(name = OrderDataProvider.ORDER_DATA_PROVIDER_NAME, required = true)
-  private transient GenericOrderCheckoutDataProvider<Order> orderDataProvider;
+  @SpringBean(name = ORDER_DATA_PROVIDER_NAME, required = true)
+  private transient IGenericOrderCheckoutDataProvider<Order> orderDataProvider;
 
-  @SpringBean(name = PostalCodeDataProvider.POSTAL_CODE_DATA_PROVIDER_NAME, required = true)
-  private transient GenericTypeDataProvider<PostalCode> postalCodeDataProvider;
+  @SpringBean(name = POSTAL_CODE_DATA_PROVIDER_NAME, required = true)
+  private transient IGenericTypeDataProvider<PostalCode> postalCodeDataProvider;
 
   public SpecificationEmptyOrEditPanel(final String id, final IModel<Order> model) {
     super(id, model);
@@ -646,7 +708,7 @@ public class SpecificationEmptyOrEditPanel extends Panel {
     orderDataProvider.setType(new Order());
     orderDataProvider.getType().setActive(true);
     orderDataProvider.setOrderBy(OrderBy.NONE);
-    orderDataProvider.setCheckOut(CheckOut.PAGSEGURO);
+    orderDataProvider.setPaymentProvider(PaymentProviderEnum.PAGSEGURO);
 
     postalCodeDataProvider.setUser(AppServletContainerAuthenticatedWebSession.getUserName());
     postalCodeDataProvider.setPassword(AppServletContainerAuthenticatedWebSession.getPassword());

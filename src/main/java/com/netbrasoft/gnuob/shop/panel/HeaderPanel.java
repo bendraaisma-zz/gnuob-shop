@@ -11,7 +11,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.flow.RedirectToUrlException;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import com.netbrasoft.gnuob.shop.NetbrasoftShopMessageKeyConstants;
+import com.netbrasoft.gnuob.shop.NetbrasoftShopConstants;
 import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
 import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import com.netbrasoft.gnuob.shop.page.AccountPage;
@@ -80,9 +80,9 @@ public class HeaderPanel extends Panel {
     subTitleLabel = new Label(GNUOB_SITE_SUBTITLE_PROPERTY);
     cartSizeLabel = new Label(CART_SIZE_ID);
     loginAjaxLink = new LoginLogoutAjaxLink(LOGIN_LOGOUT_ID, (IModel<Shopper>) HeaderPanel.this.getDefaultModel(), Type.Menu,
-        Model.of(HeaderPanel.this.getString(NetbrasoftShopMessageKeyConstants.LOGIN_MESSAGE_KEY)));
+        Model.of(HeaderPanel.this.getString(NetbrasoftShopConstants.LOGIN_MESSAGE_KEY)));
     logoutAjaxLink = new LoginLogoutAjaxLink(LOGIN_LOGOUT_ID, (IModel<Shopper>) HeaderPanel.this.getDefaultModel(), Type.Menu,
-        Model.of(HeaderPanel.this.getString(NetbrasoftShopMessageKeyConstants.LOGOUT_MESSAGE_KEY)));
+        Model.of(HeaderPanel.this.getString(NetbrasoftShopConstants.LOGOUT_MESSAGE_KEY)));
   }
 
   @Override

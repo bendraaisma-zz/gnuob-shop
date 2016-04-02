@@ -1,5 +1,7 @@
 package com.netbrasoft.gnuob.shop.checkout;
 
+import static com.netbrasoft.gnuob.api.generic.NetbrasoftApiConstants.ORDER_DATA_PROVIDER_NAME;
+
 import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -8,8 +10,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import com.netbrasoft.gnuob.api.Order;
 import com.netbrasoft.gnuob.api.OrderBy;
-import com.netbrasoft.gnuob.api.order.GenericOrderCheckoutDataProvider;
-import com.netbrasoft.gnuob.api.order.OrderDataProvider;
+import com.netbrasoft.gnuob.api.order.IGenericOrderCheckoutDataProvider;
 import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
 import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
@@ -29,12 +30,13 @@ public class CheckoutPanel extends Panel {
   @SpringBean(name = ShopperDataProvider.SHOPPER_DATA_PROVIDER_NAME, required = true)
   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
-  @SpringBean(name = OrderDataProvider.ORDER_DATA_PROVIDER_NAME, required = true)
-  private transient GenericOrderCheckoutDataProvider<Order> orderDataProvider;
+  @SpringBean(name = ORDER_DATA_PROVIDER_NAME, required = true)
+  private transient IGenericOrderCheckoutDataProvider<Order> orderDataProvider;
 
   public CheckoutPanel(final String id, final IModel<Order> model) {
     super(id, model);
-    checkoutEmptyOrEditPanel = new CheckoutEmptyOrEditPanel(CHECKOUT_EMPTY_OR_EDIT_PANEL_ID, (IModel<Order>) CheckoutPanel.this.getDefaultModel());
+    checkoutEmptyOrEditPanel = new CheckoutEmptyOrEditPanel(CHECKOUT_EMPTY_OR_EDIT_PANEL_ID,
+        (IModel<Order>) CheckoutPanel.this.getDefaultModel());
   }
 
   @Override

@@ -1,5 +1,6 @@
 package com.netbrasoft.gnuob.shop.cart;
 
+import static com.netbrasoft.gnuob.api.generic.NetbrasoftApiConstants.OFFER_DATA_PROVIDER_NAME;
 import static de.agilecoders.wicket.jquery.JQuery.$;
 
 import java.math.BigDecimal;
@@ -32,16 +33,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 
+import com.netbrasoft.gnuob.api.Address;
+import com.netbrasoft.gnuob.api.Contract;
+import com.netbrasoft.gnuob.api.Invoice;
 import com.netbrasoft.gnuob.api.Offer;
 import com.netbrasoft.gnuob.api.OfferRecord;
 import com.netbrasoft.gnuob.api.Option;
 import com.netbrasoft.gnuob.api.Order;
 import com.netbrasoft.gnuob.api.OrderRecord;
+import com.netbrasoft.gnuob.api.Shipment;
 import com.netbrasoft.gnuob.api.SubOption;
-import com.netbrasoft.gnuob.api.generic.GenericTypeDataProvider;
+import com.netbrasoft.gnuob.api.generic.IGenericTypeDataProvider;
 import com.netbrasoft.gnuob.api.generic.converter.CurrencyConverter;
-import com.netbrasoft.gnuob.api.offer.OfferDataProvider;
-import com.netbrasoft.gnuob.shop.NetbrasoftShopMessageKeyConstants;
+import com.netbrasoft.gnuob.shop.NetbrasoftShopConstants;
 import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
 import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import com.netbrasoft.gnuob.shop.page.SpecificationPage;
@@ -93,7 +97,8 @@ public class CartEmptyOrEditPanel extends Panel {
 
               private static final String CONFIRMATION_FUNCTION_NAME = "confirmation";
 
-              public RemoveAjaxButton(final String id, final IModel<OfferRecord> model, final Buttons.Type type, final IModel<String> labelModel) {
+              public RemoveAjaxButton(final String id, final IModel<OfferRecord> model, final Buttons.Type type,
+                  final IModel<String> labelModel) {
                 super(id, model, type, labelModel);
                 setIconType(GlyphIconType.remove);
                 setSize(Buttons.Size.Mini);
@@ -101,14 +106,17 @@ public class CartEmptyOrEditPanel extends Panel {
 
               @Override
               public void onClick(final AjaxRequestTarget target) {
-                ((Offer) CartDataviewContainer.this.getDefaultModelObject()).getRecords().remove(RemoveAjaxButton.this.getDefaultModelObject());
+                ((Offer) CartDataviewContainer.this.getDefaultModelObject()).getRecords()
+                    .remove(RemoveAjaxButton.this.getDefaultModelObject());
                 shopperDataProvider.find(new Shopper()).calculateCart();
                 index = index > 0 ? --index : index;
 
                 if (!((Offer) CartDataviewContainer.this.getDefaultModelObject()).getRecords().isEmpty()) {
                   cartViewOrEditPanel.removeAll();
                   target.add(cartEditTable.setOutputMarkupId(true));
-                  target.add(cartViewOrEditPanel.add(cartViewOrEditPanel.new CartOfferRecordEditFragment().setOutputMarkupId(true)).setOutputMarkupId(true));
+                  target.add(cartViewOrEditPanel
+                      .add(cartViewOrEditPanel.new CartOfferRecordEditFragment().setOutputMarkupId(true))
+                      .setOutputMarkupId(true));
                 } else {
                   CartEmptyOrEditPanel.this.removeAll();
                   target.add(CartEmptyOrEditPanel.this.add(CartEmptyOrEditPanel.this.new CartEmptyFragment()));
@@ -123,10 +131,11 @@ public class CartEmptyOrEditPanel extends Panel {
 
                   @Override
                   public void renderHead(final Component component, final IHeaderResponse response) {
-                    response.render($(component).chain(CONFIRMATION_FUNCTION_NAME,
-                        new ConfirmationConfig().withTitle(getString(NetbrasoftShopMessageKeyConstants.CONFIRMATION_MESSAGE_KEY)).withSingleton(true).withPopout(true)
-                            .withBtnOkLabel(getString(NetbrasoftShopMessageKeyConstants.CONFIRM_MESSAGE_KEY))
-                            .withBtnCancelLabel(getString(NetbrasoftShopMessageKeyConstants.CANCEL_MESSAGE_KEY)))
+                    response.render($(component)
+                        .chain(CONFIRMATION_FUNCTION_NAME, new ConfirmationConfig()
+                            .withTitle(getString(NetbrasoftShopConstants.CONFIRMATION_MESSAGE_KEY)).withSingleton(true)
+                            .withPopout(true).withBtnOkLabel(getString(NetbrasoftShopConstants.CONFIRM_MESSAGE_KEY))
+                            .withBtnCancelLabel(getString(NetbrasoftShopConstants.CANCEL_MESSAGE_KEY)))
                         .asDomReadyScript());
                   }
                 };
@@ -157,7 +166,8 @@ public class CartEmptyOrEditPanel extends Panel {
 
             private int index = 0;
 
-            protected CartDataView(final String id, final IDataProvider<OfferRecord> dataProvider, final long itemsPerPage) {
+            protected CartDataView(final String id, final IDataProvider<OfferRecord> dataProvider,
+                final long itemsPerPage) {
               super(id, dataProvider, itemsPerPage);
             }
 
@@ -165,7 +175,8 @@ public class CartEmptyOrEditPanel extends Panel {
               final StringBuilder optionStringBuilder = new StringBuilder();
 
               for (final Option option : options) {
-                optionStringBuilder.append(option.getValue()).append(": ").append(option.getSubOptions().iterator().next().getValue()).append(" ");
+                optionStringBuilder.append(option.getValue()).append(": ")
+                    .append(option.getSubOptions().iterator().next().getValue()).append(" ");
               }
               return optionStringBuilder.toString();
             }
@@ -199,10 +210,13 @@ public class CartEmptyOrEditPanel extends Panel {
               final BigDecimal itemTotal = productAmount.add(productTax).subtract(productDiscount).multiply(quantity);
               final BigDecimal amountTotal = productAmount.add(productTax).multiply(quantity);
               final Label nameLabel = new Label(NAME_ID);
-              final Label optionsLabel = new Label(OPTIONS_ID, Model.of(getOptions(item.getModelObject().getOptions())));
+              final Label optionsLabel =
+                  new Label(OPTIONS_ID, Model.of(getOptions(item.getModelObject().getOptions())));
               final Label quantityLabel = new Label(QUANTITY_ID);
-              final Label itemTotalLabel = new Label(ITEM_TOTAL_ID, Model.of(NumberFormat.getCurrencyInstance().format(itemTotal)));
-              final Label amountLabel = new Label(AMOUNT_TOTAL_ID, Model.of(NumberFormat.getCurrencyInstance().format(amountTotal)));
+              final Label itemTotalLabel =
+                  new Label(ITEM_TOTAL_ID, Model.of(NumberFormat.getCurrencyInstance().format(itemTotal)));
+              final Label amountLabel =
+                  new Label(AMOUNT_TOTAL_ID, Model.of(NumberFormat.getCurrencyInstance().format(amountTotal)));
               final AjaxEventBehavior ajaxEventBehavior = new AjaxEventBehavior(CLICK_EVENT) {
 
                 private static final long serialVersionUID = 1L;
@@ -213,10 +227,12 @@ public class CartEmptyOrEditPanel extends Panel {
                   cartViewOrEditPanel.setSelectedModel(item.getModel());
                   cartViewOrEditPanel.removeAll();
                   target.add(cartDataviewContainer.setOutputMarkupId(true));
-                  target.add(cartViewOrEditPanel.add(cartViewOrEditPanel.new CartOfferRecordEditFragment()).setOutputMarkupId(true));
+                  target.add(cartViewOrEditPanel.add(cartViewOrEditPanel.new CartOfferRecordEditFragment())
+                      .setOutputMarkupId(true));
                 }
               };
-              final RemoveAjaxButton removeAjaxButton = new RemoveAjaxButton(REMOVE_ID, item.getModel(), Buttons.Type.Default, Model.of(""));
+              final RemoveAjaxButton removeAjaxButton =
+                  new RemoveAjaxButton(REMOVE_ID, item.getModel(), Buttons.Type.Default, Model.of(""));
               item.setModel(new CompoundPropertyModel<OfferRecord>(item.getModelObject()));
               item.add(nameLabel.setOutputMarkupId(true));
               item.add(optionsLabel.setOutputMarkupId(true));
@@ -274,6 +290,7 @@ public class CartEmptyOrEditPanel extends Panel {
           @Override
           protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
             final Offer sourceOffer = (Offer) form.getDefaultModelObject();
+            final Contract currentContract = shopperDataProvider.find(new Shopper()).getContract();
             final Order targetOrder = new Order();
 
             BeanUtils.copyProperties(sourceOffer, targetOrder, ID_IGNORE_PROPERTIES, VERSION_IGNORE_PROPERTIES);
@@ -294,6 +311,22 @@ public class CartEmptyOrEditPanel extends Panel {
             }
             targetOrder.setOrderTotal(BigDecimal.valueOf(sourceOffer.getOfferTotal().doubleValue()));
             targetOrder.setOrderDescription(sourceOffer.getOfferDescription());
+            targetOrder.setInvoice(new Invoice());
+            targetOrder.setShipment(new Shipment());
+
+            final Address invoiceAddress = new Address();
+            final Address shipmentAddress = new Address();
+
+            if (currentContract != null) {
+              BeanUtils.copyProperties(currentContract.getCustomer().getAddress(), invoiceAddress, ID_IGNORE_PROPERTIES,
+                  VERSION_IGNORE_PROPERTIES);
+              BeanUtils.copyProperties(currentContract.getCustomer().getAddress(), shipmentAddress,
+                  ID_IGNORE_PROPERTIES, VERSION_IGNORE_PROPERTIES);
+            }
+
+            targetOrder.getInvoice().setAddress(invoiceAddress);
+            targetOrder.getShipment().setAddress(shipmentAddress);
+
             shopperDataProvider.find(new Shopper()).setCheckout(targetOrder);
             super.onSubmit(target, form);
             throw new RedirectToUrlException(SpecificationPage.SPECIFICATION_HTML_VALUE);
@@ -305,7 +338,8 @@ public class CartEmptyOrEditPanel extends Panel {
 
           private static final long serialVersionUID = 6184459006667863564L;
 
-          public SaveAsOfferAjaxLink(final String id, final IModel<Offer> model, final Type type, final IModel<String> labelModel) {
+          public SaveAsOfferAjaxLink(final String id, final IModel<Offer> model, final Type type,
+              final IModel<String> labelModel) {
             super(id, model, type, labelModel);
             setIconType(GlyphIconType.plus);
             setSize(Buttons.Size.Small);
@@ -315,12 +349,15 @@ public class CartEmptyOrEditPanel extends Panel {
           public void onClick(final AjaxRequestTarget target) {
             try {
               if (((Offer) SaveAsOfferAjaxLink.this.getDefaultModelObject()).getId() == 0) {
-                CartEditTable.this.setDefaultModelObject(offerDataProvider.findById(offerDataProvider.persist((Offer) SaveAsOfferAjaxLink.this.getDefaultModelObject())));
+                CartEditTable.this.setDefaultModelObject(offerDataProvider
+                    .findById(offerDataProvider.persist((Offer) SaveAsOfferAjaxLink.this.getDefaultModelObject())));
               } else {
-                CartEditTable.this.setDefaultModelObject(offerDataProvider.findById(offerDataProvider.merge((Offer) SaveAsOfferAjaxLink.this.getDefaultModelObject())));
+                CartEditTable.this.setDefaultModelObject(offerDataProvider
+                    .findById(offerDataProvider.merge((Offer) SaveAsOfferAjaxLink.this.getDefaultModelObject())));
               }
               CartEmptyOrEditPanel.this.removeAll();
-              target.add(CartEmptyOrEditPanel.this.add(CartEmptyOrEditPanel.this.new CartEditFragment()).setOutputMarkupId(true));
+              target.add(CartEmptyOrEditPanel.this.add(CartEmptyOrEditPanel.this.new CartEditFragment())
+                  .setOutputMarkupId(true));
             } catch (final RuntimeException e) {
               LOGGER.warn(e.getMessage(), e);
               feedbackPanel.warn(e.getLocalizedMessage());
@@ -388,12 +425,15 @@ public class CartEmptyOrEditPanel extends Panel {
               return (IConverter<C>) new CurrencyConverter();
             }
           };
-          saveAsOfferAjaxButton = new SaveAsOfferAjaxLink(SAVE_AS_OFFER_ID, (IModel<Offer>) CartEditTable.this.getDefaultModel(), Buttons.Type.Default,
-              Model.of(CartEmptyOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.ADD_TO_WISH_LIST_MESSAGE_KEY)));
-          saveAjaxButton =
-              new SaveAjaxButton(SAVE_ID, Model.of(CartEmptyOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.CHECKOUT_MESSAGE_KEY)), cartEditForm, Type.Primary);
+          saveAsOfferAjaxButton = new SaveAsOfferAjaxLink(SAVE_AS_OFFER_ID,
+              (IModel<Offer>) CartEditTable.this.getDefaultModel(), Buttons.Type.Default,
+              Model.of(CartEmptyOrEditPanel.this.getString(NetbrasoftShopConstants.ADD_TO_WISH_LIST_MESSAGE_KEY)));
+          saveAjaxButton = new SaveAjaxButton(SAVE_ID,
+              Model.of(CartEmptyOrEditPanel.this.getString(NetbrasoftShopConstants.CHECKOUT_MESSAGE_KEY)), cartEditForm,
+              Type.Primary);
           feedbackPanel = new NotificationPanel(FEEDBACK_ID);
-          cartDataviewContainer = new CartDataviewContainer(CART_DATAVIEW_CONTAINER_ID, (IModel<Offer>) CartEditTable.this.getDefaultModel());
+          cartDataviewContainer = new CartDataviewContainer(CART_DATAVIEW_CONTAINER_ID,
+              (IModel<Offer>) CartEditTable.this.getDefaultModel());
         }
 
         @Override
@@ -424,14 +464,18 @@ public class CartEmptyOrEditPanel extends Panel {
 
       public CartEditContainer(final String id, final IModel<Offer> model) {
         super(id, model);
-        cartViewOrEditPanel = new CartViewOrEditPanel(CART_VIEW_OR_EDIT_PANEL_ID, (IModel<Offer>) CartEditContainer.this.getDefaultModel());
+        cartViewOrEditPanel = new CartViewOrEditPanel(CART_VIEW_OR_EDIT_PANEL_ID,
+            (IModel<Offer>) CartEditContainer.this.getDefaultModel());
         cartEditTable = new CartEditTable(CART_EDIT_TABLE, (IModel<Offer>) CartEditContainer.this.getDefaultModel());
-        cartEditForm = new BootstrapForm<Offer>(CART_EDIT_FORM_COMPONENT_ID, (IModel<Offer>) CartEditContainer.this.getDefaultModel());
+        cartEditForm = new BootstrapForm<Offer>(CART_EDIT_FORM_COMPONENT_ID,
+            (IModel<Offer>) CartEditContainer.this.getDefaultModel());
       }
 
       @Override
       protected void onInitialize() {
-        cartEditForm.add(cartViewOrEditPanel.add(cartViewOrEditPanel.new CartOfferRecordEditFragment().setOutputMarkupId(true)).setOutputMarkupId(true));
+        cartEditForm
+            .add(cartViewOrEditPanel.add(cartViewOrEditPanel.new CartOfferRecordEditFragment().setOutputMarkupId(true))
+                .setOutputMarkupId(true));
         cartEditForm.add(cartEditTable.add(new TableBehavior()).setOutputMarkupId(true));
         cartEditForm.add(new FormBehavior(FormType.Horizontal));
         add(cartEditForm.setOutputMarkupId(true));
@@ -450,8 +494,10 @@ public class CartEmptyOrEditPanel extends Panel {
     private final CartEditContainer cartEditContainer;
 
     public CartEditFragment() {
-      super(CART_EMPTY_OR_EDIT_FRAGMENT_ID, CART_EDIT_FRAGMENT_MARKUP_ID, CartEmptyOrEditPanel.this, CartEmptyOrEditPanel.this.getDefaultModel());
-      cartEditContainer = new CartEditContainer("cartEditContainer", (IModel<Offer>) CartEditFragment.this.getDefaultModel());
+      super(CART_EMPTY_OR_EDIT_FRAGMENT_ID, CART_EDIT_FRAGMENT_MARKUP_ID, CartEmptyOrEditPanel.this,
+          CartEmptyOrEditPanel.this.getDefaultModel());
+      cartEditContainer =
+          new CartEditContainer("cartEditContainer", (IModel<Offer>) CartEditFragment.this.getDefaultModel());
     }
 
     @Override
@@ -471,7 +517,8 @@ public class CartEmptyOrEditPanel extends Panel {
     private static final long serialVersionUID = 5058607382122871571L;
 
     public CartEmptyFragment() {
-      super(CART_EMPTY_OR_EDIT_FRAGMENT_ID, CART_EMPTY_FRAGMENT_MARKUP_ID, CartEmptyOrEditPanel.this, CartEmptyOrEditPanel.this.getDefaultModel());
+      super(CART_EMPTY_OR_EDIT_FRAGMENT_ID, CART_EMPTY_FRAGMENT_MARKUP_ID, CartEmptyOrEditPanel.this,
+          CartEmptyOrEditPanel.this.getDefaultModel());
     }
   }
 
@@ -482,8 +529,8 @@ public class CartEmptyOrEditPanel extends Panel {
   @SpringBean(name = ShopperDataProvider.SHOPPER_DATA_PROVIDER_NAME, required = true)
   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
-  @SpringBean(name = OfferDataProvider.OFFER_DATA_PROVIDER_NAME, required = true)
-  private transient GenericTypeDataProvider<Offer> offerDataProvider;
+  @SpringBean(name = OFFER_DATA_PROVIDER_NAME, required = true)
+  private transient IGenericTypeDataProvider<Offer> offerDataProvider;
 
   public CartEmptyOrEditPanel(final String id, final IModel<Offer> model) {
     super(id, model);

@@ -1,5 +1,7 @@
 package com.netbrasoft.gnuob.shop.confirmation;
 
+import static com.netbrasoft.gnuob.api.generic.NetbrasoftApiConstants.ORDER_DATA_PROVIDER_NAME;
+
 import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
 import org.apache.wicket.markup.html.basic.Label;
@@ -11,9 +13,8 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import com.netbrasoft.gnuob.api.Order;
 import com.netbrasoft.gnuob.api.OrderBy;
-import com.netbrasoft.gnuob.api.order.GenericOrderCheckoutDataProvider;
-import com.netbrasoft.gnuob.api.order.OrderDataProvider;
-import com.netbrasoft.gnuob.api.order.OrderDataProvider.CheckOut;
+import com.netbrasoft.gnuob.api.order.IGenericOrderCheckoutDataProvider;
+import com.netbrasoft.gnuob.api.order.OrderDataProvider.PaymentProviderEnum;
 import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
 import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
@@ -52,18 +53,20 @@ public class ConfirmationEmptyOrEditPanel extends Panel {
     private final Label buyerEmailLabel;
 
     public ConfirmationViewFragement() {
-      super(CONFIRMATION_EMPTY_OR_EDIT_FRAGMENT_ID, CONFIRMATION_EDIT_FRAGMENT_MARKUP_ID, ConfirmationEmptyOrEditPanel.this, ConfirmationEmptyOrEditPanel.this.getDefaultModel());
-      confirmationEditForm =
-          new BootstrapForm<Order>(CONFIRMATION_EDIT_FORM_COMPONENT_ID, new CompoundPropertyModel<Order>((IModel<Order>) ConfirmationViewFragement.this.getDefaultModel()));
+      super(CONFIRMATION_EMPTY_OR_EDIT_FRAGMENT_ID, CONFIRMATION_EDIT_FRAGMENT_MARKUP_ID,
+          ConfirmationEmptyOrEditPanel.this, ConfirmationEmptyOrEditPanel.this.getDefaultModel());
+      confirmationEditForm = new BootstrapForm<Order>(CONFIRMATION_EDIT_FORM_COMPONENT_ID,
+          new CompoundPropertyModel<Order>((IModel<Order>) ConfirmationViewFragement.this.getDefaultModel()));
       orderIdLabel = new Label(ORDER_ID_ID);
       buyerEmailLabel = new Label(BUYER_EMAIL_ID);
     }
 
     public void doCheckoutPayment() {
       Order order = (Order) ConfirmationEmptyOrEditPanel.this.getDefaultModelObject();
-      orderDataProvider.setCheckOut(CheckOut.valueOf(order.getCheckout()));
+      orderDataProvider.setPaymentProvider(PaymentProviderEnum.valueOf(order.getCheckout()));
       order.setTransactionId(getRequest().getQueryParameters().getParameterValue(TRANSACTION_ID).toString());
-      order = orderDataProvider.doCheckoutPayment(orderDataProvider.findById(orderDataProvider.doCheckoutDetails(order)));
+      order =
+          orderDataProvider.doCheckoutPayment(orderDataProvider.findById(orderDataProvider.doCheckoutDetails(order)));
       shopperDataProvider.find(new Shopper()).emptyCheckOut(order.getContract());
     }
 
@@ -80,8 +83,8 @@ public class ConfirmationEmptyOrEditPanel extends Panel {
 
   private static final long serialVersionUID = 4629799686885772339L;
 
-  @SpringBean(name = OrderDataProvider.ORDER_DATA_PROVIDER_NAME, required = true)
-  private GenericOrderCheckoutDataProvider<Order> orderDataProvider;
+  @SpringBean(name = ORDER_DATA_PROVIDER_NAME, required = true)
+  private IGenericOrderCheckoutDataProvider<Order> orderDataProvider;
 
   @SpringBean(name = ShopperDataProvider.SHOPPER_DATA_PROVIDER_NAME, required = true)
   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
@@ -98,7 +101,7 @@ public class ConfirmationEmptyOrEditPanel extends Panel {
     orderDataProvider.setType(new Order());
     orderDataProvider.getType().setActive(true);
     orderDataProvider.setOrderBy(OrderBy.NONE);
-    orderDataProvider.setCheckOut(CheckOut.PAGSEGURO);
+    orderDataProvider.setPaymentProvider(PaymentProviderEnum.PAGSEGURO);
     super.onInitialize();
   }
 }

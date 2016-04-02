@@ -1,5 +1,7 @@
 package com.netbrasoft.gnuob.shop.wishlist;
 
+import static com.netbrasoft.gnuob.api.generic.NetbrasoftApiConstants.OFFER_DATA_PROVIDER_NAME;
+
 import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -8,8 +10,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import com.netbrasoft.gnuob.api.Offer;
 import com.netbrasoft.gnuob.api.OrderBy;
-import com.netbrasoft.gnuob.api.generic.GenericTypeDataProvider;
-import com.netbrasoft.gnuob.api.offer.OfferDataProvider;
+import com.netbrasoft.gnuob.api.generic.IGenericTypeDataProvider;
 import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
 import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
@@ -29,12 +30,13 @@ public class WishListPanel extends Panel {
   @SpringBean(name = ShopperDataProvider.SHOPPER_DATA_PROVIDER_NAME, required = true)
   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
-  @SpringBean(name = OfferDataProvider.OFFER_DATA_PROVIDER_NAME, required = true)
-  private transient GenericTypeDataProvider<Offer> offerDataProvider;
+  @SpringBean(name = OFFER_DATA_PROVIDER_NAME, required = true)
+  private transient IGenericTypeDataProvider<Offer> offerDataProvider;
 
   public WishListPanel(final String id, final IModel<Offer> model) {
     super(id, model);
-    wishListEmptyOrEditPanel = new WishListEmptyOrEditPanel(WISH_LIST_EMPTY_OR_EDIT_PANEL_ID, (IModel<Offer>) WishListPanel.this.getDefaultModel());
+    wishListEmptyOrEditPanel = new WishListEmptyOrEditPanel(WISH_LIST_EMPTY_OR_EDIT_PANEL_ID,
+        (IModel<Offer>) WishListPanel.this.getDefaultModel());
   }
 
   @Override
@@ -42,6 +44,7 @@ public class WishListPanel extends Panel {
 
     offerDataProvider.setPassword(AppServletContainerAuthenticatedWebSession.getPassword());
     offerDataProvider.setSite(AppServletContainerAuthenticatedWebSession.getSite());
+    offerDataProvider.setUser(AppServletContainerAuthenticatedWebSession.getUserName());
     offerDataProvider.setType(new Offer());
     offerDataProvider.getType().setActive(true);
     offerDataProvider.setOrderBy(OrderBy.CREATION_Z_A);

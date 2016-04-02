@@ -1,5 +1,7 @@
 package com.netbrasoft.gnuob.shop.category;
 
+import static com.netbrasoft.gnuob.api.generic.NetbrasoftApiConstants.CATEGORY_DATA_PROVIDER_NAME;
+
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.authorization.Action;
@@ -18,8 +20,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import com.netbrasoft.gnuob.api.Category;
 import com.netbrasoft.gnuob.api.Content;
 import com.netbrasoft.gnuob.api.OrderBy;
-import com.netbrasoft.gnuob.api.category.CategoryDataProvider;
-import com.netbrasoft.gnuob.api.generic.GenericTypeDataProvider;
+import com.netbrasoft.gnuob.api.generic.IGenericTypeDataProvider;
 import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
 
@@ -34,7 +35,8 @@ public class CategoryHomePanel extends Panel {
 
     private static final String CONTENT_ID = "content";
 
-    private static final String CONTENT_BORDER_CONTENT_BORDER_BODY_MAIN_MENU_PANEL_MAIN_MENU_TABBED_PANEL = "contentBorder:contentBorder_body:mainMenuPanel:mainMenuTabbedPanel";
+    private static final String CONTENT_BORDER_CONTENT_BORDER_BODY_MAIN_MENU_PANEL_MAIN_MENU_TABBED_PANEL =
+        "contentBorder:contentBorder_body:mainMenuPanel:mainMenuTabbedPanel";
 
     private static final String CLICK_EVENT = "click";
 
@@ -65,11 +67,12 @@ public class CategoryHomePanel extends Panel {
 
         @Override
         public void onEvent(final AjaxRequestTarget target) {
-          final BootstrapTabbedPanel<ITab> bootstrapTabbedPanel =
-              (BootstrapTabbedPanel<ITab>) getPage().get(CONTENT_BORDER_CONTENT_BORDER_BODY_MAIN_MENU_PANEL_MAIN_MENU_TABBED_PANEL);
+          final BootstrapTabbedPanel<ITab> bootstrapTabbedPanel = (BootstrapTabbedPanel<ITab>) getPage()
+              .get(CONTENT_BORDER_CONTENT_BORDER_BODY_MAIN_MENU_PANEL_MAIN_MENU_TABBED_PANEL);
 
           for (final ITab tab : bootstrapTabbedPanel.getTabs()) {
-            if (tab instanceof CategoryTab && ((CategoryTab) tab).getModelObject().getId() == ((Category) item.getDefaultModelObject()).getId()) {
+            if (tab instanceof CategoryTab
+                && ((CategoryTab) tab).getModelObject().getId() == ((Category) item.getDefaultModelObject()).getId()) {
               bootstrapTabbedPanel.setSelectedTab(bootstrapTabbedPanel.getTabs().lastIndexOf(tab));
             }
           }
@@ -87,8 +90,8 @@ public class CategoryHomePanel extends Panel {
 
   private static final long serialVersionUID = 5858682402634442147L;
 
-  @SpringBean(name = CategoryDataProvider.CATEGORY_DATA_PROVIDER_NAME, required = true)
-  private transient GenericTypeDataProvider<Category> categoryDataProvider;
+  @SpringBean(name = CATEGORY_DATA_PROVIDER_NAME, required = true)
+  private transient IGenericTypeDataProvider<Category> categoryDataProvider;
 
   private final CategoryDataview categoryDataView;
 

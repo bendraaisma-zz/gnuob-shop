@@ -1,5 +1,7 @@
 package com.netbrasoft.gnuob.shop.page;
 
+import static com.netbrasoft.gnuob.api.generic.NetbrasoftApiConstants.CONTRACT_DATA_PROVIDER_NAME;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Iterator;
@@ -26,9 +28,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 import com.netbrasoft.gnuob.api.Contract;
 import com.netbrasoft.gnuob.api.OrderBy;
-import com.netbrasoft.gnuob.api.contract.ContractDataProvider;
 import com.netbrasoft.gnuob.api.generic.GNUOpenBusinessApplicationException;
-import com.netbrasoft.gnuob.api.generic.GenericTypeDataProvider;
+import com.netbrasoft.gnuob.api.generic.IGenericTypeDataProvider;
 import com.netbrasoft.gnuob.shop.authentication.OAuthUtils;
 import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
 import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
@@ -62,7 +63,8 @@ public abstract class BasePage extends WebPage implements IAjaxIndicatorAware {
     public List<HeaderItem> getDependencies() {
       final List<HeaderItem> dependencies = Lists.newArrayList(super.getDependencies());
       dependencies.add(JavaScriptHeaderItem.forReference(JQueryCookieJsReference.INSTANCE));
-      dependencies.add(JavaScriptHeaderItem.forReference(WebApplication.get().getJavaScriptLibrarySettings().getJQueryReference()));
+      dependencies.add(
+          JavaScriptHeaderItem.forReference(WebApplication.get().getJavaScriptLibrarySettings().getJQueryReference()));
       dependencies.add(JavaScriptHeaderItem.forReference(Bootstrap.getSettings().getJsResourceReference()));
       return dependencies;
     }
@@ -81,8 +83,8 @@ public abstract class BasePage extends WebPage implements IAjaxIndicatorAware {
   @SpringBean(name = ShopperDataProvider.SHOPPER_DATA_PROVIDER_NAME, required = true)
   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
-  @SpringBean(name = ContractDataProvider.CONTRACT_DATA_PROVIDER_NAME, required = true)
-  private transient GenericTypeDataProvider<Contract> contractDataProvider;
+  @SpringBean(name = CONTRACT_DATA_PROVIDER_NAME, required = true)
+  private transient IGenericTypeDataProvider<Contract> contractDataProvider;
 
   private void authenticateShopper() {
     final Shopper shopper = shopperDataProvider.find(new Shopper());
@@ -93,7 +95,8 @@ public abstract class BasePage extends WebPage implements IAjaxIndicatorAware {
       } catch (GNUOpenBusinessApplicationException | URISyntaxException e) {
         LOGGER.warn(e.getMessage(), e);
       }
-      final URI redirectURI = URI.create(System.getProperty("gnuob." + AppServletContainerAuthenticatedWebSession.getSite() + ".login.redirect"));
+      final URI redirectURI = URI.create(
+          System.getProperty("gnuob." + AppServletContainerAuthenticatedWebSession.getSite() + ".login.redirect"));
       throw new RedirectToUrlException(redirectURI.toString());
     }
   }
@@ -127,7 +130,8 @@ public abstract class BasePage extends WebPage implements IAjaxIndicatorAware {
     final ClientID clientID = OAuthUtils.getClientID(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
     final State state = new State(shopper.getId());
     final URI requestURI = URI.create(getRequest().getClientUrl().toString());
-    final URI redirectURI = URI.create(System.getProperty("gnuob." + AppServletContainerAuthenticatedWebSession.getSite() + ".login.redirect"));
+    final URI redirectURI = URI.create(
+        System.getProperty("gnuob." + AppServletContainerAuthenticatedWebSession.getSite() + ".login.redirect"));
     final OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
     return OAuthUtils.getUserInfo(providerConfiguration, clientID, state, requestURI, redirectURI,
         OAuthUtils.getClientSecret(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI));
@@ -145,7 +149,8 @@ public abstract class BasePage extends WebPage implements IAjaxIndicatorAware {
   private void initializePageTitle() {
     final String site = getRequest().getClientUrl().getHost();
     final String title = site.replaceFirst("www.", "").split("\\.")[0];
-    add(new Label(GNUOB_SITE_TITLE_PROPERTY, System.getProperty(GNUOB_SITE_TITLE_PROPERTY, WordUtils.capitalize(title))));
+    add(new Label(GNUOB_SITE_TITLE_PROPERTY,
+        System.getProperty(GNUOB_SITE_TITLE_PROPERTY, WordUtils.capitalize(title))));
   }
 
   @Override
@@ -158,14 +163,16 @@ public abstract class BasePage extends WebPage implements IAjaxIndicatorAware {
   protected void onInitialize() {
     initializeContractDataProvider();
     initializePageTitle();
-    add(new HeaderResponseContainer(NETBRASOFT_SHOPPING_JAVASCRIPT_CONTAINER_ID, NETBRASOFT_SHOPPING_JAVASCRIPT_CONTAINER_ID));
+    add(new HeaderResponseContainer(NETBRASOFT_SHOPPING_JAVASCRIPT_CONTAINER_ID,
+        NETBRASOFT_SHOPPING_JAVASCRIPT_CONTAINER_ID));
     authenticateShopper();
     super.onInitialize();
   }
 
   @Override
   public void renderHead(final IHeaderResponse response) {
-    response.render(new FilteredHeaderItem(JavaScriptHeaderItem.forReference(new NetbrasoftApplicationJavaScript()), NETBRASOFT_SHOPPING_JAVASCRIPT_CONTAINER_ID));
+    response.render(new FilteredHeaderItem(JavaScriptHeaderItem.forReference(new NetbrasoftApplicationJavaScript()),
+        NETBRASOFT_SHOPPING_JAVASCRIPT_CONTAINER_ID));
     super.renderHead(response);
   }
 

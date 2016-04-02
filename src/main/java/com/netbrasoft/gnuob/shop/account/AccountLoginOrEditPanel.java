@@ -14,6 +14,9 @@
 
 package com.netbrasoft.gnuob.shop.account;
 
+import static com.netbrasoft.gnuob.api.generic.NetbrasoftApiConstants.CONTRACT_DATA_PROVIDER_NAME;
+import static com.netbrasoft.gnuob.api.generic.NetbrasoftApiConstants.POSTAL_CODE_DATA_PROVIDER_NAME;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -51,8 +54,8 @@ import com.netbrasoft.gnuob.api.PostalCode;
 import com.netbrasoft.gnuob.api.contract.ContractDataProvider;
 import com.netbrasoft.gnuob.api.customer.PostalCodeDataProvider;
 import com.netbrasoft.gnuob.api.generic.GNUOpenBusinessApplicationException;
-import com.netbrasoft.gnuob.api.generic.GenericTypeDataProvider;
-import com.netbrasoft.gnuob.shop.NetbrasoftShopMessageKeyConstants;
+import com.netbrasoft.gnuob.api.generic.IGenericTypeDataProvider;
+import com.netbrasoft.gnuob.shop.NetbrasoftShopConstants;
 import com.netbrasoft.gnuob.shop.authentication.OAuthUtils;
 import com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
 import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
@@ -152,7 +155,8 @@ public class AccountLoginOrEditPanel extends Panel {
           final List<String> cityNames = new ArrayList<String>();
           postalCodeDataProvider.getType().setPlaceName(input + "%");
           postalCodeDataProvider.setOrderBy(OrderBy.PLACE_NAME_A_Z);
-          for (final Iterator<? extends PostalCode> iterator = postalCodeDataProvider.iterator(0, 5); iterator.hasNext();) {
+          for (final Iterator<? extends PostalCode> iterator = postalCodeDataProvider.iterator(0, 5); iterator
+              .hasNext();) {
             cityNames.add(iterator.next().getPlaceName());
           }
           return cityNames;
@@ -192,10 +196,12 @@ public class AccountLoginOrEditPanel extends Panel {
          * @param form The assigned form.
          * @param type The type of button.
          */
-        public SaveAjaxButton(final String id, final IModel<String> model, final Form<Contract> form, final Buttons.Type type) {
+        public SaveAjaxButton(final String id, final IModel<String> model, final Form<Contract> form,
+            final Buttons.Type type) {
           super(id, model, form, type);
           setSize(Buttons.Size.Small);
-          add(new LoadingBehavior(Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.SAVE_MESSAGE_KEY))));
+          add(new LoadingBehavior(
+              Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopConstants.SAVE_MESSAGE_KEY))));
         }
 
         /**
@@ -205,7 +211,8 @@ public class AccountLoginOrEditPanel extends Panel {
         protected void onError(final AjaxRequestTarget target, final Form<?> form) {
           form.add(new TooltipValidation());
           target.add(form);
-          target.add(SaveAjaxButton.this.add(new LoadingBehavior(Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.SAVE_MESSAGE_KEY)))));
+          target.add(SaveAjaxButton.this.add(new LoadingBehavior(
+              Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopConstants.SAVE_MESSAGE_KEY)))));
         }
 
         /**
@@ -217,19 +224,23 @@ public class AccountLoginOrEditPanel extends Panel {
             final Shopper shopper = shopperDataProvider.find(new Shopper());
             ((Contract) form.getDefaultModelObject()).getCustomer().getAddress().setCountry("BR");
             if (((Contract) form.getDefaultModelObject()).getId() == 0) {
-              AccountEditContainer.this.setDefaultModelObject(contractDataProvider.findById(contractDataProvider.persist((Contract) form.getDefaultModelObject())));
+              AccountEditContainer.this.setDefaultModelObject(
+                  contractDataProvider.findById(contractDataProvider.persist((Contract) form.getDefaultModelObject())));
             } else {
-              AccountEditContainer.this.setDefaultModelObject(contractDataProvider.findById(contractDataProvider.merge((Contract) form.getDefaultModelObject())));
+              AccountEditContainer.this.setDefaultModelObject(
+                  contractDataProvider.findById(contractDataProvider.merge((Contract) form.getDefaultModelObject())));
             }
             shopper.setContract((Contract) AccountEditContainer.this.getDefaultModelObject());
             shopperDataProvider.merge(shopper);
             AccountLoginOrEditPanel.this.removeAll();
-            target.add(AccountLoginOrEditPanel.this.add(AccountLoginOrEditPanel.this.new AccountEditFragment()).setOutputMarkupId(true));
+            target.add(AccountLoginOrEditPanel.this.add(AccountLoginOrEditPanel.this.new AccountEditFragment())
+                .setOutputMarkupId(true));
           } catch (final RuntimeException e) {
             LOGGER.warn(e.getMessage(), e);
             feedbackPanel.warn(e.getLocalizedMessage());
             target.add(feedbackPanel.setOutputMarkupId(true));
-            target.add(SaveAjaxButton.this.add(new LoadingBehavior(Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.SAVE_MESSAGE_KEY)))));
+            target.add(SaveAjaxButton.this.add(new LoadingBehavior(
+                Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopConstants.SAVE_MESSAGE_KEY)))));
           }
         }
       }
@@ -446,9 +457,10 @@ public class AccountLoginOrEditPanel extends Panel {
         super(id, model);
         final BloodhoundPlaceNames bloodhoundPlaceNames = new BloodhoundPlaceNames(REMOTE_NAME, new BloodhoundConfig());
         final TypeaheadConfig<String> config = new TypeaheadConfig<String>(new DataSet<>(bloodhoundPlaceNames));
-        accountEditForm =
-            new BootstrapForm<Contract>(ACCOUNT_EDIT_FORM_COMPONENT_ID, new CompoundPropertyModel<Contract>((IModel<Contract>) AccountEditContainer.this.getDefaultModel()));
-        saveAjaxButton = new SaveAjaxButton(SAVE_ID, Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.SAVE_MESSAGE_KEY)), accountEditForm,
+        accountEditForm = new BootstrapForm<Contract>(ACCOUNT_EDIT_FORM_COMPONENT_ID,
+            new CompoundPropertyModel<Contract>((IModel<Contract>) AccountEditContainer.this.getDefaultModel()));
+        saveAjaxButton = new SaveAjaxButton(SAVE_ID,
+            Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopConstants.SAVE_MESSAGE_KEY)), accountEditForm,
             Buttons.Type.Primary);
         feedbackPanel = new NotificationPanel(FEEDBACK_ID);
         customerBuyerEmailTextField = new RequiredTextField<String>(CUSTOMER_BUYER_EMAIL_ID);
@@ -460,8 +472,8 @@ public class AccountLoginOrEditPanel extends Panel {
         customerAddressCountryTextField = new TextField<String>(CUSTOMER_ADDRESS_COUNTRY_ID, Model.of("Brasil"));
         customerAddressCityNameTextField = new Typeahead<String>(CUSTOMER_ADDRESS_CITY_NAME_ID, null, config);
         customerAddressPostalCodeTextField = new RequiredTextField<String>(CUSTOMER_ADDRESS_POSTAL_CODE_ID);
-        customerAddressStateOrProvinceDropDownChoice =
-            new BootstrapSelect<State>(CUSTOMER_ADDRESS_STATE_OR_PROVINCE_ID, getStatesOfCountry(), new ChoiceRenderer<State>("name", ""));
+        customerAddressStateOrProvinceDropDownChoice = new BootstrapSelect<State>(CUSTOMER_ADDRESS_STATE_OR_PROVINCE_ID,
+            getStatesOfCountry(), new ChoiceRenderer<State>("name", ""));
       }
 
       /**
@@ -473,10 +485,12 @@ public class AccountLoginOrEditPanel extends Panel {
       public List<State> getStatesOfCountry() {
         final List<State> states = new ArrayList<>();
         // FIXME Get this information from http://www.geonames.org/ to support state formats.
-        final String[][] statesOfBrazil = new String[][] {{"AC", "Acre"}, {"AL", "Alagoas"}, {"AP", "Amapá"}, {"AM", "Amazonas"}, {"BA", "Bahia"}, {"CE", "Ceará"},
-            {"ES", "Espírito Santo"}, {"GO", "Goiás"}, {"MA", "Maranhão"}, {"MT", "Mato Grosso"}, {"MS", "Mato Grosso do Sul"}, {"MG", "Minas Gerais"}, {"PA", "Pará"},
-            {"PB", "Paraíba"}, {"PR", "Paraná"}, {"PE", "Pernambuco"}, {"PI", "Piauí"}, {"RJ", "Rio de Janeiro"}, {"RN", "Rio Grande do Norte"}, {"RS", "Rio Grande do Sul"},
-            {"RO", "Rondônia"}, {"RR", "Roraima"}, {"SC", "Santa Catarina"}, {"SP", "São Paulo"}, {"SE", "Sergipe"}, {"TO", "Tocantins"}};
+        final String[][] statesOfBrazil = new String[][] {{"AC", "Acre"}, {"AL", "Alagoas"}, {"AP", "Amapá"},
+            {"AM", "Amazonas"}, {"BA", "Bahia"}, {"CE", "Ceará"}, {"ES", "Espírito Santo"}, {"GO", "Goiás"},
+            {"MA", "Maranhão"}, {"MT", "Mato Grosso"}, {"MS", "Mato Grosso do Sul"}, {"MG", "Minas Gerais"},
+            {"PA", "Pará"}, {"PB", "Paraíba"}, {"PR", "Paraná"}, {"PE", "Pernambuco"}, {"PI", "Piauí"},
+            {"RJ", "Rio de Janeiro"}, {"RN", "Rio Grande do Norte"}, {"RS", "Rio Grande do Sul"}, {"RO", "Rondônia"},
+            {"RR", "Roraima"}, {"SC", "Santa Catarina"}, {"SP", "São Paulo"}, {"SE", "Sergipe"}, {"TO", "Tocantins"}};
 
         for (final String[] state : statesOfBrazil) {
           states.add(new State(state[0], state[1]));
@@ -489,26 +503,34 @@ public class AccountLoginOrEditPanel extends Panel {
        */
       @Override
       protected void onInitialize() {
-        customerBuyerEmailTextField.setLabel(Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.BUYER_EMAIL_MESSAGE_KEY)));
+        customerBuyerEmailTextField.setLabel(
+            Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopConstants.BUYER_EMAIL_MESSAGE_KEY)));
         customerBuyerEmailTextField.add(EmailAddressValidator.getInstance());
         customerBuyerEmailTextField.add(StringValidator.maximumLength(60));
-        customerFirstNameTextField.setLabel(Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.FIRST_NAME_MESSAGE_KEY)));
+        customerFirstNameTextField
+            .setLabel(Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopConstants.FIRST_NAME_MESSAGE_KEY)));
         customerFirstNameTextField.add(StringValidator.maximumLength(40));
-        customerLastNameTextField.setLabel(Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.LAST_NAME_MESSAGE_KEY)));
+        customerLastNameTextField
+            .setLabel(Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopConstants.LAST_NAME_MESSAGE_KEY)));
         customerLastNameTextField.add(StringValidator.maximumLength(40));
         customerAddressPhoneTextField.add(StringValidator.maximumLength(40));
-        customerAddressStreet1TextField.setLabel(Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.STREET1_MESSAGE_KEY)));
+        customerAddressStreet1TextField
+            .setLabel(Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopConstants.STREET1_MESSAGE_KEY)));
         customerAddressStreet1TextField.add(StringValidator.maximumLength(40));
         customerAddressStreet2TextField.add(StringValidator.maximumLength(40));
-        customerAddressCountryTextField.setLabel(Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.COUNTRY_NAME_MESSAGE_KEY)));
+        customerAddressCountryTextField.setLabel(
+            Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopConstants.COUNTRY_NAME_MESSAGE_KEY)));
         customerAddressCountryTextField.setEnabled(false);
         customerAddressCityNameTextField.setRequired(true);
-        customerAddressCityNameTextField.setLabel(Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.CITY_NAME_MESSAGE_KEY)));
+        customerAddressCityNameTextField
+            .setLabel(Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopConstants.CITY_NAME_MESSAGE_KEY)));
         customerAddressCityNameTextField.add(StringValidator.maximumLength(40)).setOutputMarkupId(true);
-        customerAddressPostalCodeTextField.setLabel(Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.POSTAL_CODE_MESSAGE_KEY)));
+        customerAddressPostalCodeTextField.setLabel(
+            Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopConstants.POSTAL_CODE_MESSAGE_KEY)));
         customerAddressPostalCodeTextField.add(new PatternValidator(PATTERN_0_9_5_0_9_3));
         customerAddressStateOrProvinceDropDownChoice.setRequired(true);
-        customerAddressStateOrProvinceDropDownChoice.setLabel(Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopMessageKeyConstants.STATE_OR_PROVINCE_MESSAGE_KEY)));
+        customerAddressStateOrProvinceDropDownChoice.setLabel(
+            Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopConstants.STATE_OR_PROVINCE_MESSAGE_KEY)));
         accountEditForm.add(customerBuyerEmailTextField.setOutputMarkupId(true));
         accountEditForm.add(customerFirstNameTextField.setOutputMarkupId(true));
         accountEditForm.add(customerLastNameTextField.setOutputMarkupId(true));
@@ -557,8 +579,10 @@ public class AccountLoginOrEditPanel extends Panel {
      * where the {@link Customer} can edit his/here personal data record.
      */
     public AccountEditFragment() {
-      super(ACCOUNT_LOGIN_OR_EDIT_FRAGMENT_ID, ACCOUNT_EDIT_FRAGMENT_MARKUP_ID, AccountLoginOrEditPanel.this, AccountLoginOrEditPanel.this.getDefaultModel());
-      accountEditContainer = new AccountEditContainer(ACCOUNT_EDIT_CONTAINER_ID, (IModel<Contract>) AccountEditFragment.this.getDefaultModel());
+      super(ACCOUNT_LOGIN_OR_EDIT_FRAGMENT_ID, ACCOUNT_EDIT_FRAGMENT_MARKUP_ID, AccountLoginOrEditPanel.this,
+          AccountLoginOrEditPanel.this.getDefaultModel());
+      accountEditContainer = new AccountEditContainer(ACCOUNT_EDIT_CONTAINER_ID,
+          (IModel<Contract>) AccountEditFragment.this.getDefaultModel());
     }
 
     /**
@@ -625,14 +649,18 @@ public class AccountLoginOrEditPanel extends Panel {
           try {
             final Shopper shopper = shopperDataProvider.find(new Shopper());
             final URI issuerURI = new URI(FacebookAjaxLink.this.getDefaultModelObjectAsString());
-            final ClientID clientID = OAuthUtils.getClientID(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
+            final ClientID clientID =
+                OAuthUtils.getClientID(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
             final State state = new State(shopper.getId());
-            final URI redirectURI = URI.create(System.getProperty(GNUOB_PREFIX_PROPERTY + AppServletContainerAuthenticatedWebSession.getSite() + LOGIN_REDIRECT_PREFIX_PROPERTY));
+            final URI redirectURI = URI.create(System.getProperty(GNUOB_PREFIX_PROPERTY
+                + AppServletContainerAuthenticatedWebSession.getSite() + LOGIN_REDIRECT_PREFIX_PROPERTY));
             final Scope scope = OAuthUtils.getScope(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
             final OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
             shopper.setIssuer(FacebookAjaxLink.this.getDefaultModelObjectAsString());
             shopperDataProvider.merge(shopper);
-            throw new RedirectToUrlException(OAuthUtils.getFacebookAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state).toURI().toString());
+            throw new RedirectToUrlException(
+                OAuthUtils.getFacebookAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state)
+                    .toURI().toString());
           } catch (GNUOpenBusinessApplicationException | URISyntaxException | SerializeException e) {
             LOGGER.warn("OAuth Exception with Facebook.", e);
           }
@@ -673,14 +701,18 @@ public class AccountLoginOrEditPanel extends Panel {
           try {
             final Shopper shopper = shopperDataProvider.find(new Shopper());
             final URI issuerURI = new URI(GoogleAjaxLink.this.getDefaultModelObjectAsString());
-            final ClientID clientID = OAuthUtils.getClientID(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
+            final ClientID clientID =
+                OAuthUtils.getClientID(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
             final State state = new State(shopper.getId());
-            final URI redirectURI = URI.create(System.getProperty(GNUOB_PREFIX_PROPERTY + AppServletContainerAuthenticatedWebSession.getSite() + LOGIN_REDIRECT_PREFIX_PROPERTY));
+            final URI redirectURI = URI.create(System.getProperty(GNUOB_PREFIX_PROPERTY
+                + AppServletContainerAuthenticatedWebSession.getSite() + LOGIN_REDIRECT_PREFIX_PROPERTY));
             final Scope scope = OAuthUtils.getScope(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
             final OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
             shopper.setIssuer(GoogleAjaxLink.this.getDefaultModelObjectAsString());
             shopperDataProvider.merge(shopper);
-            throw new RedirectToUrlException(OAuthUtils.getAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state).toURI().toString());
+            throw new RedirectToUrlException(
+                OAuthUtils.getAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state).toURI()
+                    .toString());
           } catch (GNUOpenBusinessApplicationException | URISyntaxException | SerializeException e) {
             LOGGER.warn("OAuth Exception with Google.", e);
           }
@@ -721,14 +753,18 @@ public class AccountLoginOrEditPanel extends Panel {
           try {
             final Shopper shopper = shopperDataProvider.find(new Shopper());
             final URI issuerURI = new URI(MicrosoftAjaxLink.this.getDefaultModelObjectAsString());
-            final ClientID clientID = OAuthUtils.getClientID(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
+            final ClientID clientID =
+                OAuthUtils.getClientID(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
             final State state = new State(shopper.getId());
-            final URI redirectURI = URI.create(System.getProperty(GNUOB_PREFIX_PROPERTY + AppServletContainerAuthenticatedWebSession.getSite() + LOGIN_REDIRECT_PREFIX_PROPERTY));
+            final URI redirectURI = URI.create(System.getProperty(GNUOB_PREFIX_PROPERTY
+                + AppServletContainerAuthenticatedWebSession.getSite() + LOGIN_REDIRECT_PREFIX_PROPERTY));
             final Scope scope = OAuthUtils.getScope(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
             final OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
             shopper.setIssuer(MicrosoftAjaxLink.this.getDefaultModelObjectAsString());
             shopperDataProvider.merge(shopper);
-            throw new RedirectToUrlException(OAuthUtils.getMicrosoftAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state).toURI().toString());
+            throw new RedirectToUrlException(
+                OAuthUtils.getMicrosoftAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state)
+                    .toURI().toString());
           } catch (GNUOpenBusinessApplicationException | URISyntaxException | SerializeException e) {
             LOGGER.warn("OAuth Exception with Microsoft.", e);
           }
@@ -769,14 +805,18 @@ public class AccountLoginOrEditPanel extends Panel {
           try {
             final Shopper shopper = shopperDataProvider.find(new Shopper());
             final URI issuerURI = new URI(PayPalAjaxLink.this.getDefaultModelObjectAsString());
-            final ClientID clientID = OAuthUtils.getClientID(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
+            final ClientID clientID =
+                OAuthUtils.getClientID(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
             final State state = new State(shopper.getId());
-            final URI redirectURI = URI.create(System.getProperty(GNUOB_PREFIX_PROPERTY + AppServletContainerAuthenticatedWebSession.getSite() + LOGIN_REDIRECT_PREFIX_PROPERTY));
+            final URI redirectURI = URI.create(System.getProperty(GNUOB_PREFIX_PROPERTY
+                + AppServletContainerAuthenticatedWebSession.getSite() + LOGIN_REDIRECT_PREFIX_PROPERTY));
             final Scope scope = OAuthUtils.getScope(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
             final OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
             shopper.setIssuer(PayPalAjaxLink.this.getDefaultModelObjectAsString());
             shopperDataProvider.merge(shopper);
-            throw new RedirectToUrlException(OAuthUtils.getAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state).toURI().toString());
+            throw new RedirectToUrlException(
+                OAuthUtils.getAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state).toURI()
+                    .toString());
           } catch (GNUOpenBusinessApplicationException | URISyntaxException | SerializeException e) {
             LOGGER.warn("OAuth Exception with PayPal.", e);
           }
@@ -861,8 +901,8 @@ public class AccountLoginOrEditPanel extends Panel {
        */
       public AccountLoginContainer(final String id, final IModel<Contract> model) {
         super(id, model);
-        accountLoginForm =
-            new BootstrapForm<Contract>(ACCOUNT_LOGIN_FORM_COMPONENT_ID, new CompoundPropertyModel<Contract>((IModel<Contract>) AccountLoginContainer.this.getDefaultModel()));
+        accountLoginForm = new BootstrapForm<Contract>(ACCOUNT_LOGIN_FORM_COMPONENT_ID,
+            new CompoundPropertyModel<Contract>((IModel<Contract>) AccountLoginContainer.this.getDefaultModel()));
         facebookAjaxLink = new FacebookAjaxLink(FACEBOOK_ID, Model.of(OAuthUtils.ACCOUNTS_FACEBOOK_COM));
         googleAjaxLink = new GoogleAjaxLink(GOOGLE_ID, Model.of(OAuthUtils.ACCOUNTS_GOOGLE_COM));
         payPalAjaxLink = new PayPalAjaxLink(PAYPAL_ID, Model.of(OAuthUtils.ACCOUNTS_PAY_PAL_COM));
@@ -914,8 +954,10 @@ public class AccountLoginOrEditPanel extends Panel {
      * the {@link Customer} can authenticated with a prefered OAUTH2.0 provider.
      */
     public AccountLoginFragment() {
-      super(ACCOUNT_LOGIN_OR_EDIT_FRAGMENT_ID, ACCOUNT_LOGIN_FRAGMENT_MARKUP_ID, AccountLoginOrEditPanel.this, AccountLoginOrEditPanel.this.getDefaultModel());
-      accountLoginContainer = new AccountLoginContainer(ACCOUNT_LOGIN_CONTAINER_ID, (IModel<Contract>) AccountLoginFragment.this.getDefaultModel());
+      super(ACCOUNT_LOGIN_OR_EDIT_FRAGMENT_ID, ACCOUNT_LOGIN_FRAGMENT_MARKUP_ID, AccountLoginOrEditPanel.this,
+          AccountLoginOrEditPanel.this.getDefaultModel());
+      accountLoginContainer = new AccountLoginContainer(ACCOUNT_LOGIN_CONTAINER_ID,
+          (IModel<Contract>) AccountLoginFragment.this.getDefaultModel());
     }
 
     /**
@@ -947,14 +989,14 @@ public class AccountLoginOrEditPanel extends Panel {
   /**
    * Reference to the {@link Contract} data provider instance of {@link ContractDataProvider}.
    */
-  @SpringBean(name = ContractDataProvider.CONTRACT_DATA_PROVIDER_NAME, required = true)
-  private transient GenericTypeDataProvider<Contract> contractDataProvider;
+  @SpringBean(name = CONTRACT_DATA_PROVIDER_NAME, required = true)
+  private transient IGenericTypeDataProvider<Contract> contractDataProvider;
 
   /**
    * Reference to the {@link PostalCode} data provider instance of {@link PostalCodeDataProvider}.
    */
-  @SpringBean(name = PostalCodeDataProvider.POSTAL_CODE_DATA_PROVIDER_NAME, required = true)
-  private transient GenericTypeDataProvider<PostalCode> postalCodeDataProvider;
+  @SpringBean(name = POSTAL_CODE_DATA_PROVIDER_NAME, required = true)
+  private transient IGenericTypeDataProvider<PostalCode> postalCodeDataProvider;
 
   /**
    * Constructor that initialize the {@link AccountLoginOrEditPanel} presenting or the registration
