@@ -4,35 +4,42 @@ import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.request.flow.RedirectToUrlException;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
+import com.netbrasoft.gnuob.api.Order;
 import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
+import com.netbrasoft.gnuob.shop.page.CartPage;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
 import com.netbrasoft.gnuob.shop.shopper.Shopper;
+import com.netbrasoft.gnuob.shop.shopper.ShopperDataProvider;
 
-@AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
+@SuppressWarnings("unchecked")
+@AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
 public class SpecificationPanel extends Panel {
 
-   private static final long serialVersionUID = -2071564475086309712L;
+  private static final String SPECIFICATION_EMPTY_OR_EDIT_PANEL_ID = "specificationEmptyOrEditPanel";
 
-   private final SpecificationViewPanel specificationViewPanel = new SpecificationViewPanel("specificationViewPanel", Model.of(new Shopper()));
+  private static final long serialVersionUID = -2071564475086309712L;
 
-   @SpringBean(name = "ShopperDataProvider", required = true)
-   private GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
+  private final SpecificationEmptyOrEditPanel specificationEmptyOrViewPanel;
 
-   public SpecificationPanel(final String id, final IModel<Shopper> model) {
-      super(id, model);
-   }
+  @SpringBean(name = ShopperDataProvider.SHOPPER_DATA_PROVIDER_NAME, required = true)
+  private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
-   @Override
-   protected void onInitialize() {
-      if (shopperDataProvider.find(new Shopper()).getCart().getRecords().isEmpty()) {
-         throw new RedirectToUrlException("cart.html");
-      }
+  public SpecificationPanel(final String id, final IModel<Order> model) {
+    super(id, model);
+    specificationEmptyOrViewPanel = new SpecificationEmptyOrEditPanel(SPECIFICATION_EMPTY_OR_EDIT_PANEL_ID, (IModel<Order>) SpecificationPanel.this.getDefaultModel());
+  }
 
-      add(specificationViewPanel.add(specificationViewPanel.new SpecificationViewFragement()).setOutputMarkupId(true));
-      super.onInitialize();
-   }
+  @Override
+  protected void onInitialize() {
+    if (shopperDataProvider.find(new Shopper()).getCheckout().getRecords().isEmpty()) {
+      throw new RedirectToUrlException(CartPage.CART_HTML_VALUE);
+    }
+
+    specificationEmptyOrViewPanel.setDefaultModelObject(shopperDataProvider.find(new Shopper()).getCheckout());
+    add(specificationEmptyOrViewPanel.add(specificationEmptyOrViewPanel.new SpecificationEditFragment()).setOutputMarkupId(true));
+    super.onInitialize();
+  }
 }

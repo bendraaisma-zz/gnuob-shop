@@ -2,9 +2,9 @@ package com.netbrasoft.gnuob.shop.generic;
 
 public interface GenericTypeCacheRepository<T> {
 
-   T find(T paramType);
+  T find(T type);
 
-   T merge(T paramType);
+  T merge(T type);
 
-   void remove(T paramType);
+  void remove(T type);
 }

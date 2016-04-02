@@ -29,51 +29,52 @@ import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
 @RunWith(Arquillian.class)
 public class FacebookOAuthTest {
 
-   @Deployment(testable = false)
-   public static Archive<?> createDeployment() {
-      return Utils.createDeployment();
-   }
+  @Deployment(testable = false)
+  public static Archive<?> createDeployment() {
+    return Utils.createDeployment();
+  }
 
-   private URI issuerURI = null;
-   private ClientID clientID = null;
-   private State state = null;
-   private URI redirectURI = null;
-   private Scope scope = null;
-   private OIDCProviderMetadata providerConfiguration = null;
+  private URI issuerURI = null;
+  private ClientID clientID = null;
+  private State state = null;
+  private URI redirectURI = null;
+  private Scope scope = null;
+  private OIDCProviderMetadata providerConfiguration = null;
 
-   @Drone
-   private WebDriver driver;
+  @Drone
+  private WebDriver driver;
 
-   @Before
-   public void testBefore() throws URISyntaxException {
-      System.setProperty("gnuob.localhost.facebook.clientId", "1629794503933891");
-      System.setProperty("gnuob.localhost.facebook.clientSecret", "115bb80745066faa447340be468fa7fd");
-      System.setProperty("gnuob.localhost.facebook.scope", "email");
+  @Before
+  public void testBefore() throws URISyntaxException {
+    System.setProperty("gnuob.localhost.facebook.clientId", "1629794503933891");
+    System.setProperty("gnuob.localhost.facebook.clientSecret", "115bb80745066faa447340be468fa7fd");
+    System.setProperty("gnuob.localhost.facebook.scope", "email");
 
-      issuerURI = new URI(OAuthUtils.ACCOUNTS_FACEBOOK_COM);
-      clientID = OAuthUtils.getClientID("localhost", issuerURI);
-      state = new State(UUID.randomUUID().toString());
-      redirectURI = URI.create("http://localhost:8080/account.html");
-      scope = OAuthUtils.getScope("localhost", issuerURI);
-      providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
-   }
+    issuerURI = new URI(OAuthUtils.ACCOUNTS_FACEBOOK_COM);
+    clientID = OAuthUtils.getClientID("localhost", issuerURI);
+    state = new State(UUID.randomUUID().toString());
+    redirectURI = URI.create("http://localhost:8080/account.html");
+    scope = OAuthUtils.getScope("localhost", issuerURI);
+    providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
+  }
 
-   @Test
-   public void testFaceBookOAuthLoginVersionV2_4Login() throws SerializeException {
-      final FacebookAuthenticationRequest authenticationRequest = OAuthUtils.getFacebookAuthenticationRequest(providerConfiguration, issuerURI, clientID, redirectURI, scope, state);
+  @Test
+  public void testFaceBookOAuthLoginVersionV2_4Login() throws SerializeException {
+    final FacebookAuthenticationRequest authenticationRequest = OAuthUtils.getFacebookAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state);
 
-      final WebDriverWait webDriverWait = new WebDriverWait(driver, 60);
+    final WebDriverWait webDriverWait = new WebDriverWait(driver, 60);
 
-      driver.get("http://localhost:8080/");
-      driver.get(authenticationRequest.toURI().toString());
+    driver.get("http://localhost:8080/");
+    driver.get(authenticationRequest.toURI().toString());
 
-      webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("google")));
+    webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("google")));
 
-      final UserInfo userInfo = OAuthUtils.getUserInfo(providerConfiguration, issuerURI, clientID, state, URI.create(driver.getCurrentUrl()), redirectURI, OAuthUtils.getClientSecret("localhost", issuerURI));
+    final UserInfo userInfo =
+        OAuthUtils.getUserInfo(providerConfiguration, clientID, state, URI.create(driver.getCurrentUrl()), redirectURI, OAuthUtils.getClientSecret("localhost", issuerURI));
 
-      assertEquals("Bernard Arjan Draaisma", userInfo.getName());
-      assertEquals("bendraaisma@gmail.com", userInfo.getEmail().getAddress());
-      assertEquals("Bernard Arjan", userInfo.getGivenName());
-      assertEquals("Draaisma", userInfo.getFamilyName());
-   }
+    assertEquals("Bernard Arjan Draaisma", userInfo.getName());
+    assertEquals("bendraaisma@gmail.com", userInfo.getEmail().getAddress());
+    assertEquals("Bernard Arjan", userInfo.getGivenName());
+    assertEquals("Draaisma", userInfo.getFamilyName());
+  }
 }

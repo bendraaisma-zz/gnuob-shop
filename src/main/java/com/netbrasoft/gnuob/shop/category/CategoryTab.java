@@ -8,24 +8,25 @@ import com.netbrasoft.gnuob.api.Category;
 
 public class CategoryTab extends AbstractTab {
 
-   private static final long serialVersionUID = 4835579949680085443L;
-   IModel<Category> model;
+  private static final long serialVersionUID = 4835579949680085443L;
 
-   public CategoryTab(final IModel<String> title, final IModel<Category> model) {
-      super(title);
-      this.model = model;
-   }
+  private final IModel<Category> model;
 
-   public IModel<Category> getModel() {
-      return model;
-   }
+  public CategoryTab(final IModel<String> title, final IModel<Category> model) {
+    super(title);
+    this.model = model;
+  }
 
-   public Category getModelObject() {
-      return model.getObject();
-   }
+  public IModel<Category> getModel() {
+    return model;
+  }
 
-   @Override
-   public WebMarkupContainer getPanel(final String panelId) {
-      return new CategoryPanel(panelId, model);
-   }
+  public Category getModelObject() {
+    return model.getObject();
+  }
+
+  @Override
+  public WebMarkupContainer getPanel(final String panelId) {
+    return new CategoryPanel(panelId, model);
+  }
 }

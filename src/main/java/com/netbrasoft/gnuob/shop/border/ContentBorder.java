@@ -1,27 +1,35 @@
 package com.netbrasoft.gnuob.shop.border;
 
 import org.apache.wicket.markup.html.border.Border;
+import org.apache.wicket.model.IModel;
 
 import com.netbrasoft.gnuob.shop.panel.FooterPanel;
 import com.netbrasoft.gnuob.shop.panel.HeaderPanel;
+import com.netbrasoft.gnuob.shop.shopper.Shopper;
 
+@SuppressWarnings("unchecked")
 public class ContentBorder extends Border {
 
-   private static final long serialVersionUID = 6569587142042286311L;
+  private static final String FOOTER_PANEL_ID = "footerPanel";
 
-   private HeaderPanel headerPanel = new HeaderPanel("headerPanel");
+  private static final String HEADER_PANEL_ID = "headerPanel";
 
-   private FooterPanel footerPanel = new FooterPanel("footerPanel");
+  private static final long serialVersionUID = 6569587142042286311L;
 
-   public ContentBorder(String id) {
-      super(id);
-   }
+  private final HeaderPanel headerPanel;
 
-   @Override
-   protected void onInitialize() {
-      super.onInitialize();
+  private final FooterPanel footerPanel;
 
-      addToBorder(headerPanel.setOutputMarkupId(true));
-      addToBorder(footerPanel.setOutputMarkupId(true));
-   }
+  public ContentBorder(final String id, final IModel<Shopper> model) {
+    super(id, model);
+    headerPanel = new HeaderPanel(HEADER_PANEL_ID, (IModel<Shopper>) ContentBorder.this.getDefaultModel());
+    footerPanel = new FooterPanel(FOOTER_PANEL_ID, (IModel<Shopper>) ContentBorder.this.getDefaultModel());
+  }
+
+  @Override
+  protected void onInitialize() {
+    super.onInitialize();
+    addToBorder(headerPanel.setOutputMarkupId(true));
+    addToBorder(footerPanel.setOutputMarkupId(true));
+  }
 }

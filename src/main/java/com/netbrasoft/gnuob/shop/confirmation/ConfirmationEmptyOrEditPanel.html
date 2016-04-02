@@ -1,0 +1,24 @@
+<wicket:panel xmlns:wicket="http://wicket.apache.org">
+   <wicket:container wicket:id="confirmationEmptyOrEditFragment" />
+   <wicket:fragment wicket:id="confirmationEditFragment">
+      <div class="row">
+         <form wicket:id="confirmationEditForm" action="">
+            <div class="col-md-12">
+               <div class="panel-heading">
+                  <h3>
+                     <wicket:message key="thankYouForPlacingYourOrderWithUsMessage" />
+                  </h3>
+                  <h5>
+                     <wicket:message key="theOrderNumberIsMessage" />
+                     &nbsp;<strong><span wicket:id="orderId"></span></strong>.
+                  </h5>
+                  <h5>
+                     <wicket:message key="youWillReceiveAnEmailConfirmationShortlyAtMessage" />
+                     &nbsp;<strong><span wicket:id="buyerEmail"></span></strong>.
+                  </h5>
+               </div>
+            </div>
+         </form>
+      </div>
+   </wicket:fragment>
+</wicket:panel>

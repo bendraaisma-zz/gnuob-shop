@@ -11,30 +11,41 @@ import com.netbrasoft.gnuob.shop.border.ContentBorder;
 import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import com.netbrasoft.gnuob.shop.security.ShopRoles;
 import com.netbrasoft.gnuob.shop.shopper.Shopper;
+import com.netbrasoft.gnuob.shop.shopper.ShopperDataProvider;
 import com.netbrasoft.gnuob.shop.wishlist.WishListMainMenuPanel;
 
-@MountPath("wishlist.html")
-@AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
+@MountPath(WishListPage.WISHLIST_HTML_NAME)
+@AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
 public class WishListPage extends BasePage {
 
-   private static final long serialVersionUID = 4051343927877779621L;
+  private static final String MAIN_MENU_PANEL_ID = "mainMenuPanel";
 
-   private WishListMainMenuPanel mainMenuPanel = new WishListMainMenuPanel("mainMenuPanel", Model.of(new Shopper()));
+  private static final String CONTENT_BORDER_ID = "contentBorder";
 
-   private ContentBorder contentBorder = new ContentBorder("contentBorder");
+  public static final String WISHLIST_HTML_NAME = "wishlist.html";
 
-   @SpringBean(name = "ShopperDataProvider", required = true)
-   private GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
+  private static final long serialVersionUID = 4051343927877779621L;
 
-   @Override
-   protected void onInitialize() {
-      if (!shopperDataProvider.find(new Shopper()).isLoggedIn()) {
-         throw new RedirectToUrlException("account.html");
-      }
+  private final WishListMainMenuPanel mainMenuPanel;
 
-      contentBorder.add(mainMenuPanel);
-      add(contentBorder);
+  private final ContentBorder contentBorder;
 
-      super.onInitialize();
-   }
+  @SpringBean(name = ShopperDataProvider.SHOPPER_DATA_PROVIDER_NAME, required = true)
+  private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
+
+  public WishListPage() {
+    mainMenuPanel = new WishListMainMenuPanel(MAIN_MENU_PANEL_ID);
+    contentBorder = new ContentBorder(CONTENT_BORDER_ID, Model.of(new Shopper()));
+  }
+
+  @Override
+  protected void onInitialize() {
+    if (!shopperDataProvider.find(new Shopper()).isLoggedIn()) {
+      throw new RedirectToUrlException(AccountPage.ACCOUNT_HTML_VALUE);
+    }
+    contentBorder.setDefaultModelObject(shopperDataProvider.find(new Shopper()));
+    contentBorder.add(mainMenuPanel);
+    add(contentBorder);
+    super.onInitialize();
+  }
 }

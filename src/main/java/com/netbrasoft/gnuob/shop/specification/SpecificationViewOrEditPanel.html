@@ -1,0 +1,27 @@
+<wicket:panel xmlns:wicket="http://wicket.apache.org">
+   <wicket:container wicket:id="specificationOfferRecordViewOrEditFragment" />
+   <wicket:fragment wicket:id="specificationOfferRecordEditFragment">
+      <div wicket:id="specificationOfferRecordEditContainer">
+         <form wicket:id="specificationOfferRecordEditForm" action="">
+            <div class="col-md-6">
+               <div wicket:id="productCarousel"></div>
+            </div>
+            <div class="col-md-6">
+               <h4>
+                  <span wicket:id="name"></span>
+               </h4>
+               <p>
+                  <span wicket:id="rating"></span>
+               </p>
+               <h5>
+                  <small><wicket:message key="quantityMessage" />&nbsp;<span wicket:id="product.stock.quantity"></span></small>
+               </h5>
+               <br>
+               <h4>
+                  <span wicket:id="amount"></span>&nbsp;<small><span style="text-decoration: line-through;" wicket:id="product.amount"></span></small>
+               </h4>
+            </div>
+         </form>
+      </div>
+   </wicket:fragment>
+</wicket:panel>

@@ -1,6 +1,7 @@
 package com.netbrasoft.gnuob.shop.wishlist;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
@@ -9,6 +10,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
+import com.netbrasoft.gnuob.shop.NetbrasoftShopConstants;
 import com.netbrasoft.gnuob.shop.page.tab.AccountTab;
 import com.netbrasoft.gnuob.shop.page.tab.CheckoutTab;
 import com.netbrasoft.gnuob.shop.page.tab.HomeTab;
@@ -16,40 +18,52 @@ import com.netbrasoft.gnuob.shop.security.ShopRoles;
 
 import de.agilecoders.wicket.core.markup.html.bootstrap.tabs.BootstrapTabbedPanel;
 
-@AuthorizeAction(action = Action.RENDER, roles = { ShopRoles.GUEST })
+@AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
 public class WishListMainMenuPanel extends Panel {
 
-   class MainMenuTabbedPanel extends BootstrapTabbedPanel<ITab> {
+  @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
+  class MainMenuTabbedPanel extends BootstrapTabbedPanel<ITab> {
 
-      private static final long serialVersionUID = 6838221105862530322L;
+    private static final String NAV_NAV_PILLS_NAV_JUSTIFIED_CSS_CLASS = "nav nav-pills nav-justified";
 
-      public MainMenuTabbedPanel() {
-         super("mainMenuTabbedPanel", new ArrayList<ITab>());
-      }
+    private static final long serialVersionUID = 6838221105862530322L;
 
-      @Override
-      public String getTabContainerCssClass() {
-         return "nav nav-pills nav-justified";
-      }
-   }
+    public MainMenuTabbedPanel(final String id, final List<ITab> tabs, final IModel<Integer> model) {
+      super(id, tabs, model);
+    }
 
-   private static final long serialVersionUID = 4037036072135523233L;
+    @Override
+    public String getTabContainerCssClass() {
+      return NAV_NAV_PILLS_NAV_JUSTIFIED_CSS_CLASS;
+    }
+  }
 
-   private final MainMenuTabbedPanel mainMenuTabbedPanel = new MainMenuTabbedPanel();
+  private static final String MAIN_MENU_TABBED_PANEL_ID = "mainMenuTabbedPanel";
 
-   public WishListMainMenuPanel(final String id, final IModel<?> model) {
-      super(id, model);
-   }
+  private static final long serialVersionUID = 4037036072135523233L;
 
-   @Override
-   protected void onInitialize() {
-      mainMenuTabbedPanel.getTabs().add(new HomeTab(Model.of(getString("homeMessage", new Model<String>(), "HOME").toUpperCase())));
-      mainMenuTabbedPanel.getTabs().add(new AccountTab(Model.of(getString("accountMessage", new Model<String>(), "ACCOUNT").toUpperCase())));
-      mainMenuTabbedPanel.getTabs().add(new WishListTab(Model.of(getString("wishListMessage", new Model<String>(), "OFFER").toUpperCase())));
-      mainMenuTabbedPanel.getTabs().add(new CheckoutTab(Model.of(getString("checkoutMessage", new Model<String>(), "ORDERS").toUpperCase())));
-      mainMenuTabbedPanel.setSelectedTab(2);
+  private static final int SELECTED_TAB = 2;
 
-      add(mainMenuTabbedPanel.setOutputMarkupId(true));
-      super.onInitialize();
-   }
+  private final MainMenuTabbedPanel mainMenuTabbedPanel;
+
+  public WishListMainMenuPanel(final String id) {
+    super(id);
+    mainMenuTabbedPanel = new MainMenuTabbedPanel(MAIN_MENU_TABBED_PANEL_ID, new ArrayList<ITab>(), null);
+  }
+
+  @Override
+  protected void onInitialize() {
+    final HomeTab homeTab = new HomeTab(Model.of(WishListMainMenuPanel.this.getString(NetbrasoftShopConstants.HOME_MESSAGE_KEY)));
+    final AccountTab accountTab = new AccountTab(Model.of(WishListMainMenuPanel.this.getString(NetbrasoftShopConstants.ACCOUNT_MESSAGE_KEY)));
+    final WishListTab wishListTab = new WishListTab(Model.of(WishListMainMenuPanel.this.getString(NetbrasoftShopConstants.WISH_LIST_MESSAGE_KEY)));
+    final CheckoutTab checkoutTab = new CheckoutTab(Model.of(WishListMainMenuPanel.this.getString(NetbrasoftShopConstants.CHECKOUT_MESSAGE_KEY)));
+
+    mainMenuTabbedPanel.getTabs().add(homeTab);
+    mainMenuTabbedPanel.getTabs().add(accountTab);
+    mainMenuTabbedPanel.getTabs().add(wishListTab);
+    mainMenuTabbedPanel.getTabs().add(checkoutTab);
+    mainMenuTabbedPanel.setSelectedTab(SELECTED_TAB);
+    add(mainMenuTabbedPanel.setOutputMarkupId(true));
+    super.onInitialize();
+  }
 }

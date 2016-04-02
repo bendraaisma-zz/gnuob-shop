@@ -10,27 +10,27 @@ import net.minidev.json.JSONObject;
 
 public class MicrosoftUserInfo extends UserInfo {
 
-   public MicrosoftUserInfo(JSONObject contentAsJSONObject) {
-      super(contentAsJSONObject);
-   }
+  public MicrosoftUserInfo(final JSONObject contentAsJSONObject) {
+    super(contentAsJSONObject);
+  }
 
-   @Override
-   public InternetAddress getEmail() {
-      try {
-         final JSONObject jsonObject = JSONObjectUtils.getJSONObject(toJSONObject(), "emails");
-         return JSONObjectUtils.getEmail(jsonObject, "account");
-      } catch (final ParseException e) {
-         return null;
-      }
-   }
+  @Override
+  public InternetAddress getEmail() {
+    try {
+      final JSONObject jsonObject = JSONObjectUtils.getJSONObject(toJSONObject(), "emails");
+      return JSONObjectUtils.getEmail(jsonObject, "account");
+    } catch (final ParseException e) {
+      return null;
+    }
+  }
 
-   @Override
-   public String getFamilyName() {
-      return getStringClaim("last_name");
-   }
+  @Override
+  public String getFamilyName() {
+    return getStringClaim("last_name");
+  }
 
-   @Override
-   public String getGivenName() {
-      return getStringClaim("first_name");
-   }
+  @Override
+  public String getGivenName() {
+    return getStringClaim("first_name");
+  }
 }

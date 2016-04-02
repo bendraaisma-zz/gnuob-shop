@@ -1,0 +1,97 @@
+<wicket:panel xmlns:wicket="http://wicket.apache.org">
+   <wicket:container wicket:id="wishListEmptyOrEditFragment" />
+   <wicket:fragment wicket:id="wishListEditFragment">
+      <style type="text/css">
+.wishListDataviewContainer tr {
+   cursor: pointer;
+}
+</style>
+      <div wicket:id="wishListsDataviewContainer">
+         <div class="row">
+            <div class="col-md-12">
+               <div class="panel-heading">
+                  <h3 class="panel-title">
+                     <wicket:message key="offerStatusDetailsMessage" />
+                  </h3>
+               </div>
+            </div>
+         </div>
+         <div wicket:id="wishListsDataview">
+            <div wicket:id="wishListEditContainer">
+               <form wicket:id="wishListEditForm" action="">
+                  <div class="row">
+                     <div class="col-md-12">
+                        <div class="panel-heading">
+                           <h3 class="panel-title">
+                              ID: <strong><span wicket:id="offerId"></span></strong>
+                           </h3>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="row">
+                     <div class="col-md-6">
+                        <div wicket:id="wishListViewOrEditPanel"></div>
+                     </div>
+                     <div class="col-md-6">
+                        <table wicket:id="wishListEditTable">
+                           <thead>
+                              <tr>
+                                 <td><small><strong><wicket:message key="nameMessage" /></strong></small></td>
+                                 <td><small><strong><wicket:message key="optionMessage" /></strong></small></td>
+                                 <td align="right"><small><strong><wicket:message key="quantityMessage" /></strong></small></td>
+                                 <td align="right"><small><strong><wicket:message key="amountMessage" /></strong></small></td>
+                                 <td align="right"><small><strong><wicket:message key="amountWithDiscountMessage" /></strong></small></td>
+                              </tr>
+                           </thead>
+                           <tbody wicket:id="wishListDataviewContainer" class="wishListDataviewContainer">
+                              <tr wicket:id="wishListDataview">
+                                 <td><small><span wicket:id="name"></span></small></td>
+                                 <td><small><span wicket:id="options"></span></small></td>
+                                 <td align="right"><small><span wicket:id="quantity"></span></small></td>
+                                 <td align="right"><small><span style="text-decoration: line-through;" wicket:id="amountTotal"></span></small></td>
+                                 <td align="right"><small><span wicket:id="itemTotal"></span></small></td>
+                              </tr>
+                           </tbody>
+                           <tfoot>
+                              <tr>
+                                 <td style="border: none;"></td>
+                                 <td colspan="2" align="left" style="border: none; background-color: #f7f7f9"><small><strong style="text-decoration: underline;"><wicket:message
+                                             key="yourTotalDiscountMessage" />:</strong></small><br> <small><wicket:message key="allIncludedMessage" /></small></td>
+                                 <td colspan="2" align="right" style="border: none; background-color: #f7f7f9"><small><span wicket:id="discountTotal"></span></small></td>
+                              </tr>
+                              <tr>
+                                 <td style="border: none;"></td>
+                                 <td colspan="2" align="left" style="border: none; background-color: #f7f7f9"><strong><wicket:message key="totalMessage" />:</strong><br>
+                                    <small style="text-decoration: underline;">(<wicket:message key="includedTransportMessage" />&nbsp;<span wicket:id="shippingTotal"></span>)
+                                 </small></td>
+                                 <td colspan="2" align="right" style="border: none; background-color: #f7f7f9"><strong><span wicket:id="offerTotal"></span></strong></td>
+                              </tr>
+                              <tr>
+                              <td style="border: none;"></td>
+                                 <td colspan="4" align="right" style="border: none; background-color: #f7f7f9"><a wicket:id="save"></a></td>
+                              </tr>
+                              <tr>
+                                 <td style="border-top: none;" colspan="5"><span wicket:id="feedback"></span></td>
+                              </tr>
+                           </tfoot>
+                        </table>
+                     </div>
+                  </div>
+               </form>
+            </div>
+         </div>
+      </div>
+   </wicket:fragment>
+   <wicket:fragment wicket:id="wishListEmptyFragment">
+      <div class="row">
+         <div class="col-md-12">
+            <div class="panel-heading">
+               <h3>
+                  <wicket:message key="noItemsInYourWishListMessage" />
+                  &nbsp;<small><wicket:message key="pricesDoNotIncludeShippingCostMessage" /></small>
+               </h3>
+            </div>
+         </div>
+      </div>
+   </wicket:fragment>
+</wicket:panel>

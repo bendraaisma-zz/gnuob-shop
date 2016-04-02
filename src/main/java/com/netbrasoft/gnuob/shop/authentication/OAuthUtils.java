@@ -9,6 +9,7 @@ import java.security.spec.InvalidKeySpecException;
 
 import com.netbrasoft.gnuob.api.generic.GNUOpenBusinessApplicationException;
 import com.nimbusds.jose.JOSEException;
+import com.nimbusds.oauth2.sdk.AccessTokenResponse;
 import com.nimbusds.oauth2.sdk.AuthorizationCode;
 import com.nimbusds.oauth2.sdk.AuthorizationCodeGrant;
 import com.nimbusds.oauth2.sdk.ErrorObject;
@@ -28,7 +29,7 @@ import com.nimbusds.openid.connect.sdk.AuthenticationResponse;
 import com.nimbusds.openid.connect.sdk.AuthenticationResponseParser;
 import com.nimbusds.openid.connect.sdk.AuthenticationSuccessResponse;
 import com.nimbusds.openid.connect.sdk.Nonce;
-import com.nimbusds.openid.connect.sdk.OIDCAccessTokenResponse;
+import com.nimbusds.openid.connect.sdk.OIDCTokenResponse;
 import com.nimbusds.openid.connect.sdk.OIDCTokenResponseParser;
 import com.nimbusds.openid.connect.sdk.UserInfoErrorResponse;
 import com.nimbusds.openid.connect.sdk.UserInfoRequest;
@@ -39,156 +40,214 @@ import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
 
 public final class OAuthUtils {
 
-   public static final String ISSUER_FACEBOOK = "https://www.facebook.com";
-   public static final String ISSUER_PAY_PAL = "https://www.paypal.com";
-   public static final String ISSUER_MICROSOFT = "https://www.microsoft.com";
+  private static final String GOOGLE_SCOPE_PREFIX_PROPERTY = ".google.scope";
 
-   public static final String ACCOUNTS_GOOGLE_COM = "http://localhost:8080/json/google/openid-configuration";
-   public static final String ACCOUNTS_PAY_PAL_COM = "http://localhost:8080/json/paypal/openid-configuration";
-   public static final String ACCOUNTS_FACEBOOK_COM = "http://localhost:8080/json/facebook/openid-configuration";
-   public static final String ACCOUNTS_MICROSOFT_COM = "http://localhost:8080/json/microsoft/openid-configuration";
+  private static final String MICROSOFT_SCOPE_PREFIX_PROPERTY = ".microsoft.scope";
 
-   public static AuthenticationRequest getAuthenticationRequest(final OIDCProviderMetadata providerConfiguration, final URI issuerURI, final ClientID clientID, final URI redirectURI, Scope scope, State state) {
-      return new AuthenticationRequest(providerConfiguration.getAuthorizationEndpointURI(), new ResponseType(ResponseType.Value.CODE), scope, clientID, redirectURI, state, new Nonce());
-   }
+  private static final String PAYPAL_SCOPE_PREFIX_PROPERTY = ".paypal.scope";
 
-   public static ClientID getClientID(String site, URI issuerURI) {
-      switch (issuerURI.toString()) {
-      case ACCOUNTS_GOOGLE_COM:
-         return new ClientID(System.getProperty("gnuob." + site + ".google.clientId"));
+  private static final String FACEBOOK_SCOPE_PREFIX_PROPERTY = ".facebook.scope";
+
+  private static final String GOOGLE_CLIENT_SECRET_PREFIX_PROPERTY = ".google.clientSecret";
+
+  private static final String MICROSOFT_CLIENT_SECRET_PREFIX_PROPERTY = ".microsoft.clientSecret";
+
+  private static final String PAYPAL_CLIENT_SECRET_PREFIX_PROPERTY = ".paypal.clientSecret";
+
+  private static final String FACEBOOK_CLIENT_SECRET_PREFIX_PROPERTY = ".facebook.clientSecret";
+
+  private static final String GOOGLE_CLIENT_ID_PREFIX_PROPERTY = ".google.clientId";
+
+  private static final String MICROSOFT_CLIENT_ID_PREFIX_PROPERTY = ".microsoft.clientId";
+
+  private static final String PAYPAL_CLIENT_ID_PREFIX_PROPERTY = ".paypal.clientId";
+
+  private static final String FACEBOOK_CLIENT_ID_PREFIX_PROPERTY = ".facebook.clientId";
+
+  private static final String GNUOB_PREFIX_PROPERTY = "gnuob.";
+
+  public static final String ISSUER_FACEBOOK = "https://www.facebook.com";
+
+  public static final String ISSUER_PAY_PAL = "https://www.paypal.com";
+
+  public static final String ISSUER_MICROSOFT = "https://www.microsoft.com";
+
+  public static final String ACCOUNTS_GOOGLE_COM = "http://localhost:8080/json/google/openid-configuration";
+
+  public static final String ACCOUNTS_PAY_PAL_COM = "http://localhost:8080/json/paypal/openid-configuration";
+
+  public static final String ACCOUNTS_FACEBOOK_COM = "http://localhost:8080/json/facebook/openid-configuration";
+
+  public static final String ACCOUNTS_MICROSOFT_COM = "http://localhost:8080/json/microsoft/openid-configuration";
+
+  public static AuthenticationRequest getAuthenticationRequest(final OIDCProviderMetadata providerConfiguration, final ClientID clientID, final URI redirectURI, final Scope scope,
+      final State state) {
+    return new AuthenticationRequest(providerConfiguration.getAuthorizationEndpointURI(), new ResponseType(ResponseType.Value.CODE), scope, clientID, redirectURI, state,
+        new Nonce());
+  }
+
+  public static ClientID getClientID(final String site, final URI issuerURI) {
+    switch (issuerURI.toString()) {
       case ACCOUNTS_FACEBOOK_COM:
-         return new ClientID(System.getProperty("gnuob." + site + ".facebook.clientId"));
+        return new ClientID(System.getProperty(GNUOB_PREFIX_PROPERTY + site + FACEBOOK_CLIENT_ID_PREFIX_PROPERTY));
       case ACCOUNTS_PAY_PAL_COM:
-         return new ClientID(System.getProperty("gnuob." + site + ".paypal.clientId"));
+        return new ClientID(System.getProperty(GNUOB_PREFIX_PROPERTY + site + PAYPAL_CLIENT_ID_PREFIX_PROPERTY));
       case ACCOUNTS_MICROSOFT_COM:
-         return new ClientID(System.getProperty("gnuob." + site + ".microsoft.clientId"));
-      }
-
-      return new ClientID();
-   }
-
-   public static Secret getClientSecret(String site, URI issuerURI) {
-      switch (issuerURI.toString()) {
-      case ACCOUNTS_GOOGLE_COM:
-         return new Secret(System.getProperty("gnuob." + site + ".google.clientSecret"));
-      case ACCOUNTS_FACEBOOK_COM:
-         return new Secret(System.getProperty("gnuob." + site + ".facebook.clientSecret"));
-      case ACCOUNTS_PAY_PAL_COM:
-         return new Secret(System.getProperty("gnuob." + site + ".paypal.clientSecret"));
-      case ACCOUNTS_MICROSOFT_COM:
-         return new Secret(System.getProperty("gnuob." + site + ".microsoft.clientSecret"));
-      }
-
-      return new Secret("");
-   }
-
-   public static FacebookAuthenticationRequest getFacebookAuthenticationRequest(final OIDCProviderMetadata providerConfiguration, final URI issuerURI, final ClientID clientID, final URI redirectURI, Scope scope, State state) {
-      return new FacebookAuthenticationRequest(providerConfiguration.getAuthorizationEndpointURI(), new ResponseType(ResponseType.Value.CODE), scope, clientID, redirectURI, state, new Nonce());
-   }
-
-   public static MicrosoftAuthenticationRequest getMicrosoftAuthenticationRequest(final OIDCProviderMetadata providerConfiguration, final URI issuerURI, final ClientID clientID, final URI redirectURI, Scope scope, State state) {
-      return new MicrosoftAuthenticationRequest(providerConfiguration.getAuthorizationEndpointURI(), new ResponseType(ResponseType.Value.CODE), scope, clientID, redirectURI, state, new Nonce());
-   }
-
-   public static OIDCProviderMetadata getProviderConfigurationURL(final URI issuerURI) {
-      try {
-         final URL providerConfigurationURL = issuerURI.toURL();
-         final InputStream inputStream = providerConfigurationURL.openStream();
-
-         String providerInfo = null;
-
-         try (java.util.Scanner json = new java.util.Scanner(inputStream)) {
-            providerInfo = json.useDelimiter("\\A").hasNext() ? json.next() : "";
-         }
-
-         return OIDCProviderMetadata.parse(providerInfo);
-      } catch (ParseException | IOException e) {
-         throw new GNUOpenBusinessApplicationException("Couldn't get OIDCProviderMetadata", e);
-      }
-   }
-
-   public static Scope getScope(String site, URI issuerURI) {
-      switch (issuerURI.toString()) {
-      case ACCOUNTS_GOOGLE_COM:
-         return Scope.parse(System.getProperty("gnuob." + site + ".google.scope"));
-      case ACCOUNTS_FACEBOOK_COM:
-         return Scope.parse(System.getProperty("gnuob." + site + ".facebook.scope"));
-      case ACCOUNTS_PAY_PAL_COM:
-         return Scope.parse(System.getProperty("gnuob." + site + ".paypal.scope"));
-      case ACCOUNTS_MICROSOFT_COM:
-         return Scope.parse(System.getProperty("gnuob." + site + ".microsoft.scope"));
-      }
-
-      return new Scope();
-   }
-
-   private static BearerAccessToken getTokenRequest(final OIDCProviderMetadata providerConfiguration, final ClientID clientID, final AuthorizationCode authorizationCode, final URI redirectURI, Secret clientSecret)
-         throws SerializeException, ParseException, IOException, NoSuchAlgorithmException, InvalidKeySpecException, java.text.ParseException, JOSEException {
-      final SecretTokenRequest tokenRequest = new SecretTokenRequest(providerConfiguration.getTokenEndpointURI(), clientID, clientSecret, new AuthorizationCodeGrant(authorizationCode, redirectURI));
-      final TokenResponse tokenResponse = OIDCTokenResponseParser.parse(tokenRequest.toHTTPRequest().send());
-
-      if (tokenResponse instanceof TokenErrorResponse) {
-         final ErrorObject error = ((TokenErrorResponse) tokenResponse).getErrorObject();
-         throw new GNUOpenBusinessApplicationException(error.getDescription());
-      }
-
-      return ((OIDCAccessTokenResponse) tokenResponse).getBearerAccessToken();
-   }
-
-   private static UserInfo getUserInfo(final OIDCProviderMetadata providerConfiguration, final BearerAccessToken bearerAccessToken) throws ParseException, SerializeException, IOException {
-      final UserInfoRequest userInfoRequest = new UserInfoRequest(providerConfiguration.getUserInfoEndpointURI(), bearerAccessToken);
-
-      UserInfoResponse userInfoResponse;
-
-      switch (providerConfiguration.getIssuer().getValue()) {
-
-      case ISSUER_FACEBOOK:
-         userInfoResponse = FacebookUserInfoResponse.parse(userInfoRequest.toHTTPRequest().send());
-         break;
-      case ISSUER_PAY_PAL:
-         userInfoResponse = PayPalUserInfoResponse.parse(userInfoRequest.toHTTPRequest().send());
-         break;
-      case ISSUER_MICROSOFT:
-         userInfoResponse = MicrosoftUserInfoResponse.parse(userInfoRequest.toHTTPRequest().send());
-         break;
+        return new ClientID(System.getProperty(GNUOB_PREFIX_PROPERTY + site + MICROSOFT_CLIENT_ID_PREFIX_PROPERTY));
       default: // Google.
-         userInfoResponse = UserInfoResponse.parse(userInfoRequest.toHTTPRequest().send());
-         break;
+        return new ClientID(System.getProperty(GNUOB_PREFIX_PROPERTY + site + GOOGLE_CLIENT_ID_PREFIX_PROPERTY));
+    }
+  }
+
+  public static Secret getClientSecret(final String site, final URI issuerURI) {
+    switch (issuerURI.toString()) {
+      case ACCOUNTS_FACEBOOK_COM:
+        return new Secret(System.getProperty(GNUOB_PREFIX_PROPERTY + site + FACEBOOK_CLIENT_SECRET_PREFIX_PROPERTY));
+      case ACCOUNTS_PAY_PAL_COM:
+        return new Secret(System.getProperty(GNUOB_PREFIX_PROPERTY + site + PAYPAL_CLIENT_SECRET_PREFIX_PROPERTY));
+      case ACCOUNTS_MICROSOFT_COM:
+        return new Secret(System.getProperty(GNUOB_PREFIX_PROPERTY + site + MICROSOFT_CLIENT_SECRET_PREFIX_PROPERTY));
+      default: // Google.
+        return new Secret(System.getProperty(GNUOB_PREFIX_PROPERTY + site + GOOGLE_CLIENT_SECRET_PREFIX_PROPERTY));
+    }
+  }
+
+  public static FacebookAuthenticationRequest getFacebookAuthenticationRequest(final OIDCProviderMetadata providerConfiguration, final ClientID clientID, final URI redirectURI,
+      final Scope scope, final State state) {
+    return new FacebookAuthenticationRequest(providerConfiguration.getAuthorizationEndpointURI(), new ResponseType(ResponseType.Value.CODE), scope, clientID, redirectURI, state);
+  }
+
+  public static MicrosoftAuthenticationRequest getMicrosoftAuthenticationRequest(final OIDCProviderMetadata providerConfiguration, final ClientID clientID, final URI redirectURI,
+      final Scope scope, final State state) {
+    return new MicrosoftAuthenticationRequest(providerConfiguration.getAuthorizationEndpointURI(), new ResponseType(ResponseType.Value.CODE), scope, clientID, redirectURI, state);
+  }
+
+  public static OIDCProviderMetadata getProviderConfigurationURL(final URI issuerURI) {
+    try {
+      final URL providerConfigurationURL = issuerURI.toURL();
+      final InputStream inputStream = providerConfigurationURL.openStream();
+
+      String providerInfo = null;
+
+      try (java.util.Scanner json = new java.util.Scanner(inputStream)) {
+        providerInfo = json.useDelimiter("\\A").hasNext() ? json.next() : "";
       }
 
-      if (userInfoResponse instanceof UserInfoErrorResponse) {
-         final ErrorObject error = ((UserInfoErrorResponse) userInfoResponse).getErrorObject();
-         throw new GNUOpenBusinessApplicationException(error.getDescription());
-      }
+      return OIDCProviderMetadata.parse(providerInfo);
+    } catch (ParseException | IOException e) {
+      throw new GNUOpenBusinessApplicationException("Couldn't get OIDCProviderMetadata", e);
+    }
+  }
 
-      return ((UserInfoSuccessResponse) userInfoResponse).getUserInfo();
-   }
+  public static Scope getScope(final String site, final URI issuerURI) {
+    switch (issuerURI.toString()) {
+      case ACCOUNTS_FACEBOOK_COM:
+        return Scope.parse(System.getProperty(GNUOB_PREFIX_PROPERTY + site + FACEBOOK_SCOPE_PREFIX_PROPERTY));
+      case ACCOUNTS_PAY_PAL_COM:
+        return Scope.parse(System.getProperty(GNUOB_PREFIX_PROPERTY + site + PAYPAL_SCOPE_PREFIX_PROPERTY));
+      case ACCOUNTS_MICROSOFT_COM:
+        return Scope.parse(System.getProperty(GNUOB_PREFIX_PROPERTY + site + MICROSOFT_SCOPE_PREFIX_PROPERTY));
+      default: // Google.
+        return Scope.parse(System.getProperty(GNUOB_PREFIX_PROPERTY + site + GOOGLE_SCOPE_PREFIX_PROPERTY));
+    }
+  }
 
-   public static UserInfo getUserInfo(final OIDCProviderMetadata providerConfiguration, final URI issuerURI, final ClientID clientID, final State state, final URI requestURI, final URI redirectURI, Secret clientSecret) {
-      try {
-         final AuthorizationCode authorizationCode = retrieveAuthenticationCode(requestURI, state);
-         final BearerAccessToken bearerAccessToken = getTokenRequest(providerConfiguration, clientID, authorizationCode, redirectURI, clientSecret);
-         return getUserInfo(providerConfiguration, bearerAccessToken);
-      } catch (ParseException | SerializeException | IOException | NoSuchAlgorithmException | InvalidKeySpecException | java.text.ParseException | JOSEException e) {
-         throw new GNUOpenBusinessApplicationException("Couldn't get UserInfo", e);
-      }
-   }
+  private static BearerAccessToken getTokenRequest(final OIDCProviderMetadata providerConfiguration, final ClientID clientID, final AuthorizationCode authorizationCode,
+      final URI redirectURI, final Secret clientSecret)
+          throws SerializeException, ParseException, IOException, NoSuchAlgorithmException, InvalidKeySpecException, java.text.ParseException, JOSEException {
+    final SecretTokenRequest tokenRequest =
+        new SecretTokenRequest(providerConfiguration.getTokenEndpointURI(), clientID, clientSecret, new AuthorizationCodeGrant(authorizationCode, redirectURI));
 
-   private static AuthorizationCode retrieveAuthenticationCode(final URI requestURI, final State state) throws ParseException {
-      final AuthenticationResponse authenticationResponse = AuthenticationResponseParser.parse(requestURI);
+    TokenResponse tokenResponse;
 
-      if (authenticationResponse instanceof AuthenticationErrorResponse) {
-         final ErrorObject error = ((AuthenticationErrorResponse) authenticationResponse).getErrorObject();
-         throw new GNUOpenBusinessApplicationException(error.getDescription());
-      }
+    switch (providerConfiguration.getIssuer().getValue()) {
+      case ISSUER_FACEBOOK:
+        tokenResponse = AccessTokenResponse.parse(tokenRequest.toHTTPRequest().send());
+        break;
+      case ISSUER_PAY_PAL:
+        tokenResponse = OIDCTokenResponseParser.parse(tokenRequest.toHTTPRequest().send());
+        break;
+      case ISSUER_MICROSOFT:
+        tokenResponse = AccessTokenResponse.parse(tokenRequest.toHTTPRequest().send());
+        break;
+      default: // Google.
+        tokenResponse = OIDCTokenResponseParser.parse(tokenRequest.toHTTPRequest().send());
+        break;
+    }
 
-      if (((AuthenticationSuccessResponse) authenticationResponse).getState() == null || !((AuthenticationSuccessResponse) authenticationResponse).getState().getValue().equals(state.getValue())) {
-         throw new GNUOpenBusinessApplicationException("State verification failed, recieved stated is not correct");
-      }
+    if (tokenResponse instanceof TokenErrorResponse) {
+      final ErrorObject error = ((TokenErrorResponse) tokenResponse).getErrorObject();
+      throw new GNUOpenBusinessApplicationException(error.getDescription());
+    }
 
-      return ((AuthenticationSuccessResponse) authenticationResponse).getAuthorizationCode();
-   }
+    if (tokenResponse instanceof OIDCTokenResponse) {
+      return ((OIDCTokenResponse) tokenResponse).getOIDCTokens().getBearerAccessToken();
+    }
 
-   private OAuthUtils() {
-   }
+    if (tokenResponse instanceof AccessTokenResponse) {
+      return ((AccessTokenResponse) tokenResponse).getTokens().getBearerAccessToken();
+    }
+
+    throw new GNUOpenBusinessApplicationException("Couldn't get a BearerAccessToken");
+  }
+
+  private static UserInfo getUserInfo(final OIDCProviderMetadata providerConfiguration, final BearerAccessToken bearerAccessToken)
+      throws ParseException, SerializeException, IOException {
+    final UserInfoRequest userInfoRequest = new UserInfoRequest(providerConfiguration.getUserInfoEndpointURI(), bearerAccessToken);
+
+    UserInfoResponse userInfoResponse;
+
+    switch (providerConfiguration.getIssuer().getValue()) {
+      case ISSUER_FACEBOOK:
+        userInfoResponse = FacebookUserInfoResponse.parse(userInfoRequest.toHTTPRequest().send());
+        break;
+      case ISSUER_PAY_PAL:
+        userInfoResponse = PayPalUserInfoResponse.parse(userInfoRequest.toHTTPRequest().send());
+        break;
+      case ISSUER_MICROSOFT:
+        userInfoResponse = MicrosoftUserInfoResponse.parse(userInfoRequest.toHTTPRequest().send());
+        break;
+      default: // Google.
+        userInfoResponse = UserInfoResponse.parse(userInfoRequest.toHTTPRequest().send());
+        break;
+    }
+
+    if (userInfoResponse instanceof UserInfoErrorResponse) {
+      final ErrorObject error = ((UserInfoErrorResponse) userInfoResponse).getErrorObject();
+      throw new GNUOpenBusinessApplicationException(error.getDescription());
+    }
+
+    return ((UserInfoSuccessResponse) userInfoResponse).getUserInfo();
+  }
+
+  public static UserInfo getUserInfo(final OIDCProviderMetadata providerConfiguration, final ClientID clientID, final State state, final URI requestURI, final URI redirectURI,
+      final Secret clientSecret) {
+    try {
+      final AuthorizationCode authorizationCode = retrieveAuthenticationCode(requestURI, state);
+      final BearerAccessToken bearerAccessToken = getTokenRequest(providerConfiguration, clientID, authorizationCode, redirectURI, clientSecret);
+      return getUserInfo(providerConfiguration, bearerAccessToken);
+    } catch (ParseException | SerializeException | IOException | NoSuchAlgorithmException | InvalidKeySpecException | java.text.ParseException | JOSEException e) {
+      throw new GNUOpenBusinessApplicationException("Couldn't get UserInfo", e);
+    }
+  }
+
+  private static AuthorizationCode retrieveAuthenticationCode(final URI requestURI, final State state) throws ParseException {
+    final AuthenticationResponse authenticationResponse = AuthenticationResponseParser.parse(requestURI);
+
+    if (authenticationResponse instanceof AuthenticationErrorResponse) {
+      final ErrorObject error = ((AuthenticationErrorResponse) authenticationResponse).getErrorObject();
+      throw new GNUOpenBusinessApplicationException(error.getDescription());
+    }
+
+    if (((AuthenticationSuccessResponse) authenticationResponse).getState() == null
+        || !((AuthenticationSuccessResponse) authenticationResponse).getState().getValue().equals(state.getValue())) {
+      throw new GNUOpenBusinessApplicationException("State verification failed, recieved stated is not correct");
+    }
+
+    return ((AuthenticationSuccessResponse) authenticationResponse).getAuthorizationCode();
+  }
+
+  private OAuthUtils() {
+
+  }
 }

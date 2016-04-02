@@ -1,72 +1,80 @@
 <wicket:panel xmlns:wicket="http://wicket.apache.org">
-	<wicket:container wicket:id="subCategoryProductViewFragement"></wicket:container>
-	<wicket:fragment wicket:id="subCategoryViewFragement">
-		<style type="text/css">
+   <wicket:container wicket:id="subCategoryProductViewFragment" />
+   <wicket:fragment wicket:id="subCategoryViewFragment">
+      <style type="text/css">
 .featurette {
-	cursor: pointer;
+   cursor: pointer;
 }
 </style>
-		<div class="row">
-			<div class="col-md-2">
-				<ul class="nav nav-list">
-					<li wicket:id="subCategoryMenuBootstrapListView"><h4>
-							<small><strong><span wicket:id="name"></span></strong></small>
-						</h4>
-						<ul class="nav nav-list">
-							<li wicket:id="subCategoryBootstrapListView"><a wicket:id="link" style="text-align: left;"></a></li>
-						</ul></li>
-				</ul>
-			</div>
-			<div class="col-md-10" wicket:id="subCategoryDataviewContainer">
-				<div wicket:id="subCategoryDataview" class="featurette">
-					<span wicket:id="content"></span>
-				</div>
-			</div>
-		</div>
-	</wicket:fragment>
-	<wicket:fragment wicket:id="productViewFragement">
-		<div class="row">
-			<div class="col-md-2">
-				<ul class="nav nav-list">
-					<li wicket:id="subCategoryMenuBootstrapListView"><h4>
-							<small><strong><span wicket:id="name"></span></strong></small>
-						</h4>
-						<ul class="nav nav-list">
-							<li wicket:id="subCategoryBootstrapListView"><a wicket:id="link" style="text-align: left;"></a></li>
-						</ul></li>
-				</ul>
-			</div>
-			<div class="col-md-10">
-				<div wicket:id="subCategoryDataviewContainer">
-					<div wicket:id="subCategoryDataview" class="featurette">
-						<span wicket:id="content"></span>
-					</div>
-				</div>
-				<div wicket:id="productDataview" class="featurette">
-					<div class="col-md-3">
-						<div wicket:id="productCarousel"></div>
-						<h4>
-							<span wicket:id="name"></span>
-						</h4>
-						<p>
-							<span wicket:id="rating"></span>
-						</p>
-						<h5>
-							<small><wicket:message key="stockQuantityMessage">[Stock Quantity Message]</wicket:message>:&nbsp;<span wicket:id="stock.quantity"></span></small>
-						</h5>
-						<br>
-						<h4>
-							<span wicket:id="amountWithDiscount"></span>&nbsp;<small><s><span wicket:id="amount"></span></s></small>
-						</h4>
-						<div class="col-md-3 col-md-offset-6">
-							<a wicket:id="purchase"></a>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-6 col-md-offset-3 text-center">
-					<ul wicket:id="productPagingNavigator"></ul>
-				</div>
-			</div>
-		</div>
-	</wicket:fragment>
+      <div class="row">
+         <div class="col-md-2">
+            <ul class="nav nav-list">
+               <li wicket:id="subCategoryMenuBootstrapListView"><h4>
+                     <small><strong><span wicket:id="name"></span></strong></small>
+                  </h4>
+                  <ul class="nav nav-list">
+                     <li wicket:id="subCategoryBootstrapListView"><a wicket:id="link" style="text-align: left;"></a></li>
+                  </ul></li>
+            </ul>
+         </div>
+         <div class="col-md-10" wicket:id="subCategoryDataviewContainer">
+            <div wicket:id="subCategoryDataview" class="featurette">
+               <span wicket:id="content"></span>
+            </div>
+         </div>
+      </div>
+   </wicket:fragment>
+   <wicket:fragment wicket:id="productViewFragment">
+      <div class="row">
+         <div class="col-md-2">
+            <ul class="nav nav-list">
+               <li wicket:id="subCategoryMenuBootstrapListView"><h4>
+                     <small><strong><span wicket:id="name"></span></strong></small>
+                  </h4>
+                  <ul class="nav nav-list">
+                     <li wicket:id="subCategoryBootstrapListView"><a wicket:id="link" style="text-align: left;"></a></li>
+                  </ul></li>
+            </ul>
+         </div>
+         <div class="col-md-10">
+            <div class="row">
+               <div wicket:id="subCategoryDataviewContainer">
+                  <div wicket:id="subCategoryDataview">
+                     <span wicket:id="content"></span>
+                  </div>
+               </div>
+            </div>
+            <div class="row">
+               <div wicket:id="productDataviewContainer">
+                  <div wicket:id="productDataview">
+                     <div class="col-md-3">
+                        <div wicket:id="productCarousel"></div>
+                        <h4>
+                           <span wicket:id="name"></span>
+                        </h4>
+                        <p>
+                           <span wicket:id="rating"></span>
+                        </p>
+                        <h5>
+                           <small><wicket:message key="stockQuantityMessage" />:&nbsp;<span wicket:id="stock.quantity"></span></small>
+                        </h5>
+                        <br>
+                        <h4>
+                           <span wicket:id="amountWithDiscount"></span>&nbsp;<small><span style="text-decoration: line-through;" wicket:id="amount"></span></small>
+                        </h4>
+                        <div class="col-md-3 col-md-offset-6">
+                           <a wicket:id="purchase"></a>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-md-6 col-md-offset-3 text-center">
+                  <ul wicket:id="productPagingNavigator"></ul>
+               </div>
+            </div>
+         </div>
+      </div>
+   </wicket:fragment>
 </wicket:panel>

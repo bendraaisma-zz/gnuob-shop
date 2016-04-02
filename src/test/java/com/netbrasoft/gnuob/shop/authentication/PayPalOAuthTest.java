@@ -30,51 +30,51 @@ import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
 @RunWith(Arquillian.class)
 public class PayPalOAuthTest {
 
-   @Deployment(testable = false)
-   public static Archive<?> createDeployment() {
-      return Utils.createDeployment();
-   }
+  @Deployment(testable = false)
+  public static Archive<?> createDeployment() {
+    return Utils.createDeployment();
+  }
 
-   private URI issuerURI = null;
-   private ClientID clientID = null;
-   private State state = null;
-   private URI redirectURI = null;
-   private Scope scope = null;
-   private OIDCProviderMetadata providerConfiguration = null;
+  private final URI issuerURI = null;
+  private ClientID clientID = null;
+  private State state = null;
+  private URI redirectURI = null;
+  private Scope scope = null;
+  private OIDCProviderMetadata providerConfiguration = null;
 
-   @Drone
-   private WebDriver driver;
+  @Drone
+  private WebDriver driver;
 
-   @Before
-   public void testBefore() throws URISyntaxException {
-      System.setProperty("gnuob.localhost.paypal.clientId", "Ad0Qqt8C8GTgsW6V0PrwuE49MiRUxNanQbmptFIxKH_VjovYNZrfl8MTg3mmaENIG1PlfOozj_r-1Ek4");
-      System.setProperty("gnuob.localhost.paypal.clientSecret", "ENGboXWLXQnpLbauwIL0xzLOSLCnIDOxjWpBPmzArUXBTm_V5kN5f68gnjK24ceCU9QWQ-uYGeyExgaI");
-      System.setProperty("gnuob.localhost.paypal.scope", "openid profile email");
+  @Before
+  public void testBefore() throws URISyntaxException {
+    System.setProperty("gnuob.localhost.paypal.clientId", "Ad0Qqt8C8GTgsW6V0PrwuE49MiRUxNanQbmptFIxKH_VjovYNZrfl8MTg3mmaENIG1PlfOozj_r-1Ek4");
+    System.setProperty("gnuob.localhost.paypal.clientSecret", "ENGboXWLXQnpLbauwIL0xzLOSLCnIDOxjWpBPmzArUXBTm_V5kN5f68gnjK24ceCU9QWQ-uYGeyExgaI");
+    System.setProperty("gnuob.localhost.paypal.scope", "openid profile email");
 
-      issuerURI = new URI(OAuthUtils.ACCOUNTS_PAY_PAL_COM);
-      clientID = OAuthUtils.getClientID("localhost", issuerURI);
-      state = new State(UUID.randomUUID().toString());
-      redirectURI = URI.create("http://localhost:8080/account.html");
-      scope = OAuthUtils.getScope("localhost", issuerURI);
-      providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
-   }
+    clientID = OAuthUtils.getClientID("localhost", issuerURI);
+    state = new State(UUID.randomUUID().toString());
+    redirectURI = URI.create("http://localhost:8080/account.html");
+    scope = OAuthUtils.getScope("localhost", issuerURI);
+    providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
+  }
 
-   @Test
-   public void testFaceBookOAuthLoginVersionV2_4Login() throws SerializeException {
-      final AuthenticationRequest authenticationRequest = OAuthUtils.getAuthenticationRequest(providerConfiguration, issuerURI, clientID, redirectURI, scope, state);
+  @Test
+  public void testFaceBookOAuthLoginVersionV2_4Login() throws SerializeException {
+    final AuthenticationRequest authenticationRequest = OAuthUtils.getAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state);
 
-      final WebDriverWait webDriverWait = new WebDriverWait(driver, 60);
+    final WebDriverWait webDriverWait = new WebDriverWait(driver, 60);
 
-      driver.get("http://localhost:8080/");
-      driver.get(authenticationRequest.toURI().toString());
+    driver.get("http://localhost:8080/");
+    driver.get(authenticationRequest.toURI().toString());
 
-      webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("google")));
+    webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("google")));
 
-      final UserInfo userInfo = OAuthUtils.getUserInfo(providerConfiguration, issuerURI, clientID, state, URI.create(driver.getCurrentUrl()), redirectURI, OAuthUtils.getClientSecret("localhost", issuerURI));
+    final UserInfo userInfo =
+        OAuthUtils.getUserInfo(providerConfiguration, clientID, state, URI.create(driver.getCurrentUrl()), redirectURI, OAuthUtils.getClientSecret("localhost", issuerURI));
 
-      assertEquals("Bernard Draaisma", userInfo.getName());
-      assertEquals("badraaisma@msn.com", userInfo.getEmail().getAddress());
-      assertEquals("Bernard", userInfo.getGivenName());
-      assertEquals("Draaisma", userInfo.getFamilyName());
-   }
+    assertEquals("Bernard Draaisma", userInfo.getName());
+    assertEquals("badraaisma@msn.com", userInfo.getEmail().getAddress());
+    assertEquals("Bernard", userInfo.getGivenName());
+    assertEquals("Draaisma", userInfo.getFamilyName());
+  }
 }

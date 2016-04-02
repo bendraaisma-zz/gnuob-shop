@@ -11,41 +11,38 @@ import com.netbrasoft.gnuob.security.GNUOBPrincipal;
 
 public class AppServletContainerAuthenticatedWebSession extends ServletContainerAuthenticatedWebSession {
 
-   private static final long serialVersionUID = 2503512201455796747L;
+  private static final long serialVersionUID = 2503512201455796747L;
 
-   public static AppServletContainerAuthenticatedWebSession get() {
-      return (AppServletContainerAuthenticatedWebSession) Session.get();
-   }
+  public AppServletContainerAuthenticatedWebSession(final Request request) {
+    super(request);
+  }
 
-   public static String getPassword() {
-      final GNUOBPrincipal gnuobPrincipal = (GNUOBPrincipal) getRequest().getUserPrincipal();
+  public static AppServletContainerAuthenticatedWebSession get() {
+    return (AppServletContainerAuthenticatedWebSession) Session.get();
+  }
 
-      if (gnuobPrincipal == null) {
-         return null;
-      }
+  public static String getPassword() {
+    final GNUOBPrincipal gnuobPrincipal = (GNUOBPrincipal) getRequest().getUserPrincipal();
+    if (gnuobPrincipal == null) {
+      return null;
+    }
+    return gnuobPrincipal.getPassword();
+  }
 
-      return gnuobPrincipal.getPassword();
-   }
+  private static HttpServletRequest getRequest() {
+    return (HttpServletRequest) RequestCycle.get().getRequest().getContainerRequest();
+  }
 
-   private static HttpServletRequest getRequest() {
-      return (HttpServletRequest) RequestCycle.get().getRequest().getContainerRequest();
-   }
+  public static String getSite() {
+    final GNUOBPrincipal gnuobPrincipal = (GNUOBPrincipal) getRequest().getUserPrincipal();
+    if (gnuobPrincipal == null) {
+      return null;
+    }
+    return gnuobPrincipal.getSite();
+  }
 
-   public static String getSite() {
-      final GNUOBPrincipal gnuobPrincipal = (GNUOBPrincipal) getRequest().getUserPrincipal();
+  public static String getUserName() {
+    return ServletContainerAuthenticatedWebSession.getUserName();
+  }
 
-      if (gnuobPrincipal == null) {
-         return null;
-      }
-
-      return gnuobPrincipal.getSite();
-   }
-
-   public static String getUserName() {
-      return ServletContainerAuthenticatedWebSession.getUserName();
-   }
-
-   public AppServletContainerAuthenticatedWebSession(Request request) {
-      super(request);
-   }
 }

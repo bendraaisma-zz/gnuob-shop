@@ -29,51 +29,52 @@ import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
 @RunWith(Arquillian.class)
 public class MicrosoftOAuthTest {
 
-   @Deployment(testable = false)
-   public static Archive<?> createDeployment() {
-      return Utils.createDeployment();
-   }
+  @Deployment(testable = false)
+  public static Archive<?> createDeployment() {
+    return Utils.createDeployment();
+  }
 
-   private URI issuerURI = null;
-   private ClientID clientID = null;
-   private State state = null;
-   private URI redirectURI = null;
-   private Scope scope = null;
-   private OIDCProviderMetadata providerConfiguration = null;
+  private URI issuerURI = null;
+  private ClientID clientID = null;
+  private State state = null;
+  private URI redirectURI = null;
+  private Scope scope = null;
+  private OIDCProviderMetadata providerConfiguration = null;
 
-   @Drone
-   private WebDriver driver;
+  @Drone
+  private WebDriver driver;
 
-   @Before
-   public void testBefore() throws URISyntaxException {
-      System.setProperty("gnuob.localhost.microsoft.clientId", "000000004C15C1C8");
-      System.setProperty("gnuob.localhost.microsoft.clientSecret", "GI2fXbaRJpkliLflfnY-lwm56b18wu2c");
-      System.setProperty("gnuob.localhost.microsoft.scope", "wl.emails wl.basic");
+  @Before
+  public void testBefore() throws URISyntaxException {
+    System.setProperty("gnuob.localhost.microsoft.clientId", "000000004C15C1C8");
+    System.setProperty("gnuob.localhost.microsoft.clientSecret", "GI2fXbaRJpkliLflfnY-lwm56b18wu2c");
+    System.setProperty("gnuob.localhost.microsoft.scope", "wl.emails wl.basic");
 
-      issuerURI = new URI(OAuthUtils.ACCOUNTS_MICROSOFT_COM);
-      clientID = OAuthUtils.getClientID("localhost", issuerURI);
-      state = new State(UUID.randomUUID().toString());
-      redirectURI = URI.create("http://localhost:8080/account.html");
-      scope = OAuthUtils.getScope("localhost", issuerURI);
-      providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
-   }
+    issuerURI = new URI(OAuthUtils.ACCOUNTS_MICROSOFT_COM);
+    clientID = OAuthUtils.getClientID("localhost", issuerURI);
+    state = new State(UUID.randomUUID().toString());
+    redirectURI = URI.create("http://localhost:8080/account.html");
+    scope = OAuthUtils.getScope("localhost", issuerURI);
+    providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
+  }
 
-   @Test
-   public void testFaceBookOAuthLoginVersionV2_4Login() throws SerializeException {
-      final MicrosoftAuthenticationRequest authenticationRequest = OAuthUtils.getMicrosoftAuthenticationRequest(providerConfiguration, issuerURI, clientID, redirectURI, scope, state);
+  @Test
+  public void testFaceBookOAuthLoginVersionV2_4Login() throws SerializeException {
+    final MicrosoftAuthenticationRequest authenticationRequest = OAuthUtils.getMicrosoftAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state);
 
-      final WebDriverWait webDriverWait = new WebDriverWait(driver, 60);
+    final WebDriverWait webDriverWait = new WebDriverWait(driver, 60);
 
-      driver.get("http://localhost:8080/");
-      driver.get(authenticationRequest.toURI().toString());
+    driver.get("http://localhost:8080/");
+    driver.get(authenticationRequest.toURI().toString());
 
-      webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("google")));
+    webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("google")));
 
-      final UserInfo userInfo = OAuthUtils.getUserInfo(providerConfiguration, issuerURI, clientID, state, URI.create(driver.getCurrentUrl()), redirectURI, OAuthUtils.getClientSecret("localhost", issuerURI));
+    final UserInfo userInfo =
+        OAuthUtils.getUserInfo(providerConfiguration, clientID, state, URI.create(driver.getCurrentUrl()), redirectURI, OAuthUtils.getClientSecret("localhost", issuerURI));
 
-      assertEquals("Bernard Arjan Draaisma", userInfo.getName());
-      assertEquals("badraaisma@msn.com", userInfo.getEmail().getAddress());
-      assertEquals("Bernard Arjan", userInfo.getGivenName());
-      assertEquals("Draaisma", userInfo.getFamilyName());
-   }
+    assertEquals("Bernard Arjan Draaisma", userInfo.getName());
+    assertEquals("badraaisma@msn.com", userInfo.getEmail().getAddress());
+    assertEquals("Bernard Arjan", userInfo.getGivenName());
+    assertEquals("Draaisma", userInfo.getFamilyName());
+  }
 }

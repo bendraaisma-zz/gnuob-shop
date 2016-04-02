@@ -14,55 +14,42 @@ import net.minidev.json.JSONObject;
 
 public class MicrosoftUserInfoSuccessResponse extends UserInfoSuccessResponse {
 
-   public static MicrosoftUserInfoSuccessResponse parse(final HTTPResponse httpResponse) throws ParseException {
-      httpResponse.ensureStatusCode(HTTPResponse.SC_OK);
-
-      httpResponse.ensureContentType();
-
-      final ContentType ct = httpResponse.getContentType();
-
-      MicrosoftUserInfoSuccessResponse response;
-
-      if (ct.match(CommonContentTypes.APPLICATION_JSON)) {
-
-         MicrosoftUserInfo claimsSet;
-
-         try {
-            final JSONObject jsonObject = httpResponse.getContentAsJSONObject();
-            jsonObject.put(MicrosoftUserInfo.SUB_CLAIM_NAME, JSONObjectUtils.getString(jsonObject, "id"));
-            claimsSet = new MicrosoftUserInfo(jsonObject);
-
-         } catch (final Exception e) {
-
-            throw new ParseException("Couldn't parse UserInfo claims: " + e.getMessage(), e);
-         }
-
-         response = new MicrosoftUserInfoSuccessResponse(claimsSet);
-      } else if (ct.match(CommonContentTypes.APPLICATION_JWT)) {
-
-         JWT jwt;
-
-         try {
-            jwt = httpResponse.getContentAsJWT();
-
-         } catch (final ParseException e) {
-
-            throw new ParseException("Couldn't parse UserInfo claims JWT: " + e.getMessage(), e);
-         }
-
-         response = new MicrosoftUserInfoSuccessResponse(jwt);
-      } else {
-         throw new ParseException("Unexpected Content-Type, must be " + CommonContentTypes.APPLICATION_JSON + " or " + CommonContentTypes.APPLICATION_JWT);
+  public static MicrosoftUserInfoSuccessResponse parse(final HTTPResponse httpResponse) throws ParseException {
+    httpResponse.ensureStatusCode(HTTPResponse.SC_OK);
+    httpResponse.ensureContentType();
+    final ContentType ct = httpResponse.getContentType();
+    MicrosoftUserInfoSuccessResponse response;
+    if (ct.match(CommonContentTypes.APPLICATION_JSON)) {
+      MicrosoftUserInfo claimsSet;
+      try {
+        final JSONObject jsonObject = httpResponse.getContentAsJSONObject();
+        jsonObject.put(UserInfo.SUB_CLAIM_NAME, JSONObjectUtils.getString(jsonObject, "id"));
+        claimsSet = new MicrosoftUserInfo(jsonObject);
+      } catch (final Exception e) {
+        throw new ParseException("Couldn't parse UserInfo claims: " + e.getMessage(), e);
       }
+      response = new MicrosoftUserInfoSuccessResponse(claimsSet);
+    } else {
+      if (ct.match(CommonContentTypes.APPLICATION_JWT)) {
+        JWT jwt;
+        try {
+          jwt = httpResponse.getContentAsJWT();
+        } catch (final ParseException e) {
+          throw new ParseException("Couldn't parse UserInfo claims JWT: " + e.getMessage(), e);
+        }
+        response = new MicrosoftUserInfoSuccessResponse(jwt);
+      } else {
+        throw new ParseException("Unexpected Content-Type, must be " + CommonContentTypes.APPLICATION_JSON + " or " + CommonContentTypes.APPLICATION_JWT);
+      }
+    }
+    return response;
+  }
 
-      return response;
-   }
+  public MicrosoftUserInfoSuccessResponse(final JWT jwt) {
+    super(jwt);
+  }
 
-   public MicrosoftUserInfoSuccessResponse(JWT jwt) {
-      super(jwt);
-   }
-
-   public MicrosoftUserInfoSuccessResponse(UserInfo claimsSet) {
-      super(claimsSet);
-   }
+  public MicrosoftUserInfoSuccessResponse(final UserInfo claimsSet) {
+    super(claimsSet);
+  }
 }

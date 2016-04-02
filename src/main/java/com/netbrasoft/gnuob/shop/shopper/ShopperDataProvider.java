@@ -15,44 +15,54 @@ import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import com.netbrasoft.gnuob.shop.generic.GenericTypeCacheRepository;
 
 @Monitored
-@Controller("ShopperDataProvider")
-public class ShopperDataProvider<S extends Shopper> implements GenericTypeCacheDataProvider<S> {
+@Controller(ShopperDataProvider.SHOPPER_DATA_PROVIDER_NAME)
+public class ShopperDataProvider<T extends Shopper> implements GenericTypeCacheDataProvider<T> {
 
-   private static final String SHOPPER_ID = "SHOPPER_ID";
+  private static final String GNUOB_COOKIE_SECURE_ENABLED_PROPERTY = "gnuob.cookie.secure.enabled";
 
-   @Resource(name = "ShopperCacheRepository")
-   private transient GenericTypeCacheRepository<S> shopperCacheRepository;
+  private static final String FALSE = "false";
 
-   @Override
-   public S find(S type) {
-      return shopperCacheRepository.find(setShopperId(type));
-   }
+  private static final String TRUE = "true";
 
-   @Override
-   public S merge(S type) {
-      return shopperCacheRepository.merge(setShopperId(type));
-   }
+  public static final String SHOPPER_DATA_PROVIDER_NAME = "ShopperDataProvider";
 
-   @Override
-   public void remove(S type) {
-      shopperCacheRepository.remove(setShopperId(type));
-   }
+  private static final int ONE_DAY = 3600;
 
-   private S setShopperId(S type) {
-      List<Cookie> cookies = ((WebRequest) RequestCycle.get().getRequest()).getCookies();
-      Cookie shopperId = new Cookie(SHOPPER_ID, type.getId());
+  private static final String SHOPPER_ID = "SHOPPER_ID";
 
-      if (cookies != null) {
-         for (Cookie cookie : cookies) {
-            if (SHOPPER_ID.equals(cookie.getName())) {
-               shopperId.setValue(cookie.getValue());
-               type.setId(cookie.getValue());
-               break;
-            }
-         }
+  @Resource(name = ShopperCacheRepository.SHOPPER_CACHE_REPOSITORY_NAME)
+  private GenericTypeCacheRepository<T> shopperCacheRepository;
+
+  @Override
+  public T find(final T type) {
+    return shopperCacheRepository.find(setShopperId(type));
+  }
+
+  @Override
+  public T merge(final T type) {
+    return shopperCacheRepository.merge(setShopperId(type));
+  }
+
+  @Override
+  public void remove(final T type) {
+    shopperCacheRepository.remove(setShopperId(type));
+  }
+
+  private T setShopperId(final T type) {
+    final List<Cookie> cookies = ((WebRequest) RequestCycle.get().getRequest()).getCookies();
+    final Cookie shopperId = new Cookie(SHOPPER_ID, type.getId());
+    for (final Cookie cookie : cookies) {
+      if (SHOPPER_ID.equals(cookie.getName())) {
+        shopperId.setValue(cookie.getValue());
+        if (TRUE.equalsIgnoreCase(System.getProperty(GNUOB_COOKIE_SECURE_ENABLED_PROPERTY, FALSE))) {
+          shopperId.setSecure(true);
+        }
+        shopperId.setMaxAge(ONE_DAY);
+        type.setId(cookie.getValue());
+        break;
       }
-
-      ((WebResponse) RequestCycle.get().getResponse()).addCookie(shopperId);
-      return type;
-   }
+    }
+    ((WebResponse) RequestCycle.get().getResponse()).addCookie(shopperId);
+    return type;
+  }
 }
