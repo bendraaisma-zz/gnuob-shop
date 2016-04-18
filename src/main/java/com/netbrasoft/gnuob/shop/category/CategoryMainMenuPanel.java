@@ -1,3 +1,18 @@
+
+/*
+ * Copyright 2016 Netbrasoft
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
 package com.netbrasoft.gnuob.shop.category;
 
 import static com.netbrasoft.gnuob.api.generic.NetbrasoftApiConstants.CATEGORY_DATA_PROVIDER_NAME;
@@ -31,7 +46,6 @@ public class CategoryMainMenuPanel extends Panel {
   class MainMenuTabbedPanel extends BootstrapTabbedPanel<ITab> {
 
     private static final String NAV_NAV_PILLS_NAV_JUSTIFIED_CSS_CLASS = "nav nav-pills nav-justified";
-
 
     private static final long serialVersionUID = 6838221105862530322L;
 
@@ -74,10 +88,14 @@ public class CategoryMainMenuPanel extends Panel {
     categoryDataProvider.setOrderBy(OrderBy.POSITION_A_Z);
 
     mainMenuTabbedPanel.getTabs().add(categoryHomeTab);
-    for (final Iterator<? extends Category> iterator = categoryDataProvider.iterator(0, 5); iterator.hasNext();) {
-      final Category category = iterator.next();
-      final CategoryTab categoryTab = new CategoryTab(Model.of(category.getName()), Model.of(category));
-      mainMenuTabbedPanel.getTabs().add(categoryTab);
+
+    final long count = categoryDataProvider.size();
+    if (count > 0) {
+      for (final Iterator<? extends Category> iterator = categoryDataProvider.iterator(0, count); iterator.hasNext();) {
+        final Category category = iterator.next();
+        final CategoryTab categoryTab = new CategoryTab(Model.of(category.getName()), Model.of(category));
+        mainMenuTabbedPanel.getTabs().add(categoryTab);
+      }
     }
     mainMenuTabbedPanel.getTabs().add(contactTab);
     add(mainMenuTabbedPanel.setOutputMarkupId(true));

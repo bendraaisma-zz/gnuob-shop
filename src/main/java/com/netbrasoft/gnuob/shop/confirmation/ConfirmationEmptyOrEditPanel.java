@@ -55,7 +55,7 @@ public class ConfirmationEmptyOrEditPanel extends Panel {
     public ConfirmationViewFragement() {
       super(CONFIRMATION_EMPTY_OR_EDIT_FRAGMENT_ID, CONFIRMATION_EDIT_FRAGMENT_MARKUP_ID,
           ConfirmationEmptyOrEditPanel.this, ConfirmationEmptyOrEditPanel.this.getDefaultModel());
-      confirmationEditForm = new BootstrapForm<Order>(CONFIRMATION_EDIT_FORM_COMPONENT_ID,
+      confirmationEditForm = new BootstrapForm<>(CONFIRMATION_EDIT_FORM_COMPONENT_ID,
           new CompoundPropertyModel<Order>((IModel<Order>) ConfirmationViewFragement.this.getDefaultModel()));
       orderIdLabel = new Label(ORDER_ID_ID);
       buyerEmailLabel = new Label(BUYER_EMAIL_ID);

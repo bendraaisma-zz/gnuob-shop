@@ -67,11 +67,14 @@ public class AccountMainMenuPanel extends Panel {
 
   @Override
   protected void onInitialize() {
-    final HomeTab homeTab = new HomeTab(Model.of(AccountMainMenuPanel.this.getString(NetbrasoftShopConstants.HOME_MESSAGE_KEY)));
-    final AccountTab accountTab = new AccountTab(Model.of(AccountMainMenuPanel.this.getString(NetbrasoftShopConstants.ACCOUNT_MESSAGE_KEY)));
-    final WishListTab wishListTab = new WishListTab(Model.of(AccountMainMenuPanel.this.getString(NetbrasoftShopConstants.WISH_LIST_MESSAGE_KEY)));
-    final CheckoutTab checkoutTab = new CheckoutTab(Model.of(AccountMainMenuPanel.this.getString(NetbrasoftShopConstants.CHECKOUT_MESSAGE_KEY)));
-
+    final HomeTab homeTab =
+        new HomeTab(Model.of(AccountMainMenuPanel.this.getString(NetbrasoftShopConstants.HOME_MESSAGE_KEY)));
+    final AccountTab accountTab =
+        new AccountTab(Model.of(AccountMainMenuPanel.this.getString(NetbrasoftShopConstants.ACCOUNT_MESSAGE_KEY)));
+    final WishListTab wishListTab =
+        new WishListTab(Model.of(AccountMainMenuPanel.this.getString(NetbrasoftShopConstants.WISH_LIST_MESSAGE_KEY)));
+    final CheckoutTab checkoutTab =
+        new CheckoutTab(Model.of(AccountMainMenuPanel.this.getString(NetbrasoftShopConstants.CHECKOUT_MESSAGE_KEY)));
     mainMenuTabbedPanel.getTabs().add(homeTab);
     mainMenuTabbedPanel.getTabs().add(accountTab);
     mainMenuTabbedPanel.getTabs().add(wishListTab);
