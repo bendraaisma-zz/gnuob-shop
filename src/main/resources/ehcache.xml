@@ -19,7 +19,7 @@
 			</nonstop>
 		</terracotta>
 	</defaultCache>
-	<cache name="com.netbrasoft.gnuob.shop.shopper.Shopper"
+	<cache name="br.com.netbrasoft.gnuob.shop.shopper.Shopper"
 		maxElementsInMemory="1000" maxElementsOnDisk="10000" eternal="false"
 		statistics="true" timeToIdleSeconds="3600" timeToLiveSeconds="0"
 		memoryStoreEvictionPolicy="LFU">

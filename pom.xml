@@ -4,7 +4,7 @@
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
-   <groupId>com.netbrasoft</groupId>
+   <groupId>br.com.netbrasoft</groupId>
    <artifactId>gnuob-shop</artifactId>
    <version>0.0.9-SNAPSHOT</version>
    <packaging>war</packaging>
@@ -39,7 +39,7 @@
       <version.war.plugin>2.1.1</version.war.plugin>
       <version.jboss.maven.plugin>7.4.Final</version.jboss.maven.plugin>
       <version.wicket.plugin>7.2.0</version.wicket.plugin>
-      <version.wicketstuff.plugin>7.2.0</version.wicketstuff.plugin>
+      <version.wicketstuff.plugin>7.3.0</version.wicketstuff.plugin>
       <version.wicket-source.plugin>7.0.0</version.wicket-source.plugin>
       <version.springframework.plugin>4.1.7.RELEASE</version.springframework.plugin>
       <version.surefire.plugin>2.17</version.surefire.plugin>
@@ -51,7 +51,7 @@
       <version.bootstrap-validator>0.8.1</version.bootstrap-validator>
       <version.jquery.cookie>1.4.1</version.jquery.cookie>
       <version.bootstrap-3-datepicker>1.4.0</version.bootstrap-3-datepicker>
-      <version.com.nimbusds>5.5.1</version.com.nimbusds>
+      <version.com.nimbusds>5.10.1</version.com.nimbusds>
       <version.mockito-all>1.9.5</version.mockito-all>
       <version.graphene-webdriver>2.0.3.Final</version.graphene-webdriver>
       <version.terracotta-session>1.3.10</version.terracotta-session>
@@ -203,12 +203,12 @@
       </dependency>
       <!-- GNUOB -->
       <dependency>
-         <groupId>com.netbrasoft</groupId>
+         <groupId>br.com.netbrasoft</groupId>
          <artifactId>gnuob-api</artifactId>
          <version>${version.gnuob-api}</version>
       </dependency>
       <dependency>
-         <groupId>com.netbrasoft</groupId>
+         <groupId>br.com.netbrasoft</groupId>
          <artifactId>gnuob-login</artifactId>
          <version>${version.gnuob-login}</version>
          <scope>provided</scope>

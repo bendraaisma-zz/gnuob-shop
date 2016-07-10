@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+  <link rel="stylesheet" href="../../src/main/java/br/com/netbrasoft/gnuob/shop/html/css/bootstrap.blackfalcon.css">
+  <link rel="stylesheet" href="../../src/main/webapp/css/glyphicons-social-regular.css">
+  <script integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <meta charset="utf-8">
+  <title>BlackFalcon</title>
+  <meta name="generator" content="Google Web Designer 1.6.0.0429">
+  <style type="text/css">
+    body {
+      width: 100%;
+      height: 100%;
+    }
+    body {
+      transform: perspective(1400px) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+      transform-style: preserve-3d;
+    }
+  </style>
+  <style type="text/css">
+    body {
+      padding-top: 5px;
+    }
+    #elevator_item {
+      width: 60px;
+      height: 100px;
+      position: fixed;
+      right: 15px;
+      bottom: 10px;
+      transition: opacity 0.4s ease-in-out;
+      opacity: 1;
+      z-index: 100020;
+      display: none;
+    }
+    #elevator_item.off {
+      opacity: 0;
+      visibility: hidden;
+    }
+    #elevator {
+      display: block;
+      width: 60px;
+      height: 50px;
+      border-radius: 2px;
+      box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 3px;
+      cursor: pointer;
+      margin-bottom: 10px;
+      background: url("images/icon_top.png") 50% 50% no-repeat rgba(0, 0, 0, 0.6);
+    }
+    #elevator:hover {
+      background-color: rgba(0, 0, 0, 0.701961);
+    }
+    #elevator:active {
+      background-color: rgba(0, 0, 0, 0.74902);
+    }
+    .form-group.required .control-label::before {
+      content: "* ";
+      color: red;
+    }
+    .gwd-img-q4lc {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      left: 230px;
+      top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <script type="text/javascript">
+    /*<![CDATA[*/
+
+    $(document).ready(function() {
+
+      if ($.cookie("scroll") !== null) {
+        $(document).scrollTop($.cookie("scroll"));
+      }
+
+      $(window).on("scroll", function() {
+        $.cookie("scroll", $(document).scrollTop());
+      });
+    });
+
+    $(function() {
+      $(window).scroll(function() {
+        var scrolltop = $(this).scrollTop();
+
+        if (scrolltop >= 200) {
+          $("#elevator_item").show();
+        } else {
+          $("#elevator_item").hide();
+        }
+      });
+
+      $("#elevator").click(function() {
+        $("html,body").animate({
+          scrollTop: 0
+        }, 500);
+      });
+    });
+
+    /*]]>*/
+  </script>
+  <div class="container">
+    <div class="well well-sm">
+      <div class="row">
+        <div class="col-md-offset-8">
+          <small><a href="cart.html">Meu Carrinho&nbsp;<span class="badge">0</span>
+               </a></small><small>&nbsp;|&nbsp;</small>  <small><a href="account.html">Minha Conta</a></small>  <small>&nbsp;|&nbsp;</small>
+          <small><a href="wishlist.html">Desejos</a></small>  <small>&nbsp;|&nbsp;</small>
+          <small><a href="checkout.html">Checkout</a></small>  <small>&nbsp;|&nbsp;</small>
+          <small><a href="logout.html">Entrar</a></small>
+        </div>
+        <div class="row">
+          <div class="col-md-offset-1">
+            <h1 style="color: #f40d8e; font-size: 50px;">
+                     <img src="assets/Blackfalcon.png" class="gwd-img-q4lc" style=""> <span>Black-falcon</span><small><span>.com.br</span></small>
+                  </h1>
+          </div>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <ul class="nav nav-pills nav-justified">
+            <li role="presentation" class="active"><a href="#">Inicio</a>
+            </li>
+            <li role="presentation"><a href="#">Profile</a>
+            </li>
+            <li role="presentation"><a href="#">Profile</a>
+            </li>
+            <li role="presentation"><a href="#">Profile</a>
+            </li>
+            <li role="presentation"><a href="#">Profile</a>
+            </li>
+            <li role="presentation"><a href="#">Contato</a>
+            </li>
+          </ul>
+          <div class="panel-body">
+            <img src="assets/body.png" width="1050px">
+            <img src="assets/body.png" width="1050px">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <h5>
+                  <strong>Nossa loja</strong>
+               </h5>
+          <p>
+            <small>Black-falcon é uma empresa de
+                     e-comercio moderno que foi iniciada em fevereiro de
+                     2015 no Brasil. O site <u>black-falcon.com.br</u>
+                     oferece aos consumidores uma ampla variedade de
+                     artigos no campo da moda, sendo renovada
+                     constantemente. A sede da Black-falcon está
+                     localizado em Vitória, Espírito Santo - Brasil
+                  </small>
+          </p>
+        </div>
+        <div class="col-md-4">
+          <h5>
+                  <strong>ADICIONAR AOS AMIGOS</strong>
+               </h5>
+          <div class="row">
+            <div class="col-md-4">
+              <p>
+                <small><span class="social social-facebook"></span>&nbsp;Facebook</small>
+              </p>
+            </div>
+            <div class="col-md-4">
+              <p>
+                <small><span class="social social-twitter"></span>&nbsp;Twitter</small>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <h5>
+                  <strong>Aceitamos</strong>
+               </h5>
+          <a href="https://pagseguro.uol.com.br" target="_blank">
+            <img alt="Logotipos de meios de pagamento do PagSeguro" src="https://p.simg.uol.com.br/out/pagseguro/i/banners/pagamento/todos_animado_125_150.gif" title="Este site aceita pagamentos com Visa, MasterCard, Diners, American Express, Hipercard, Aura, Elo, PLENOCard, PersonalCard, BrasilCard, FORTBRASIL, Cabal, Mais!, Avista, Grandcard, Sorocred, Bradesco, Itaú, Banco do Brasil, Banrisul, Banco HSBC, saldo em conta PagSeguro e boleto."
+            border="0" style="width: 100px; height: 112px;">
+          </a>
+          <a href="https://www.paypal.com/br" target="_blank">
+            <img alt="Compra segura PayPal" src="https://www.paypalobjects.com/webstatic/mktg/br/compra_segura_vertical.png" title="Pagamentos online no Brasil e no exterior – PayPal Brasil" border="0">
+          </a>
+          <a href="http://www.correios.com.br/" target="_blank">
+            <img alt="Correios" src="../../src/main/webapp/images/correios.png" title="Você — Correios: encomendas, rastreamento, telegramas, cep, cartas, selos, agências e mais!" border="0">
+          </a>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <h5>
+                  <strong>Contato</strong>
+               </h5>
+          <p>
+            <small><span class="social social-skype"></span>&nbsp;Skype:&nbsp;black-falcon</small>
+          </p>
+          <p></p>
+          <p>
+            <small><span class="glyphicon glyphicon-envelope"></span>&nbsp;Email:&nbsp;info@black-falcon.com.br</small>
+          </p>
+        </div>
+        <div class="col-md-4">
+          <h5>
+                  <strong>NOTÍCIAS</strong>
+               </h5>
+          <p>
+            <small>Se inscrevam na nossa pagina e fique
+                     por dentro da moda das últimas tendências e das
+                     melhores ofertas.</small>
+          </p>
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="E-mail"> <span class="input-group-btn">
+                     <button class="btn btn-default" type="button">Inscrever-se!</button>
+                  </span>
+          </div>
+        </div>
+        <div class="col-md-4"></div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <small>© 2016 Netbrasoft.com - Todos os direitos
+                  reservados.</small>
+        </div>
+        <div class="col-md-offset-8">
+          <small><a href="returns.html">Retornos</a></small>  <small>&nbsp;|&nbsp;</small>
+          <small><a href="FAQs.html">Perguntas</a></small>  <small>&nbsp;|&nbsp;</small>
+          <small><a href="privacy.html">Privacidade</a></small>  <small>&nbsp;|&nbsp;</small>
+          <small><a href="careers.html">Carreiras</a></small>  <small>&nbsp;|&nbsp;</small>
+          <small><a href="store.html">Loja</a></small>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
