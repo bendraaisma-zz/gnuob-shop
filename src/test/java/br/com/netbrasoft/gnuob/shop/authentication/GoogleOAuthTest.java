@@ -1,5 +1,6 @@
 package br.com.netbrasoft.gnuob.shop.authentication;
 
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.ACCOUNTS_GOOGLE_COM;
 import static org.junit.Assert.assertEquals;
 
 import java.net.URI;
@@ -18,8 +19,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import br.com.netbrasoft.gnuob.shop.authentication.OAuthUtils;
-import br.com.netbrasoft.gnuob.shop.utils.Utils;
 import com.nimbusds.oauth2.sdk.Scope;
 import com.nimbusds.oauth2.sdk.SerializeException;
 import com.nimbusds.oauth2.sdk.id.ClientID;
@@ -27,6 +26,8 @@ import com.nimbusds.oauth2.sdk.id.State;
 import com.nimbusds.openid.connect.sdk.AuthenticationRequest;
 import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
+
+import br.com.netbrasoft.gnuob.shop.utils.Utils;
 
 @RunWith(Arquillian.class)
 public class GoogleOAuthTest {
@@ -48,21 +49,23 @@ public class GoogleOAuthTest {
 
   @Before
   public void testBefore() throws URISyntaxException {
-    System.setProperty("gnuob.localhost.google.clientId", "1046071506023-95es29on7glbbjgh3nlb2v9m76hn78jp.apps.googleusercontent.com");
+    System.setProperty("gnuob.localhost.google.clientId",
+        "1046071506023-95es29on7glbbjgh3nlb2v9m76hn78jp.apps.googleusercontent.com");
     System.setProperty("gnuob.localhost.google.clientSecret", "Rc-NPf-QMcGpTdOKjaNpxvbt");
     System.setProperty("gnuob.localhost.google.scope", "openid profile email");
 
-    issuerURI = new URI(OAuthUtils.ACCOUNTS_GOOGLE_COM);
+    issuerURI = new URI(ACCOUNTS_GOOGLE_COM);
     clientID = OAuthUtils.getClientID("localhost", issuerURI);
     state = new State(UUID.randomUUID().toString());
     redirectURI = URI.create("http://localhost:8080/account.html");
     scope = OAuthUtils.getScope("localhost", issuerURI);
-    providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
+    providerConfiguration = OAuthUtils.getOIDCProviderMetaData(issuerURI);
   }
 
   @Test
   public void testGoogleOAuthLoginVersionLogin() throws SerializeException {
-    final AuthenticationRequest authenticationRequest = OAuthUtils.getAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state);
+    final AuthenticationRequest authenticationRequest =
+        OAuthUtils.getAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state);
 
     final WebDriverWait webDriverWait = new WebDriverWait(driver, 60);
 
@@ -71,8 +74,8 @@ public class GoogleOAuthTest {
 
     webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("facebook")));
 
-    final UserInfo userInfo =
-        OAuthUtils.getUserInfo(providerConfiguration, clientID, state, URI.create(driver.getCurrentUrl()), redirectURI, OAuthUtils.getClientSecret("localhost", issuerURI));
+    final UserInfo userInfo = OAuthUtils.getUserInfo(providerConfiguration, clientID, state,
+        URI.create(driver.getCurrentUrl()), redirectURI, OAuthUtils.getSecret("localhost", issuerURI));
 
     assertEquals("Bernard Arjan Draaisma", userInfo.getName());
     assertEquals("bendraaisma@gmail.com", userInfo.getEmail().toString());

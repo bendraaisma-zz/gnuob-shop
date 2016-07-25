@@ -2,6 +2,7 @@ package br.com.netbrasoft.gnuob.shop.checkout;
 
 import static br.com.netbrasoft.gnuob.api.generic.NetbrasoftApiConstants.ORDER_DATA_PROVIDER_NAME;
 import static br.com.netbrasoft.gnuob.api.generic.NetbrasoftApiConstants.PRODUCT_DATA_PROVIDER_NAME;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.SHOPPER_DATA_PROVIDER_NAME;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
@@ -33,16 +34,14 @@ import br.com.netbrasoft.gnuob.api.Order;
 import br.com.netbrasoft.gnuob.api.OrderBy;
 import br.com.netbrasoft.gnuob.api.OrderRecord;
 import br.com.netbrasoft.gnuob.api.Product;
+import br.com.netbrasoft.gnuob.api.generic.IGenericTypeDataProvider;
+import br.com.netbrasoft.gnuob.api.generic.converter.CurrencyConverter;
 import br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants;
 import br.com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
 import br.com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import br.com.netbrasoft.gnuob.shop.page.SpecificationPage;
 import br.com.netbrasoft.gnuob.shop.security.ShopRoles;
 import br.com.netbrasoft.gnuob.shop.shopper.Shopper;
-import br.com.netbrasoft.gnuob.shop.shopper.ShopperDataProvider;
-
-import br.com.netbrasoft.gnuob.api.generic.IGenericTypeDataProvider;
-import br.com.netbrasoft.gnuob.api.generic.converter.CurrencyConverter;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapAjaxButton;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.Buttons;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.Buttons.Type;
@@ -417,7 +416,7 @@ public class CheckoutEmptyOrEditPanel extends Panel {
 
   private static final long serialVersionUID = -4406441947235524118L;
 
-  @SpringBean(name = ShopperDataProvider.SHOPPER_DATA_PROVIDER_NAME, required = true)
+  @SpringBean(name = SHOPPER_DATA_PROVIDER_NAME, required = true)
   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
   @SpringBean(name = ORDER_DATA_PROVIDER_NAME, required = true)

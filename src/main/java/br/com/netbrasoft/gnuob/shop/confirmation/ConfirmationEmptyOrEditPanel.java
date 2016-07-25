@@ -1,6 +1,7 @@
 package br.com.netbrasoft.gnuob.shop.confirmation;
 
 import static br.com.netbrasoft.gnuob.api.generic.NetbrasoftApiConstants.ORDER_DATA_PROVIDER_NAME;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.SHOPPER_DATA_PROVIDER_NAME;
 
 import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
@@ -13,14 +14,12 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import br.com.netbrasoft.gnuob.api.Order;
 import br.com.netbrasoft.gnuob.api.OrderBy;
+import br.com.netbrasoft.gnuob.api.order.IGenericOrderCheckoutDataProvider;
+import br.com.netbrasoft.gnuob.api.order.OrderDataProvider.PaymentProviderEnum;
 import br.com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
 import br.com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import br.com.netbrasoft.gnuob.shop.security.ShopRoles;
 import br.com.netbrasoft.gnuob.shop.shopper.Shopper;
-import br.com.netbrasoft.gnuob.shop.shopper.ShopperDataProvider;
-
-import br.com.netbrasoft.gnuob.api.order.IGenericOrderCheckoutDataProvider;
-import br.com.netbrasoft.gnuob.api.order.OrderDataProvider.PaymentProviderEnum;
 import de.agilecoders.wicket.core.markup.html.bootstrap.form.BootstrapForm;
 import de.agilecoders.wicket.core.markup.html.bootstrap.form.FormBehavior;
 import de.agilecoders.wicket.core.markup.html.bootstrap.form.FormType;
@@ -86,7 +85,7 @@ public class ConfirmationEmptyOrEditPanel extends Panel {
   @SpringBean(name = ORDER_DATA_PROVIDER_NAME, required = true)
   private IGenericOrderCheckoutDataProvider<Order> orderDataProvider;
 
-  @SpringBean(name = ShopperDataProvider.SHOPPER_DATA_PROVIDER_NAME, required = true)
+  @SpringBean(name = SHOPPER_DATA_PROVIDER_NAME, required = true)
   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
   public ConfirmationEmptyOrEditPanel(final String id, final IModel<Order> model) {

@@ -1,5 +1,7 @@
 package br.com.netbrasoft.gnuob.shop.panel;
 
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.SHOPPER_DATA_PROVIDER_NAME;
+
 import org.apache.commons.lang3.text.WordUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.authorization.Action;
@@ -17,8 +19,6 @@ import br.com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import br.com.netbrasoft.gnuob.shop.page.AccountPage;
 import br.com.netbrasoft.gnuob.shop.security.ShopRoles;
 import br.com.netbrasoft.gnuob.shop.shopper.Shopper;
-import br.com.netbrasoft.gnuob.shop.shopper.ShopperDataProvider;
-
 import de.agilecoders.wicket.core.markup.html.bootstrap.block.BadgeBehavior;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapAjaxLink;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.Buttons;
@@ -33,7 +33,8 @@ public class HeaderPanel extends Panel {
 
     private static final long serialVersionUID = 5723161748885398672L;
 
-    public LoginLogoutAjaxLink(final String id, final IModel<Shopper> model, final Type type, final IModel<String> labelModel) {
+    public LoginLogoutAjaxLink(final String id, final IModel<Shopper> model, final Type type,
+        final IModel<String> labelModel) {
       super(id, model, type, labelModel);
       setSize(Buttons.Size.Small);
     }
@@ -61,7 +62,7 @@ public class HeaderPanel extends Panel {
 
   private static final String GNUOB_SITE_SUBTITLE_PROPERTY = "gnuob.shop.site.subtitle";
 
-  @SpringBean(name = ShopperDataProvider.SHOPPER_DATA_PROVIDER_NAME, required = true)
+  @SpringBean(name = SHOPPER_DATA_PROVIDER_NAME, required = true)
   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
   private final Label titleLabel;
@@ -79,10 +80,10 @@ public class HeaderPanel extends Panel {
     titleLabel = new Label(GNUOB_SITE_TITLE_PROPERTY);
     subTitleLabel = new Label(GNUOB_SITE_SUBTITLE_PROPERTY);
     cartSizeLabel = new Label(CART_SIZE_ID);
-    loginAjaxLink = new LoginLogoutAjaxLink(LOGIN_LOGOUT_ID, (IModel<Shopper>) HeaderPanel.this.getDefaultModel(), Type.Menu,
-        Model.of(HeaderPanel.this.getString(NetbrasoftShopConstants.LOGIN_MESSAGE_KEY)));
-    logoutAjaxLink = new LoginLogoutAjaxLink(LOGIN_LOGOUT_ID, (IModel<Shopper>) HeaderPanel.this.getDefaultModel(), Type.Menu,
-        Model.of(HeaderPanel.this.getString(NetbrasoftShopConstants.LOGOUT_MESSAGE_KEY)));
+    loginAjaxLink = new LoginLogoutAjaxLink(LOGIN_LOGOUT_ID, (IModel<Shopper>) HeaderPanel.this.getDefaultModel(),
+        Type.Menu, Model.of(HeaderPanel.this.getString(NetbrasoftShopConstants.LOGIN_MESSAGE_KEY)));
+    logoutAjaxLink = new LoginLogoutAjaxLink(LOGIN_LOGOUT_ID, (IModel<Shopper>) HeaderPanel.this.getDefaultModel(),
+        Type.Menu, Model.of(HeaderPanel.this.getString(NetbrasoftShopConstants.LOGOUT_MESSAGE_KEY)));
   }
 
   @Override

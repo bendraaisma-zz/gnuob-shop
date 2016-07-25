@@ -1,5 +1,7 @@
 package br.com.netbrasoft.gnuob.shop.shopper;
 
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.SHOPPER_DATA_PROVIDER_NAME;
+
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -15,7 +17,7 @@ import br.com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import br.com.netbrasoft.gnuob.shop.generic.GenericTypeCacheRepository;
 
 @Monitored
-@Controller(ShopperDataProvider.SHOPPER_DATA_PROVIDER_NAME)
+@Controller(SHOPPER_DATA_PROVIDER_NAME)
 public class ShopperDataProvider<T extends Shopper> implements GenericTypeCacheDataProvider<T> {
 
   private static final String GNUOB_COOKIE_SECURE_ENABLED_PROPERTY = "gnuob.cookie.secure.enabled";
@@ -23,8 +25,6 @@ public class ShopperDataProvider<T extends Shopper> implements GenericTypeCacheD
   private static final String FALSE = "false";
 
   private static final String TRUE = "true";
-
-  public static final String SHOPPER_DATA_PROVIDER_NAME = "ShopperDataProvider";
 
   private static final int ONE_DAY = 3600;
 

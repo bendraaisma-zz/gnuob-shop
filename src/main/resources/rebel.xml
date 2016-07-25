@@ -11,6 +11,11 @@
 			<dir name="/home/bernard/Projects/gnuob/gnuob-shop/src/main/webapp">
 			</dir>
 		</link>
+		<link target="/">
+			<dir name="/home/bernard/Projects/gnuob/gnuob-shop/target/m2e-wtp/web-resources">
+				<exclude name="/"/>
+			</dir>
+		</link>
 	</web>
 
 </application>

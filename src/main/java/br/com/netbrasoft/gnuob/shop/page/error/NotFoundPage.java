@@ -1,5 +1,7 @@
 package br.com.netbrasoft.gnuob.shop.page.error;
 
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.SHOPPER_DATA_PROVIDER_NAME;
+
 import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.wicketstuff.wicket.mount.core.annotation.MountPath;
@@ -9,7 +11,6 @@ import br.com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import br.com.netbrasoft.gnuob.shop.page.BasePage;
 import br.com.netbrasoft.gnuob.shop.panel.error.NotFoundPanel;
 import br.com.netbrasoft.gnuob.shop.shopper.Shopper;
-import br.com.netbrasoft.gnuob.shop.shopper.ShopperDataProvider;
 
 @MountPath(NotFoundPage.NOT_FOUND_HTML_VALUE)
 public class NotFoundPage extends BasePage {
@@ -26,7 +27,7 @@ public class NotFoundPage extends BasePage {
 
   private final NotFoundPanel notFoundPanel;
 
-  @SpringBean(name = ShopperDataProvider.SHOPPER_DATA_PROVIDER_NAME, required = true)
+  @SpringBean(name = SHOPPER_DATA_PROVIDER_NAME, required = true)
   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
   public NotFoundPage() {

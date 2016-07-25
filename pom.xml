@@ -38,7 +38,7 @@
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <version.war.plugin>2.1.1</version.war.plugin>
       <version.jboss.maven.plugin>7.4.Final</version.jboss.maven.plugin>
-      <version.wicket.plugin>7.2.0</version.wicket.plugin>
+      <version.wicket.plugin>7.3.0</version.wicket.plugin>
       <version.wicketstuff.plugin>7.3.0</version.wicketstuff.plugin>
       <version.wicket-source.plugin>7.0.0</version.wicket-source.plugin>
       <version.springframework.plugin>4.1.7.RELEASE</version.springframework.plugin>

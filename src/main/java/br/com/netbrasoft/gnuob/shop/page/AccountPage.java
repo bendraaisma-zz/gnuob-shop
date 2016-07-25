@@ -1,5 +1,7 @@
 package br.com.netbrasoft.gnuob.shop.page;
 
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.SHOPPER_DATA_PROVIDER_NAME;
+
 import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
 import org.apache.wicket.model.Model;
@@ -11,7 +13,6 @@ import br.com.netbrasoft.gnuob.shop.border.ContentBorder;
 import br.com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import br.com.netbrasoft.gnuob.shop.security.ShopRoles;
 import br.com.netbrasoft.gnuob.shop.shopper.Shopper;
-import br.com.netbrasoft.gnuob.shop.shopper.ShopperDataProvider;
 
 @MountPath(AccountPage.ACCOUNT_HTML_VALUE)
 @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
@@ -29,7 +30,7 @@ public class AccountPage extends BasePage {
 
   private final ContentBorder contentBorder;
 
-  @SpringBean(name = ShopperDataProvider.SHOPPER_DATA_PROVIDER_NAME, required = true)
+  @SpringBean(name = SHOPPER_DATA_PROVIDER_NAME, required = true)
   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
   public AccountPage() {

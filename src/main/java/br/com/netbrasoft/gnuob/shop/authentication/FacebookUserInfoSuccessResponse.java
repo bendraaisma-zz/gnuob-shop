@@ -1,12 +1,28 @@
+/*
+ * Copyright 2016 Netbrasoft
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
 package br.com.netbrasoft.gnuob.shop.authentication;
 
-import javax.mail.internet.ContentType;
+import static com.nimbusds.oauth2.sdk.http.CommonContentTypes.APPLICATION_JSON;
+import static com.nimbusds.oauth2.sdk.http.CommonContentTypes.APPLICATION_JWT;
+import static com.nimbusds.oauth2.sdk.http.HTTPResponse.SC_OK;
+import static com.nimbusds.oauth2.sdk.util.JSONObjectUtils.getString;
+import static com.nimbusds.openid.connect.sdk.claims.UserInfo.SUB_CLAIM_NAME;
 
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.oauth2.sdk.ParseException;
-import com.nimbusds.oauth2.sdk.http.CommonContentTypes;
 import com.nimbusds.oauth2.sdk.http.HTTPResponse;
-import com.nimbusds.oauth2.sdk.util.JSONObjectUtils;
 import com.nimbusds.openid.connect.sdk.UserInfoSuccessResponse;
 import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 
@@ -14,42 +30,44 @@ import net.minidev.json.JSONObject;
 
 public class FacebookUserInfoSuccessResponse extends UserInfoSuccessResponse {
 
-  public static FacebookUserInfoSuccessResponse parse(final HTTPResponse httpResponse) throws ParseException {
-    httpResponse.ensureStatusCode(HTTPResponse.SC_OK);
-    httpResponse.ensureContentType();
-    final ContentType ct = httpResponse.getContentType();
-    FacebookUserInfoSuccessResponse response;
-    if (ct.match(CommonContentTypes.APPLICATION_JSON)) {
-      FacebookUserInfo claimsSet;
-      try {
-        final JSONObject jsonObject = httpResponse.getContentAsJSONObject();
-        jsonObject.put(UserInfo.SUB_CLAIM_NAME, JSONObjectUtils.getString(jsonObject, "id"));
-        claimsSet = new FacebookUserInfo(jsonObject);
-      } catch (final Exception e) {
-        throw new ParseException("Couldn't parse UserInfo claims: " + e.getMessage(), e);
-      }
-      response = new FacebookUserInfoSuccessResponse(claimsSet);
-    } else {
-      if (ct.match(CommonContentTypes.APPLICATION_JWT)) {
-        JWT jwt;
-        try {
-          jwt = httpResponse.getContentAsJWT();
-        } catch (final ParseException e) {
-          throw new ParseException("Couldn't parse UserInfo claims JWT: " + e.getMessage(), e);
-        }
-        response = new FacebookUserInfoSuccessResponse(jwt);
-      } else {
-        throw new ParseException("Unexpected Content-Type, must be " + CommonContentTypes.APPLICATION_JSON + " or " + CommonContentTypes.APPLICATION_JWT);
-      }
-    }
-    return response;
-  }
-
   public FacebookUserInfoSuccessResponse(final JWT jwt) {
     super(jwt);
   }
 
   public FacebookUserInfoSuccessResponse(final UserInfo claimsSet) {
     super(claimsSet);
+  }
+
+  public static FacebookUserInfoSuccessResponse parse(final HTTPResponse httpResponse) throws ParseException {
+    httpResponse.ensureStatusCode(SC_OK);
+    httpResponse.ensureContentType();
+    if (httpResponse.getContentType().match(APPLICATION_JSON)) {
+      try {
+        return getFaceBookUserInfoSuccessResponseFromJsonObject(httpResponse.getContentAsJSONObject());
+      } catch (final Exception e) {
+        throw new ParseException("Couldn't parse UserInfo claims: " + e.getMessage(), e);
+      }
+    } else {
+      if (httpResponse.getContentType().match(APPLICATION_JWT)) {
+        try {
+          return getFaceBookUserInfoSucessResponseFromJWTObject(httpResponse.getContentAsJWT());
+        } catch (final ParseException e) {
+          throw new ParseException("Couldn't parse UserInfo claims JWT: " + e.getMessage(), e);
+        }
+      } else {
+        throw new ParseException("Unexpected Content-Type, must be " + APPLICATION_JSON + " or " + APPLICATION_JWT);
+      }
+    }
+  }
+
+  private static FacebookUserInfoSuccessResponse getFaceBookUserInfoSuccessResponseFromJsonObject(
+      final JSONObject jsonObject) throws ParseException {
+    jsonObject.put(SUB_CLAIM_NAME, getString(jsonObject, "id"));
+    return new FacebookUserInfoSuccessResponse(new FacebookUserInfo(jsonObject));
+  }
+
+  private static FacebookUserInfoSuccessResponse getFaceBookUserInfoSucessResponseFromJWTObject(final JWT jwtObject)
+      throws ParseException {
+    return new FacebookUserInfoSuccessResponse(jwtObject);
   }
 }

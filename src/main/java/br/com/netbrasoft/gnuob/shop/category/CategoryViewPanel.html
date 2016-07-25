@@ -3,22 +3,29 @@
    <wicket:fragment wicket:id="subCategoryViewFragment">
       <style type="text/css">
 .featurette {
-   cursor: pointer;
+	cursor: pointer;
 }
 </style>
       <div class="row">
          <div class="col-md-2">
             <ul class="nav nav-list">
                <li wicket:id="subCategoryMenuBootstrapListView"><h4>
-                     <small><strong><span wicket:id="name"></span></strong></small>
+                     <small><strong><span
+                           wicket:id="name"></span></strong></small>
                   </h4>
                   <ul class="nav nav-list">
-                     <li wicket:id="subCategoryBootstrapListView"><a wicket:id="link" style="text-align: left;"></a></li>
+                     <li wicket:id="subCategoryBootstrapListView"><a
+                        wicket:id="link"
+                        style="text-align: left;"></a></li>
                   </ul></li>
             </ul>
          </div>
-         <div class="col-md-10" wicket:id="subCategoryDataviewContainer">
-            <div wicket:id="subCategoryDataview" class="featurette">
+         <div
+            class="col-md-10"
+            wicket:id="subCategoryDataviewContainer">
+            <div
+               wicket:id="subCategoryDataview"
+               class="featurette">
                <span wicket:id="content"></span>
             </div>
          </div>
@@ -29,10 +36,13 @@
          <div class="col-md-2">
             <ul class="nav nav-list">
                <li wicket:id="subCategoryMenuBootstrapListView"><h4>
-                     <small><strong><span wicket:id="name"></span></strong></small>
+                     <small><strong><span
+                           wicket:id="name"></span></strong></small>
                   </h4>
                   <ul class="nav nav-list">
-                     <li wicket:id="subCategoryBootstrapListView"><a wicket:id="link" style="text-align: left;"></a></li>
+                     <li wicket:id="subCategoryBootstrapListView"><a
+                        wicket:id="link"
+                        style="text-align: left;"></a></li>
                   </ul></li>
             </ul>
          </div>
@@ -56,11 +66,15 @@
                            <span wicket:id="rating"></span>
                         </p>
                         <h5>
-                           <small><wicket:message key="stockQuantityMessage" />:&nbsp;<span wicket:id="stock.quantity"></span></small>
+                           <small><wicket:message
+                                 key="stockQuantityMessage" />:&nbsp;<span
+                              wicket:id="stock.quantity"></span></small>
                         </h5>
                         <br>
                         <h4>
-                           <span wicket:id="amountWithDiscount"></span>&nbsp;<small><span style="text-decoration: line-through;" wicket:id="amount"></span></small>
+                           <span wicket:id="amountWithDiscount"></span>&nbsp;<small><span
+                              style="text-decoration: line-through;"
+                              wicket:id="amount"></span></small>
                         </h4>
                         <div class="col-md-3 col-md-offset-6">
                            <a wicket:id="purchase"></a>

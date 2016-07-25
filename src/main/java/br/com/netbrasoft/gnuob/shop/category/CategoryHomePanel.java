@@ -1,7 +1,34 @@
+/*
+ * Copyright 2016 Netbrasoft
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
 package br.com.netbrasoft.gnuob.shop.category;
 
+import static br.com.netbrasoft.gnuob.api.OrderBy.POSITION_A_Z;
 import static br.com.netbrasoft.gnuob.api.generic.NetbrasoftApiConstants.CATEGORY_DATA_PROVIDER_NAME;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.CATEGORY_DATA_VIEW_ID;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.CLICK_EVENT;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.CONTENT_BORDER_CONTENT_BORDER_BODY_MAIN_MENU_PANEL_MAIN_MENU_TABBED_PANEL;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.CONTENT_ID;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.UNCHECKED;
+import static br.com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession.getPassword;
+import static br.com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession.getSite;
+import static br.com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession.getUserName;
+import static br.com.netbrasoft.gnuob.shop.security.ShopRoles.GUEST;
+import static java.lang.Integer.MAX_VALUE;
+import static java.util.stream.Collectors.toList;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.authorization.Action;
@@ -18,27 +45,15 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import br.com.netbrasoft.gnuob.api.Category;
-import br.com.netbrasoft.gnuob.api.Content;
-import br.com.netbrasoft.gnuob.api.OrderBy;
-import br.com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
-import br.com.netbrasoft.gnuob.shop.security.ShopRoles;
-
 import br.com.netbrasoft.gnuob.api.generic.IGenericTypeDataProvider;
 import de.agilecoders.wicket.core.markup.html.bootstrap.tabs.BootstrapTabbedPanel;
 
-@SuppressWarnings("unchecked")
-@AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
+@SuppressWarnings(UNCHECKED)
+@AuthorizeAction(action = Action.RENDER, roles = {GUEST})
 public class CategoryHomePanel extends Panel {
 
-  @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
+  @AuthorizeAction(action = Action.RENDER, roles = {GUEST})
   class CategoryDataview extends DataView<Category> {
-
-    private static final String CONTENT_ID = "content";
-
-    private static final String CONTENT_BORDER_CONTENT_BORDER_BODY_MAIN_MENU_PANEL_MAIN_MENU_TABBED_PANEL =
-        "contentBorder:contentBorder_body:mainMenuPanel:mainMenuTabbedPanel";
-
-    private static final String CLICK_EVENT = "click";
 
     private static final long serialVersionUID = 5098665993468197838L;
 
@@ -48,20 +63,39 @@ public class CategoryHomePanel extends Panel {
 
     @Override
     protected void populateItem(final Item<Category> item) {
-      final AbstractReadOnlyModel<String> readOnlyModel = new AbstractReadOnlyModel<String>() {
+      item.setModel(getCompoundPropertyModel(item));
+      item.add(getContentLabelComponent(getReadOnlyModel(item)));
+      item.add(getAjaxEventBehavior(item));
+    }
+
+    private CompoundPropertyModel<Category> getCompoundPropertyModel(final Item<Category> item) {
+      return new CompoundPropertyModel<>(item.getModelObject());
+    }
+
+    private Component getContentLabelComponent(final AbstractReadOnlyModel<String> readOnlyModel) {
+      return getContentLabel(readOnlyModel).setEscapeModelStrings(false);
+    }
+
+    private AbstractReadOnlyModel<String> getReadOnlyModel(final Item<Category> item) {
+      return new AbstractReadOnlyModel<String>() {
 
         private static final long serialVersionUID = 4751535250171413561L;
 
         @Override
         public String getObject() {
           final StringBuilder stringBuilder = new StringBuilder();
-          for (final Content content : item.getModelObject().getContents()) {
-            stringBuilder.append(new String(content.getContent()));
-          }
+          item.getModelObject().getContents().stream().forEach(e -> stringBuilder.append(e.getContent()));
           return stringBuilder.toString();
         }
       };
-      final AjaxEventBehavior ajaxEventBehavior = new AjaxEventBehavior(CLICK_EVENT) {
+    }
+
+    private Label getContentLabel(final AbstractReadOnlyModel<String> readOnlyModel) {
+      return new Label(CONTENT_ID, readOnlyModel);
+    }
+
+    private AjaxEventBehavior getAjaxEventBehavior(final Item<Category> item) {
+      return new AjaxEventBehavior(CLICK_EVENT) {
 
         private static final long serialVersionUID = 175594289469817897L;
 
@@ -69,46 +103,51 @@ public class CategoryHomePanel extends Panel {
         public void onEvent(final AjaxRequestTarget target) {
           final BootstrapTabbedPanel<ITab> bootstrapTabbedPanel = (BootstrapTabbedPanel<ITab>) getPage()
               .get(CONTENT_BORDER_CONTENT_BORDER_BODY_MAIN_MENU_PANEL_MAIN_MENU_TABBED_PANEL);
-
-          for (final ITab tab : bootstrapTabbedPanel.getTabs()) {
-            if (tab instanceof CategoryTab
-                && ((CategoryTab) tab).getModelObject().getId() == ((Category) item.getDefaultModelObject()).getId()) {
-              bootstrapTabbedPanel.setSelectedTab(bootstrapTabbedPanel.getTabs().lastIndexOf(tab));
-            }
-          }
+          bootstrapTabbedPanel.setSelectedTab(getSelectedTabIndex(item, bootstrapTabbedPanel));
           target.add(target.getPage());
         }
+
+        private int getSelectedTabIndex(final Item<Category> item,
+            final BootstrapTabbedPanel<ITab> bootstrapTabbedPanel) {
+          return bootstrapTabbedPanel.getTabs().stream()
+              .filter(e -> e.getClass().equals(CategoryTab.class)
+                  && ((CategoryTab) e).getModelObject().getId() == ((Category) item.getDefaultModelObject()).getId())
+              .collect(toList()).size();
+        }
       };
-      final Label contentLabel = new Label(CONTENT_ID, readOnlyModel);
-      item.setModel(new CompoundPropertyModel<Category>(item.getModelObject()));
-      item.add(contentLabel.setEscapeModelStrings(false));
-      item.add(ajaxEventBehavior);
     }
   }
-
-  private static final String CATEGORY_DATA_VIEW_ID = "categoryDataView";
 
   private static final long serialVersionUID = 5858682402634442147L;
 
   @SpringBean(name = CATEGORY_DATA_PROVIDER_NAME, required = true)
   private transient IGenericTypeDataProvider<Category> categoryDataProvider;
 
-  private final CategoryDataview categoryDataView;
-
   public CategoryHomePanel(final String id, final IModel<Category> model) {
     super(id, model);
-    categoryDataView = new CategoryDataview(CATEGORY_DATA_VIEW_ID, categoryDataProvider, Integer.MAX_VALUE);
   }
 
   @Override
   protected void onInitialize() {
-    categoryDataProvider.setUser(AppServletContainerAuthenticatedWebSession.getUserName());
-    categoryDataProvider.setPassword(AppServletContainerAuthenticatedWebSession.getPassword());
-    categoryDataProvider.setSite(AppServletContainerAuthenticatedWebSession.getSite());
+    initializeCategoryDataProvider();
+    add(getCategoryDataviewComponent());
+    super.onInitialize();
+  }
+
+  private void initializeCategoryDataProvider() {
+    categoryDataProvider.setUser(getUserName());
+    categoryDataProvider.setPassword(getPassword());
+    categoryDataProvider.setSite(getSite());
     categoryDataProvider.setType(new Category());
     categoryDataProvider.getType().setActive(true);
-    categoryDataProvider.setOrderBy(OrderBy.POSITION_A_Z);
-    add(categoryDataView.setOutputMarkupId(true));
-    super.onInitialize();
+    categoryDataProvider.setOrderBy(POSITION_A_Z);
+  }
+
+  private Component getCategoryDataviewComponent() {
+    return getCategoryDataview().setOutputMarkupId(true);
+  }
+
+  private CategoryDataview getCategoryDataview() {
+    return new CategoryDataview(CATEGORY_DATA_VIEW_ID, categoryDataProvider, MAX_VALUE);
   }
 }

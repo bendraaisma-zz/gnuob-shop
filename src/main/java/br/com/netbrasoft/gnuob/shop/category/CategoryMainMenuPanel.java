@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2016 Netbrasoft
  *
@@ -15,37 +14,41 @@
 
 package br.com.netbrasoft.gnuob.shop.category;
 
+import static br.com.netbrasoft.gnuob.api.OrderBy.POSITION_A_Z;
 import static br.com.netbrasoft.gnuob.api.generic.NetbrasoftApiConstants.CATEGORY_DATA_PROVIDER_NAME;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.CONTACT_MESSAGE_KEY;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.HOME_MESSAGE_KEY;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.MAIN_MENU_TABBED_PANEL_ID;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.NAV_NAV_PILLS_NAV_JUSTIFIED_CSS_CLASS;
+import static br.com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession.getPassword;
+import static br.com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession.getSite;
+import static br.com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession.getUserName;
+import static br.com.netbrasoft.gnuob.shop.security.ShopRoles.GUEST;
+import static com.google.common.collect.Lists.newArrayList;
+import static org.apache.wicket.model.Model.of;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import br.com.netbrasoft.gnuob.api.Category;
-import br.com.netbrasoft.gnuob.api.OrderBy;
-import br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants;
-import br.com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
-import br.com.netbrasoft.gnuob.shop.page.tab.ContactTab;
-import br.com.netbrasoft.gnuob.shop.security.ShopRoles;
-
 import br.com.netbrasoft.gnuob.api.generic.IGenericTypeDataProvider;
+import br.com.netbrasoft.gnuob.shop.page.tab.ContactTab;
 import de.agilecoders.wicket.core.markup.html.bootstrap.tabs.BootstrapTabbedPanel;
 
-@AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
+@AuthorizeAction(action = Action.RENDER, roles = {GUEST})
 public class CategoryMainMenuPanel extends Panel {
 
-  @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
+  @AuthorizeAction(action = Action.RENDER, roles = {GUEST})
   class MainMenuTabbedPanel extends BootstrapTabbedPanel<ITab> {
-
-    private static final String NAV_NAV_PILLS_NAV_JUSTIFIED_CSS_CLASS = "nav nav-pills nav-justified";
 
     private static final long serialVersionUID = 6838221105862530322L;
 
@@ -59,47 +62,59 @@ public class CategoryMainMenuPanel extends Panel {
     }
   }
 
-  private static final String MAIN_MENU_TABBED_PANEL_ID = "mainMenuTabbedPanel";
-
   private static final long serialVersionUID = 6083651059402628915L;
-
-  private final MainMenuTabbedPanel mainMenuTabbedPanel;
 
   @SpringBean(name = CATEGORY_DATA_PROVIDER_NAME, required = true)
   private transient IGenericTypeDataProvider<Category> categoryDataProvider;
 
   public CategoryMainMenuPanel(final String id, final IModel<Category> model) {
     super(id, model);
-    mainMenuTabbedPanel = new MainMenuTabbedPanel(MAIN_MENU_TABBED_PANEL_ID, new ArrayList<ITab>(), null);
   }
 
   @Override
   protected void onInitialize() {
-    final CategoryHomeTab categoryHomeTab =
-        new CategoryHomeTab(Model.of(CategoryMainMenuPanel.this.getString(NetbrasoftShopConstants.HOME_MESSAGE_KEY)));
-    final ContactTab contactTab =
-        new ContactTab(Model.of(CategoryMainMenuPanel.this.getString(NetbrasoftShopConstants.CONTACT_MESSAGE_KEY)));
+    initializeCategoryProvider();
+    add(getMainMenuTabbedPanelComponent());
+    super.onInitialize();
+  }
 
-    categoryDataProvider.setUser(AppServletContainerAuthenticatedWebSession.getUserName());
-    categoryDataProvider.setPassword(AppServletContainerAuthenticatedWebSession.getPassword());
-    categoryDataProvider.setSite(AppServletContainerAuthenticatedWebSession.getSite());
+  private void initializeCategoryProvider() {
+    categoryDataProvider.setUser(getUserName());
+    categoryDataProvider.setPassword(getPassword());
+    categoryDataProvider.setSite(getSite());
     categoryDataProvider.setType(new Category());
     categoryDataProvider.getType().setActive(true);
-    categoryDataProvider.setOrderBy(OrderBy.POSITION_A_Z);
+    categoryDataProvider.setOrderBy(POSITION_A_Z);
+  }
 
-    mainMenuTabbedPanel.getTabs().add(categoryHomeTab);
+  private Component getMainMenuTabbedPanelComponent() {
+    final MainMenuTabbedPanel mainMenuTabbedPanel = getMainMenuTabbedPanel();
+    mainMenuTabbedPanel.getTabs().add(getCategoryHomeTab());
+    mainMenuTabbedPanel.getTabs().addAll(getCategoryTabs());
+    mainMenuTabbedPanel.getTabs().add(getContactTab());
+    return mainMenuTabbedPanel.setOutputMarkupId(true);
+  }
 
-    final long count = categoryDataProvider.size();
-    if (count > 0) {
-      for (final Iterator<? extends Category> iterator = categoryDataProvider.iterator(0, count); iterator.hasNext();) {
+  private MainMenuTabbedPanel getMainMenuTabbedPanel() {
+    return new MainMenuTabbedPanel(MAIN_MENU_TABBED_PANEL_ID, new ArrayList<ITab>(), null);
+  }
+
+  private CategoryHomeTab getCategoryHomeTab() {
+    return new CategoryHomeTab(of(CategoryMainMenuPanel.this.getString(HOME_MESSAGE_KEY)));
+  }
+
+  private List<CategoryTab> getCategoryTabs() {
+    final List<CategoryTab> categoryTabs = newArrayList();
+    if (categoryDataProvider.size() > 0) {
+      for (final Iterator<? extends Category> iterator = categoryDataProvider.iterator(-1, -1); iterator.hasNext();) {
         final Category category = iterator.next();
-        final CategoryTab categoryTab = new CategoryTab(Model.of(category.getName()), Model.of(category));
-        mainMenuTabbedPanel.getTabs().add(categoryTab);
+        categoryTabs.add(new CategoryTab(of(category.getName()), of(category)));
       }
     }
-    mainMenuTabbedPanel.getTabs().add(contactTab);
-    add(mainMenuTabbedPanel.setOutputMarkupId(true));
+    return categoryTabs;
+  }
 
-    super.onInitialize();
+  private ContactTab getContactTab() {
+    return new ContactTab(of(CategoryMainMenuPanel.this.getString(CONTACT_MESSAGE_KEY)));
   }
 }

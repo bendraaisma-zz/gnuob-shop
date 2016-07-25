@@ -56,7 +56,7 @@ public class PayPalOAuthTest {
     state = new State(UUID.randomUUID().toString());
     redirectURI = URI.create("http://localhost:8080/account.html");
     scope = OAuthUtils.getScope("localhost", issuerURI);
-    providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
+    providerConfiguration = OAuthUtils.getOIDCProviderMetaData(issuerURI);
   }
 
   @Test
@@ -71,7 +71,7 @@ public class PayPalOAuthTest {
     webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("google")));
 
     final UserInfo userInfo =
-        OAuthUtils.getUserInfo(providerConfiguration, clientID, state, URI.create(driver.getCurrentUrl()), redirectURI, OAuthUtils.getClientSecret("localhost", issuerURI));
+        OAuthUtils.getUserInfo(providerConfiguration, clientID, state, URI.create(driver.getCurrentUrl()), redirectURI, OAuthUtils.getSecret("localhost", issuerURI));
 
     assertEquals("Bernard Draaisma", userInfo.getName());
     assertEquals("badraaisma@msn.com", userInfo.getEmail().getAddress());

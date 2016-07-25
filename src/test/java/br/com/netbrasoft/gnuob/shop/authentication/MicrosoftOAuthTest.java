@@ -1,5 +1,6 @@
 package br.com.netbrasoft.gnuob.shop.authentication;
 
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.ACCOUNTS_MICROSOFT_COM;
 import static org.junit.Assert.assertEquals;
 
 import java.net.URI;
@@ -18,15 +19,14 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import br.com.netbrasoft.gnuob.shop.authentication.MicrosoftAuthenticationRequest;
-import br.com.netbrasoft.gnuob.shop.authentication.OAuthUtils;
-import br.com.netbrasoft.gnuob.shop.utils.Utils;
 import com.nimbusds.oauth2.sdk.Scope;
 import com.nimbusds.oauth2.sdk.SerializeException;
 import com.nimbusds.oauth2.sdk.id.ClientID;
 import com.nimbusds.oauth2.sdk.id.State;
 import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
+
+import br.com.netbrasoft.gnuob.shop.utils.Utils;
 
 @RunWith(Arquillian.class)
 public class MicrosoftOAuthTest {
@@ -52,17 +52,18 @@ public class MicrosoftOAuthTest {
     System.setProperty("gnuob.localhost.microsoft.clientSecret", "GI2fXbaRJpkliLflfnY-lwm56b18wu2c");
     System.setProperty("gnuob.localhost.microsoft.scope", "wl.emails wl.basic");
 
-    issuerURI = new URI(OAuthUtils.ACCOUNTS_MICROSOFT_COM);
+    issuerURI = new URI(ACCOUNTS_MICROSOFT_COM);
     clientID = OAuthUtils.getClientID("localhost", issuerURI);
     state = new State(UUID.randomUUID().toString());
     redirectURI = URI.create("http://localhost:8080/account.html");
     scope = OAuthUtils.getScope("localhost", issuerURI);
-    providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
+    providerConfiguration = OAuthUtils.getOIDCProviderMetaData(issuerURI);
   }
 
   @Test
   public void testFaceBookOAuthLoginVersionV2_4Login() throws SerializeException {
-    final MicrosoftAuthenticationRequest authenticationRequest = OAuthUtils.getMicrosoftAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state);
+    final MicrosoftAuthenticationRequest authenticationRequest =
+        OAuthUtils.getMicrosoftAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state);
 
     final WebDriverWait webDriverWait = new WebDriverWait(driver, 60);
 
@@ -71,8 +72,8 @@ public class MicrosoftOAuthTest {
 
     webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("google")));
 
-    final UserInfo userInfo =
-        OAuthUtils.getUserInfo(providerConfiguration, clientID, state, URI.create(driver.getCurrentUrl()), redirectURI, OAuthUtils.getClientSecret("localhost", issuerURI));
+    final UserInfo userInfo = OAuthUtils.getUserInfo(providerConfiguration, clientID, state,
+        URI.create(driver.getCurrentUrl()), redirectURI, OAuthUtils.getSecret("localhost", issuerURI));
 
     assertEquals("Bernard Arjan Draaisma", userInfo.getName());
     assertEquals("badraaisma@msn.com", userInfo.getEmail().getAddress());

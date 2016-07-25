@@ -17,12 +17,12 @@ public class NetbrasoftShopThemeProvider implements ThemeProvider {
   private final ITheme defaultTheme;
 
   public NetbrasoftShopThemeProvider(final ITheme defaultTheme) {
-    this.themes = ImmutableList.<ITheme>builder().add(NetbrasoftShopTheme.values()).build();
+    themes = ImmutableList.<ITheme>builder().add(NetbrasoftShopTheme.values()).build();
     this.defaultTheme = Args.notNull(defaultTheme, "defaultTheme");
   }
 
-  public NetbrasoftShopThemeProvider(final String name) {
-    this(NetbrasoftShopTheme.valueOf(name));
+  public static final NetbrasoftShopThemeProvider getInstance() {
+    return new NetbrasoftShopThemeProvider(NetbrasoftShopTheme.Localhost);
   }
 
   @Override

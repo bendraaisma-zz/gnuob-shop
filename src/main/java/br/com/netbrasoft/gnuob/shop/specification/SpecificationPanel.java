@@ -1,5 +1,7 @@
 package br.com.netbrasoft.gnuob.shop.specification;
 
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.SHOPPER_DATA_PROVIDER_NAME;
+
 import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -12,7 +14,6 @@ import br.com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import br.com.netbrasoft.gnuob.shop.page.CartPage;
 import br.com.netbrasoft.gnuob.shop.security.ShopRoles;
 import br.com.netbrasoft.gnuob.shop.shopper.Shopper;
-import br.com.netbrasoft.gnuob.shop.shopper.ShopperDataProvider;
 
 @SuppressWarnings("unchecked")
 @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
@@ -24,12 +25,13 @@ public class SpecificationPanel extends Panel {
 
   private final SpecificationEmptyOrEditPanel specificationEmptyOrViewPanel;
 
-  @SpringBean(name = ShopperDataProvider.SHOPPER_DATA_PROVIDER_NAME, required = true)
+  @SpringBean(name = SHOPPER_DATA_PROVIDER_NAME, required = true)
   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
   public SpecificationPanel(final String id, final IModel<Order> model) {
     super(id, model);
-    specificationEmptyOrViewPanel = new SpecificationEmptyOrEditPanel(SPECIFICATION_EMPTY_OR_EDIT_PANEL_ID, (IModel<Order>) SpecificationPanel.this.getDefaultModel());
+    specificationEmptyOrViewPanel = new SpecificationEmptyOrEditPanel(SPECIFICATION_EMPTY_OR_EDIT_PANEL_ID,
+        (IModel<Order>) SpecificationPanel.this.getDefaultModel());
   }
 
   @Override
@@ -39,7 +41,8 @@ public class SpecificationPanel extends Panel {
     }
 
     specificationEmptyOrViewPanel.setDefaultModelObject(shopperDataProvider.find(new Shopper()).getCheckout());
-    add(specificationEmptyOrViewPanel.add(specificationEmptyOrViewPanel.new SpecificationEditFragment()).setOutputMarkupId(true));
+    add(specificationEmptyOrViewPanel.add(specificationEmptyOrViewPanel.new SpecificationEditFragment())
+        .setOutputMarkupId(true));
     super.onInitialize();
   }
 }

@@ -14,67 +14,105 @@
 
 package br.com.netbrasoft.gnuob.shop.account;
 
+import static br.com.netbrasoft.gnuob.api.OrderBy.PLACE_NAME_A_Z;
 import static br.com.netbrasoft.gnuob.api.generic.NetbrasoftApiConstants.CONTRACT_DATA_PROVIDER_NAME;
 import static br.com.netbrasoft.gnuob.api.generic.NetbrasoftApiConstants.POSTAL_CODE_DATA_PROVIDER_NAME;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.ACCOUNTS_FACEBOOK_COM;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.ACCOUNTS_GOOGLE_COM;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.ACCOUNTS_MICROSOFT_COM;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.ACCOUNTS_PAY_PAL_COM;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.ACCOUNT_EDIT_CONTAINER_ID;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.ACCOUNT_EDIT_FORM_COMPONENT_ID;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.ACCOUNT_EDIT_FRAGMENT_MARKUP_ID;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.ACCOUNT_LOGIN_CONTAINER_ID;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.ACCOUNT_LOGIN_FORM_COMPONENT_ID;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.ACCOUNT_LOGIN_FRAGMENT_MARKUP_ID;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.ACCOUNT_LOGIN_OR_EDIT_FRAGMENT_ID;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.BUYER_EMAIL_MESSAGE_KEY;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.CITY_NAME_MESSAGE_KEY;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.CUSTOMER_ADDRESS_CITY_NAME_ID;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.CUSTOMER_ADDRESS_COUNTRY_ID;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.CUSTOMER_ADDRESS_PHONE_ID;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.CUSTOMER_ADDRESS_POSTAL_CODE_ID;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.CUSTOMER_ADDRESS_STATE_OR_PROVINCE_ID;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.CUSTOMER_ADDRESS_STREET1_ID;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.CUSTOMER_ADDRESS_STREET2_ID;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.CUSTOMER_BUYER_EMAIL_ID;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.CUSTOMER_FIRST_NAME_ID;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.CUSTOMER_LAST_NAME_ID;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.FACEBOOK_ID;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.FEEDBACK_ID;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.FIRST_NAME_MESSAGE_KEY;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.GNUOB_PREFIX_PROPERTY;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.GOOGLE_ID;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.LAST_NAME_MESSAGE_KEY;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.LOGIN_REDIRECT_PREFIX_PROPERTY;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.MICROSOFT_ID;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.PAYPAL_ID;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.POSTAL_CODE_MESSAGE_KEY;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.REMOTE_NAME;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.SAVE_ID;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.SAVE_MESSAGE_KEY;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.SHOPPER_DATA_PROVIDER_NAME;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.STATE_OR_PROVINCE_MESSAGE_KEY;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.STREET1_MESSAGE_KEY;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.UNCHECKED;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.VALUE_S_FORMAT;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.getProperty;
+import static br.com.netbrasoft.gnuob.shop.authentication.OAuthUtils.getAuthenticationRequest;
+import static br.com.netbrasoft.gnuob.shop.authentication.OAuthUtils.getClientID;
+import static br.com.netbrasoft.gnuob.shop.authentication.OAuthUtils.getOIDCProviderMetaData;
+import static br.com.netbrasoft.gnuob.shop.authentication.OAuthUtils.getScope;
+import static br.com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession.getPassword;
+import static br.com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession.getSite;
+import static br.com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession.getUserName;
+import static br.com.netbrasoft.gnuob.shop.security.ShopRoles.GUEST;
+import static com.google.common.collect.Lists.newArrayList;
+import static de.agilecoders.wicket.core.markup.html.bootstrap.button.Buttons.Size.Small;
+import static de.agilecoders.wicket.core.markup.html.bootstrap.form.FormType.Horizontal;
+import static java.net.URI.create;
+import static java.util.stream.Collectors.toList;
+import static org.apache.wicket.model.Model.of;
+import static org.slf4j.LoggerFactory.getLogger;
 
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
+import org.apache.wicket.bean.validation.PropertyValidator;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.request.flow.RedirectToUrlException;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.util.time.Duration;
-import org.apache.wicket.validation.validator.EmailAddressValidator;
-import org.apache.wicket.validation.validator.PatternValidator;
-import org.apache.wicket.validation.validator.StringValidator;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.nimbusds.oauth2.sdk.SerializeException;
+import com.nimbusds.oauth2.sdk.id.State;
 
 import br.com.netbrasoft.gnuob.api.Contract;
-import br.com.netbrasoft.gnuob.api.Customer;
-import br.com.netbrasoft.gnuob.api.OrderBy;
 import br.com.netbrasoft.gnuob.api.PostalCode;
-import br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants;
-import br.com.netbrasoft.gnuob.shop.authentication.OAuthUtils;
-import br.com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
-import br.com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
-import br.com.netbrasoft.gnuob.shop.security.ShopRoles;
-import br.com.netbrasoft.gnuob.shop.shopper.Shopper;
-import br.com.netbrasoft.gnuob.shop.shopper.ShopperDataProvider;
-import com.nimbusds.oauth2.sdk.Scope;
-import com.nimbusds.oauth2.sdk.SerializeException;
-import com.nimbusds.oauth2.sdk.id.ClientID;
-import com.nimbusds.oauth2.sdk.id.State;
-import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
-
-import br.com.netbrasoft.gnuob.api.contract.ContractDataProvider;
-import br.com.netbrasoft.gnuob.api.customer.PostalCodeDataProvider;
 import br.com.netbrasoft.gnuob.api.generic.GNUOpenBusinessApplicationException;
 import br.com.netbrasoft.gnuob.api.generic.IGenericTypeDataProvider;
+import br.com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
+import br.com.netbrasoft.gnuob.shop.shopper.Shopper;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapAjaxButton;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.Buttons;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.LoadingBehavior;
 import de.agilecoders.wicket.core.markup.html.bootstrap.common.NotificationPanel;
 import de.agilecoders.wicket.core.markup.html.bootstrap.form.BootstrapForm;
 import de.agilecoders.wicket.core.markup.html.bootstrap.form.FormBehavior;
-import de.agilecoders.wicket.core.markup.html.bootstrap.form.FormType;
 import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.select.BootstrapSelect;
 import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.typeaheadV10.DataSet;
 import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.typeaheadV10.Typeahead;
@@ -83,407 +121,126 @@ import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.typeaheadV10.
 import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.typeaheadV10.bloodhound.BloodhoundConfig;
 import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.validation.TooltipValidation;
 
-/**
- * {@link AccountLoginOrEditPanel} manages two {@link Fragment}s for the login and registration of
- * {@link Customer}s. If a {@link Customer} is not logged in or registered, the
- * {@link AccountLoginFragment} is present where the {@link Customer} can select the prefered
- * provide OAUTH2 provider to verify his credentials. If the {@link Customer} registered
- * successfully through the selected OAUTH2 provider the {@link AccountEditFragment} is presenting a
- * registration form where the {@link Customer} can edit his/here personal data record.
- *
- * @author "Bernard Arjan Draaisma"
- * @version 1.0
- */
-@SuppressWarnings("unchecked")
-@AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
+@SuppressWarnings(UNCHECKED)
+@AuthorizeAction(action = Action.RENDER, roles = {GUEST})
 public class AccountLoginOrEditPanel extends Panel {
 
-  /**
-   * {@link AccountEditFragment} is presenting a registration form where the {@link Customer} can
-   * edit his/here personal data record.
-   *
-   * @author "Bernard Arjan Draaisma"
-   * @version 1.0
-   */
-  @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
+  @AuthorizeAction(action = Action.RENDER, roles = {GUEST})
   class AccountEditFragment extends Fragment {
 
-    /**
-     * {@link AccountEditContainer} is a web markup container grouping the actual registration form
-     * components.
-     *
-     * @author "Bernard Arjan Draaisma"
-     * @version 1.0
-     */
-    @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
+    @AuthorizeAction(action = Action.RENDER, roles = {GUEST})
     class AccountEditContainer extends WebMarkupContainer {
 
-      /**
-       * {@link BloodhoundPlaceNames} retrieves a list of matched place names based on the input
-       * that is given as the starting place name input string.
-       *
-       * @author "Bernard Arjan Draaisma"
-       * @version 1.0
-       */
       class BloodhoundPlaceNames extends Bloodhound<String> {
 
-        /**
-         * Format value for rendering choices.
-         */
-        private static final String VALUE_S_FORMAT = "{\"value\":\"%s\"}";
-
-        /**
-         * Serial version UID of class {@link BloodhoundPlaceNames}.
-         */
         private static final long serialVersionUID = 697786098676195271L;
 
-        /**
-         * Constructor that initialize the place name Bloodhound source.
-         *
-         * @param name The name of this bloodhound instance.
-         * @param config The configuration of this bloodhound instance.
-         */
         public BloodhoundPlaceNames(final String name, final BloodhoundConfig config) {
           super(name, config);
         }
 
-        /**
-         * {@inheritDoc}.
-         */
         @Override
         public Iterable<String> getChoices(final String input) {
-          final List<String> cityNames = new ArrayList<String>();
           postalCodeDataProvider.getType().setPlaceName(input + "%");
-          postalCodeDataProvider.setOrderBy(OrderBy.PLACE_NAME_A_Z);
-          for (final Iterator<? extends PostalCode> iterator = postalCodeDataProvider.iterator(0, 5); iterator
-              .hasNext();) {
-            cityNames.add(iterator.next().getPlaceName());
-          }
-          return cityNames;
+          postalCodeDataProvider.setOrderBy(PLACE_NAME_A_Z);
+          return newArrayList(postalCodeDataProvider.iterator(0, 5)).stream().map(PostalCode::getPlaceName)
+              .collect(toList());
         }
 
-        /**
-         * {@inheritDoc}.
-         */
         @Override
         public String renderChoice(final String choice) {
           return String.format(VALUE_S_FORMAT, choice);
         }
       }
 
-      /**
-       * {@link SaveAjaxButton} verifies that all mandatory fields of the registration form are
-       * filled in correctly by the {@link Customer}. When verification is OK, the {@link Customer}
-       * his {@link Contract} is created or updated and stored back inside the back-end repository
-       * plus it will be temporary stored and available inside the {@link Shopper} repository cache.
-       *
-       * @author "Bernard Arjan Draaisma"
-       * @version 1.0
-       */
-      @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
+      @AuthorizeAction(action = Action.RENDER, roles = {GUEST})
       class SaveAjaxButton extends BootstrapAjaxButton {
 
-        /**
-         * Serial version UID of class {@link SaveAjaxButton}.
-         */
         private static final long serialVersionUID = 2695394292963384938L;
 
-        /**
-         * Constructor that initialize the {@link SaveAjaxButton} which is styled by bootstrap.
-         *
-         * @param id The component id.
-         * @param model The label.
-         * @param form The assigned form.
-         * @param type The type of button.
-         */
         public SaveAjaxButton(final String id, final IModel<String> model, final Form<Contract> form,
             final Buttons.Type type) {
           super(id, model, form, type);
-          setSize(Buttons.Size.Small);
-          add(new LoadingBehavior(
-              Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopConstants.SAVE_MESSAGE_KEY))));
         }
 
-        /**
-         * {@inheritDoc}.
-         */
+        @Override
+        protected void onInitialize() {
+          setSize(Small);
+          add(getLoadingBehavior());
+          super.onInitialize();
+        }
+
         @Override
         protected void onError(final AjaxRequestTarget target, final Form<?> form) {
-          form.add(new TooltipValidation());
-          target.add(form);
-          target.add(SaveAjaxButton.this.add(new LoadingBehavior(
-              Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopConstants.SAVE_MESSAGE_KEY)))));
+          target.add(form.add(getTooltipValidation()));
+          target.add(SaveAjaxButton.this.add(getLoadingBehavior()));
         }
 
-        /**
-         * {@inheritDoc}.
-         */
+        private TooltipValidation getTooltipValidation() {
+          return new TooltipValidation();
+        }
+
+        private LoadingBehavior getLoadingBehavior() {
+          return new LoadingBehavior(of(AccountLoginOrEditPanel.this.getString(SAVE_MESSAGE_KEY)));
+        }
+
         @Override
         protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
           try {
-            final Shopper shopper = shopperDataProvider.find(new Shopper());
-            ((Contract) form.getDefaultModelObject()).getCustomer().getAddress().setCountry("BR");
-            if (((Contract) form.getDefaultModelObject()).getId() == 0) {
-              AccountEditContainer.this.setDefaultModelObject(
-                  contractDataProvider.findById(contractDataProvider.persist((Contract) form.getDefaultModelObject())));
-            } else {
-              AccountEditContainer.this.setDefaultModelObject(
-                  contractDataProvider.findById(contractDataProvider.merge((Contract) form.getDefaultModelObject())));
-            }
-            shopper.setContract((Contract) AccountEditContainer.this.getDefaultModelObject());
-            shopperDataProvider.merge(shopper);
+            LOGGER.info("Saving customer contract information");
+            final Contract contract = (Contract) form.getDefaultModelObject();
+            contract.getCustomer().getAddress().setCountry("BR"); // FIXME: make constant BR value
+                                                                  // configurable.
+            AccountEditContainer.this.setDefaultModelObject(shopperDataProvider.merge(shopperDataProvider
+                .find(Shopper.getInstance()).setContract(contractDataProvider.findById(contract.getId() == 0
+                    ? contractDataProvider.persist(contract) : contractDataProvider.merge(contract)))));
             AccountLoginOrEditPanel.this.removeAll();
-            target.add(AccountLoginOrEditPanel.this.add(AccountLoginOrEditPanel.this.new AccountEditFragment())
-                .setOutputMarkupId(true));
+            target.add(getAccountLoginOrEditComponent());
           } catch (final RuntimeException e) {
             LOGGER.warn(e.getMessage(), e);
-            feedbackPanel.warn(e.getLocalizedMessage());
-            target.add(feedbackPanel.setOutputMarkupId(true));
-            target.add(SaveAjaxButton.this.add(new LoadingBehavior(
-                Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopConstants.SAVE_MESSAGE_KEY)))));
+            warn(e.getLocalizedMessage());
+            target.add(SaveAjaxButton.this.add(getLoadingBehavior()));
           }
+        }
+
+        private Component getAccountLoginOrEditComponent() {
+          return AccountLoginOrEditPanel.this.add(getAccountEditFragment()).setOutputMarkupId(true);
+        }
+
+        private AccountEditFragment getAccountEditFragment() {
+          return AccountLoginOrEditPanel.this.new AccountEditFragment();
         }
       }
 
-      /**
-       * {@link State} is a POJO that stores a country state code and name property.
-       *
-       * @author "Bernard Arjan Draaisma"
-       * @version 1.0
-       */
       class State implements IClusterable {
 
-        /**
-         * Serial version UID of class {@link State}.
-         */
         private static final long serialVersionUID = -318735320199663283L;
-
-        /**
-         * Property to store the country state code.
-         */
         private final String code;
-
-        /**
-         * Property to store the country state name.
-         */
         private final String name;
 
-        /**
-         * Constructor that initialize the {@link State} holding a country state code and -name
-         * property.
-         *
-         * @param code The country state code.
-         * @param name The country state name.
-         */
         public State(final String code, final String name) {
           this.code = code;
           this.name = name;
         }
 
-        /**
-         * Method to get the stored country state name property.
-         *
-         * @return The country state name.
-         */
         public String getName() {
           return name;
         }
 
-        /**
-         * toString() method to get the stored country state code property.
-         *
-         * @return The country state code.
-         */
         @Override
         public String toString() {
           return code;
         }
       }
 
-      /**
-       * Wicket markup id of the account edit form.
-       */
-      private static final String ACCOUNT_EDIT_FORM_COMPONENT_ID = "accountEditForm";
-
-      /**
-       * Bloodhound remote configuration name property.
-       */
-      private static final String REMOTE_NAME = "remote";
-
-      /**
-       * RegEx pattern of the Brazilian zip code formats.
-       */
-      private static final String PATTERN_0_9_5_0_9_3 = "([0-9]){5}([-])([0-9]){3}";
-
-      /**
-       * Wicket markup id of the state or province input field.
-       */
-      private static final String CUSTOMER_ADDRESS_STATE_OR_PROVINCE_ID = "customer.address.stateOrProvince";
-
-      /**
-       * Wicket markup id of the postal code input field.
-       */
-      private static final String CUSTOMER_ADDRESS_POSTAL_CODE_ID = "customer.address.postalCode";
-
-      /**
-       * Wicket markup id of the city name input field.
-       */
-      private static final String CUSTOMER_ADDRESS_CITY_NAME_ID = "customer.address.cityName";
-
-      /**
-       * Wicket markup id of the country input field.
-       */
-      private static final String CUSTOMER_ADDRESS_COUNTRY_ID = "customer.address.country";
-
-      /**
-       * Wicket markup id of the street2 input field.
-       */
-      private static final String CUSTOMER_ADDRESS_STREET2_ID = "customer.address.street2";
-
-      /**
-       * Wicket markup id of the street1 input field.
-       */
-      private static final String CUSTOMER_ADDRESS_STREET1_ID = "customer.address.street1";
-
-      /**
-       * Wicket markup id of the phone input field.
-       */
-      private static final String CUSTOMER_ADDRESS_PHONE_ID = "customer.address.phone";
-
-      /**
-       * Wicket markup id of the last name input field.
-       */
-      private static final String CUSTOMER_LAST_NAME_ID = "customer.lastName";
-
-      /**
-       * Wicket markup id of the first name input field.
-       */
-      private static final String CUSTOMER_FIRST_NAME_ID = "customer.firstName";
-
-      /**
-       * Wicket markup id of the buyer email input field.
-       */
-      private static final String CUSTOMER_BUYER_EMAIL_ID = "customer.buyerEmail";
-
-      /**
-       * Serial version UID.
-       */
       private static final long serialVersionUID = 5886294846061574581L;
 
-      /**
-       * Wicket markup id of the save button.
-       */
-      private static final String SAVE_ID = "save";
-
-      /**
-       * Wicket markup id of the feedback panel.
-       */
-      private static final String FEEDBACK_ID = "feedback";
-
-      /**
-       * Customer registration form holding the input components.
-       */
-      private final BootstrapForm<Contract> accountEditForm;
-
-      /**
-       * Save button for submitting and validating the customer registration form.
-       */
-      private final SaveAjaxButton saveAjaxButton;
-
-      /**
-       * Feedback panel for showing feedback text to the customer in case when getting error or
-       * warning notifications.
-       */
-      private final NotificationPanel feedbackPanel;
-
-      /**
-       * Required text field holding the filled in buyer email address.
-       */
-      private final RequiredTextField<String> customerBuyerEmailTextField;
-
-      /**
-       * Required text field holding the filled in first name text.
-       */
-      private final RequiredTextField<String> customerFirstNameTextField;
-
-      /**
-       * Required text field holding the filled in last name text.
-       */
-      private final RequiredTextField<String> customerLastNameTextField;
-
-      /**
-       * Optional text field holding the filled in phone number.
-       */
-      private final TextField<String> customerAddressPhoneTextField;
-
-      /**
-       * Required text field holding the filled in street1 text.
-       */
-      private final RequiredTextField<String> customerAddressStreet1TextField;
-
-      /**
-       * Optional text field holding the filled in street2 text.
-       */
-      private final TextField<String> customerAddressStreet2TextField;
-
-      /**
-       * Text field holding the filled in country text.
-       */
-      private final TextField<String> customerAddressCountryTextField;
-
-      /**
-       * Text field holding the filled in city name text with type ahead functionality.
-       */
-      private final Typeahead<String> customerAddressCityNameTextField;
-
-      /**
-       * Required text field holding the filled in postal code text.
-       */
-      private final RequiredTextField<String> customerAddressPostalCodeTextField;
-
-      /**
-       * Select field holding the filled in states / provinces.
-       */
-      private final BootstrapSelect<State> customerAddressStateOrProvinceDropDownChoice;
-
-      /**
-       * Constructor that initialize the {@link AccountEditContainer} and initialize the actual
-       * registration form which his field and button components
-       *
-       * @param id The component id.
-       * @param model The component's {@link Contract} model.
-       */
       public AccountEditContainer(final String id, final IModel<Contract> model) {
         super(id, model);
-        final BloodhoundPlaceNames bloodhoundPlaceNames = new BloodhoundPlaceNames(REMOTE_NAME, new BloodhoundConfig());
-        final TypeaheadConfig<String> config = new TypeaheadConfig<String>(new DataSet<>(bloodhoundPlaceNames));
-        accountEditForm = new BootstrapForm<Contract>(ACCOUNT_EDIT_FORM_COMPONENT_ID,
-            new CompoundPropertyModel<Contract>((IModel<Contract>) AccountEditContainer.this.getDefaultModel()));
-        saveAjaxButton = new SaveAjaxButton(SAVE_ID,
-            Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopConstants.SAVE_MESSAGE_KEY)), accountEditForm,
-            Buttons.Type.Primary);
-        feedbackPanel = new NotificationPanel(FEEDBACK_ID);
-        customerBuyerEmailTextField = new RequiredTextField<String>(CUSTOMER_BUYER_EMAIL_ID);
-        customerFirstNameTextField = new RequiredTextField<String>(CUSTOMER_FIRST_NAME_ID);
-        customerLastNameTextField = new RequiredTextField<String>(CUSTOMER_LAST_NAME_ID);
-        customerAddressPhoneTextField = new TextField<String>(CUSTOMER_ADDRESS_PHONE_ID);
-        customerAddressStreet1TextField = new RequiredTextField<String>(CUSTOMER_ADDRESS_STREET1_ID);
-        customerAddressStreet2TextField = new TextField<String>(CUSTOMER_ADDRESS_STREET2_ID);
-        customerAddressCountryTextField = new TextField<String>(CUSTOMER_ADDRESS_COUNTRY_ID, Model.of("Brasil"));
-        customerAddressCityNameTextField = new Typeahead<String>(CUSTOMER_ADDRESS_CITY_NAME_ID, null, config);
-        customerAddressPostalCodeTextField = new RequiredTextField<String>(CUSTOMER_ADDRESS_POSTAL_CODE_ID);
-        customerAddressStateOrProvinceDropDownChoice = new BootstrapSelect<State>(CUSTOMER_ADDRESS_STATE_OR_PROVINCE_ID,
-            getStatesOfCountry(), new ChoiceRenderer<State>("name", ""));
       }
 
-      /**
-       * Method to get the a {@link List} of country {@link State}s holding the country state code
-       * and -name.
-       *
-       * @return The list of all {@link State} entities of an country.
-       */
       public List<State> getStatesOfCountry() {
-        final List<State> states = new ArrayList<>();
+        final List<State> states = newArrayList();
         // FIXME Get this information from http://www.geonames.org/ to support state formats.
         final String[][] statesOfBrazil = new String[][] {{"AC", "Acre"}, {"AL", "Alagoas"}, {"AP", "Amapá"},
             {"AM", "Amazonas"}, {"BA", "Bahia"}, {"CE", "Ceará"}, {"ES", "Espírito Santo"}, {"GO", "Goiás"},
@@ -498,532 +255,403 @@ public class AccountLoginOrEditPanel extends Panel {
         return states;
       }
 
-      /**
-       * {@inheritDoc}.
-       */
       @Override
       protected void onInitialize() {
-        customerBuyerEmailTextField.setLabel(
-            Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopConstants.BUYER_EMAIL_MESSAGE_KEY)));
-        customerBuyerEmailTextField.add(EmailAddressValidator.getInstance());
-        customerBuyerEmailTextField.add(StringValidator.maximumLength(60));
-        customerFirstNameTextField
-            .setLabel(Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopConstants.FIRST_NAME_MESSAGE_KEY)));
-        customerFirstNameTextField.add(StringValidator.maximumLength(40));
-        customerLastNameTextField
-            .setLabel(Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopConstants.LAST_NAME_MESSAGE_KEY)));
-        customerLastNameTextField.add(StringValidator.maximumLength(40));
-        customerAddressPhoneTextField.add(StringValidator.maximumLength(40));
-        customerAddressStreet1TextField
-            .setLabel(Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopConstants.STREET1_MESSAGE_KEY)));
-        customerAddressStreet1TextField.add(StringValidator.maximumLength(40));
-        customerAddressStreet2TextField.add(StringValidator.maximumLength(40));
-        customerAddressCountryTextField.setLabel(
-            Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopConstants.COUNTRY_NAME_MESSAGE_KEY)));
-        customerAddressCountryTextField.setEnabled(false);
-        customerAddressCityNameTextField.setRequired(true);
-        customerAddressCityNameTextField
-            .setLabel(Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopConstants.CITY_NAME_MESSAGE_KEY)));
-        customerAddressCityNameTextField.add(StringValidator.maximumLength(40)).setOutputMarkupId(true);
-        customerAddressPostalCodeTextField.setLabel(
-            Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopConstants.POSTAL_CODE_MESSAGE_KEY)));
-        customerAddressPostalCodeTextField.add(new PatternValidator(PATTERN_0_9_5_0_9_3));
-        customerAddressStateOrProvinceDropDownChoice.setRequired(true);
-        customerAddressStateOrProvinceDropDownChoice.setLabel(
-            Model.of(AccountLoginOrEditPanel.this.getString(NetbrasoftShopConstants.STATE_OR_PROVINCE_MESSAGE_KEY)));
-        accountEditForm.add(customerBuyerEmailTextField.setOutputMarkupId(true));
-        accountEditForm.add(customerFirstNameTextField.setOutputMarkupId(true));
-        accountEditForm.add(customerLastNameTextField.setOutputMarkupId(true));
-        accountEditForm.add(customerAddressPhoneTextField.setOutputMarkupId(true));
-        accountEditForm.add(customerAddressStreet1TextField.setOutputMarkupId(true));
-        accountEditForm.add(customerAddressStreet2TextField.setOutputMarkupId(true));
-        accountEditForm.add(customerAddressCountryTextField.setOutputMarkupId(true));
-        accountEditForm.add(customerAddressCityNameTextField.setOutputMarkupId(true));
-        accountEditForm.add(customerAddressPostalCodeTextField.setOutputMarkupId(true));
-        accountEditForm.add(customerAddressStateOrProvinceDropDownChoice.setOutputMarkupId(true));
-        accountEditForm.add(saveAjaxButton.setOutputMarkupId(true));
-        accountEditForm.add(new FormBehavior(FormType.Horizontal));
-        add(accountEditForm.setOutputMarkupId(true));
-        add(feedbackPanel.hideAfter(Duration.seconds(5)).setOutputMarkupId(true));
+        add(getAccountEditFormComponent());
+        add(getFeedbackComponent());
         super.onInitialize();
+      }
+
+      private Component getFeedbackComponent() {
+        return new NotificationPanel(FEEDBACK_ID).hideAfter(Duration.seconds(10)).setOutputMarkupId(true);
+      }
+
+      private Component getAccountEditFormComponent() {
+        final BootstrapForm<Contract> accountEditForm = getAccountEditForm();
+        return accountEditForm.add(getBuyerEmailComponent()).add(getFirstNameComponent()).add(getLastNameComponent())
+            .add(getPhoneComponent()).add(getStreet1Component()).add(getStreet2Component()).add(getCountryComponent())
+            .add(getCityComponent()).add(getPostalCodeComponent()).add(getStateOrProvinceCompontent())
+            .add(getSaveAjaxButtonComponent(accountEditForm)).add(getHorizontalFormBehavior()).setOutputMarkupId(true);
+      }
+
+
+      private BootstrapForm<Contract> getAccountEditForm() {
+        return new BootstrapForm<>(ACCOUNT_EDIT_FORM_COMPONENT_ID,
+            new CompoundPropertyModel<Contract>((IModel<Contract>) AccountEditContainer.this.getDefaultModel()));
+      }
+
+
+      private Component getBuyerEmailComponent() {
+        return new TextField<>(CUSTOMER_BUYER_EMAIL_ID)
+            .setLabel(of(AccountLoginOrEditPanel.this.getString(BUYER_EMAIL_MESSAGE_KEY)))
+            .add(new PropertyValidator<String>()).setOutputMarkupId(true);
+      }
+
+
+      private Component getFirstNameComponent() {
+        return new TextField<>(CUSTOMER_FIRST_NAME_ID)
+            .setLabel(of(AccountLoginOrEditPanel.this.getString(FIRST_NAME_MESSAGE_KEY)))
+            .add(new PropertyValidator<String>()).setOutputMarkupId(true);
+      }
+
+      private Component getLastNameComponent() {
+        return new TextField<>(CUSTOMER_LAST_NAME_ID)
+            .setLabel(of(AccountLoginOrEditPanel.this.getString(LAST_NAME_MESSAGE_KEY)))
+            .add(new PropertyValidator<String>()).setOutputMarkupId(true);
+      }
+
+      private Component getPhoneComponent() {
+        return new TextField<>(CUSTOMER_ADDRESS_PHONE_ID).add(new PropertyValidator<String>()).setOutputMarkupId(true);
+      }
+
+      private Component getStreet1Component() {
+        return new TextField<>(CUSTOMER_ADDRESS_STREET1_ID)
+            .setLabel(of(AccountLoginOrEditPanel.this.getString(STREET1_MESSAGE_KEY)))
+            .add(new PropertyValidator<String>()).setOutputMarkupId(true);
+      }
+
+      private Component getStreet2Component() {
+        return new TextField<>(CUSTOMER_ADDRESS_STREET2_ID).add(new PropertyValidator<String>())
+            .setOutputMarkupId(true);
+      }
+
+      private Component getCountryComponent() {
+        // FIXME: Remove constant field name Brasil, make configurable.
+        return new TextField<>(CUSTOMER_ADDRESS_COUNTRY_ID, of("Brasil")).setEnabled(false).setOutputMarkupId(true);
+      }
+
+      private Component getCityComponent() {
+        return new Typeahead<>(CUSTOMER_ADDRESS_CITY_NAME_ID, null,
+            new TypeaheadConfig<>(new DataSet<>(new BloodhoundPlaceNames(REMOTE_NAME, new BloodhoundConfig()))))
+                .setLabel(of(AccountLoginOrEditPanel.this.getString(CITY_NAME_MESSAGE_KEY)))
+                .add(new PropertyValidator<String>()).setOutputMarkupId(true);
+      }
+
+      private Component getPostalCodeComponent() {
+        return new TextField<>(CUSTOMER_ADDRESS_POSTAL_CODE_ID)
+            .setLabel(of(AccountLoginOrEditPanel.this.getString(POSTAL_CODE_MESSAGE_KEY)))
+            .add(new PropertyValidator<String>()).setOutputMarkupId(true);
+      }
+
+      private Component getStateOrProvinceCompontent() {
+        return new BootstrapSelect<>(CUSTOMER_ADDRESS_STATE_OR_PROVINCE_ID, getStatesOfCountry(),
+            new ChoiceRenderer<State>("name", ""))
+                .setLabel(of(AccountLoginOrEditPanel.this.getString(STATE_OR_PROVINCE_MESSAGE_KEY)))
+                .add(new PropertyValidator<String>()).setOutputMarkupId(true);
+      }
+
+      private Component getSaveAjaxButtonComponent(BootstrapForm<Contract> accountEditForm) {
+        return new SaveAjaxButton(SAVE_ID, of(AccountLoginOrEditPanel.this.getString(SAVE_MESSAGE_KEY)),
+            accountEditForm, Buttons.Type.Primary).setOutputMarkupId(true);
+      }
+
+      private FormBehavior getHorizontalFormBehavior() {
+        return new FormBehavior(Horizontal);
       }
     }
 
-    /**
-     * Wicket markup id of the account edit container.
-     */
-    private static final String ACCOUNT_EDIT_CONTAINER_ID = "accountEditContainer";
-
-    /**
-     * Wicket markup id of the account account login or edit fragment.
-     */
-    private static final String ACCOUNT_LOGIN_OR_EDIT_FRAGMENT_ID = "accountLoginOrEditFragment";
-
-    /**
-     * Wicket markup id of the account account edit fragment.
-     */
-    private static final String ACCOUNT_EDIT_FRAGMENT_MARKUP_ID = "accountEditFragment";
-
-    /**
-     * Serial version UID of class {@link AccountEditFragment}.
-     */
     private static final long serialVersionUID = 1948798072333311170L;
 
-    /**
-     * Web markup container grouping the actual registration form components.
-     */
-    private final AccountEditContainer accountEditContainer;
-
-    /**
-     * Constructor that initialize the {@link AccountEditFragment} presenting the registration form
-     * where the {@link Customer} can edit his/here personal data record.
-     */
     public AccountEditFragment() {
       super(ACCOUNT_LOGIN_OR_EDIT_FRAGMENT_ID, ACCOUNT_EDIT_FRAGMENT_MARKUP_ID, AccountLoginOrEditPanel.this,
           AccountLoginOrEditPanel.this.getDefaultModel());
-      accountEditContainer = new AccountEditContainer(ACCOUNT_EDIT_CONTAINER_ID,
-          (IModel<Contract>) AccountEditFragment.this.getDefaultModel());
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     protected void onInitialize() {
-      add(accountEditContainer.setOutputMarkupId(true));
+      add(getAccountEditContainerComponent());
+      success(
+          "Welcome, you successfuly logged into our site, please verify your account details below and make sure the required fields are filled in and saved.");
       super.onInitialize();
+    }
+
+    private Component getAccountEditContainerComponent() {
+      return getAccountEditContainer().setOutputMarkupId(true);
+    }
+
+    private AccountEditContainer getAccountEditContainer() {
+      return new AccountEditContainer(ACCOUNT_EDIT_CONTAINER_ID,
+          (IModel<Contract>) AccountEditFragment.this.getDefaultModel());
     }
   }
 
-  /**
-   * {@link AccountLoginFragment} is presenting a login form where the {@link Customer} can select
-   * the prefered OAUTH2 provider to verify his credentials to login.
-   *
-   * @author "Bernard Arjan Draaisma"
-   * @version 1.0
-   */
-  @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
+  @AuthorizeAction(action = Action.RENDER, roles = {GUEST})
   class AccountLoginFragment extends Fragment {
 
-    /**
-     * {@link AccountLoginContainer} is a web markup container grouping the actual login form
-     * components.
-     *
-     * @author "Bernard Arjan Draaisma"
-     * @version 1.0
-     */
-    @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
+    @AuthorizeAction(action = Action.RENDER, roles = {GUEST})
     class AccountLoginContainer extends WebMarkupContainer {
 
-      /**
-       * {@link FacebookAjaxLink} is a button that authenticated the {@link Customer} to the
-       * Facebook OAUTH2.0 provider.
-       *
-       * @author "Bernard Arjan Draaisma"
-       * @version 1.0
-       */
-      @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
+      @AuthorizeAction(action = Action.RENDER, roles = {GUEST})
       class FacebookAjaxLink extends AjaxLink<String> {
 
-        /**
-         * Serial version UID of class {@link FacebookAjaxLink}.
-         */
         private static final long serialVersionUID = -8317730269644885290L;
 
-        /**
-         * Constructor that initialize the {@link FacebookAjaxLink} presenting the login button
-         * where the {@link Customer} can authenticated with to the Facebook OAUTH2.0 provider.
-         *
-         * @param id The component id.
-         * @param model The component's {@link String} model.
-         */
         public FacebookAjaxLink(final String id, final IModel<String> model) {
           super(id, model);
         }
 
-        /**
-         * {@inheritDoc}.
-         */
         @Override
         public void onClick(final AjaxRequestTarget target) {
           try {
-            final Shopper shopper = shopperDataProvider.find(new Shopper());
-            final URI issuerURI = new URI(FacebookAjaxLink.this.getDefaultModelObjectAsString());
-            final ClientID clientID =
-                OAuthUtils.getClientID(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
-            final State state = new State(shopper.getId());
-            final URI redirectURI = URI.create(System.getProperty(GNUOB_PREFIX_PROPERTY
-                + AppServletContainerAuthenticatedWebSession.getSite() + LOGIN_REDIRECT_PREFIX_PROPERTY));
-            final Scope scope = OAuthUtils.getScope(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
-            final OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
-            shopper.setIssuer(FacebookAjaxLink.this.getDefaultModelObjectAsString());
-            shopperDataProvider.merge(shopper);
-            throw new RedirectToUrlException(
-                OAuthUtils.getFacebookAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state)
-                    .toURI().toString());
-          } catch (GNUOpenBusinessApplicationException | URISyntaxException | SerializeException e) {
-            LOGGER.warn("OAuth Exception with Facebook.", e);
+            LOGGER.info("Redirecting customer to Facebook authentication service.");
+            throw new RedirectToUrlException(getFacebookRedirectUrlAsString());
+          } catch (GNUOpenBusinessApplicationException | SerializeException e) {
+            LOGGER.warn("OAuth exception with Facebook authentication service.", e);
+            warn(
+                "Sorry something went wrong and we couldn't redirecting to the Facebook authentication service, please try again later or use one of the other authentication options.");
           }
+        }
+
+        private String getFacebookRedirectUrlAsString() {
+          return getAuthenticationRequest(getOIDCProviderMetaData(getFacebookIssuerURI()),
+              getClientID(getSite(), getFacebookIssuerURI()), getRedirectUrl(),
+              getScope(getSite(), getFacebookIssuerURI()), getState()).toURI().toString();
+        }
+
+        private URI getFacebookIssuerURI() {
+          return create(FacebookAjaxLink.this.getDefaultModelObjectAsString());
+        }
+
+        private State getState() {
+          return new State(shopperDataProvider.merge(shopperDataProvider.find(Shopper.getInstance())
+              .setIssuer(FacebookAjaxLink.this.getDefaultModelObjectAsString())).getId());
+        }
+
+        private URI getRedirectUrl() {
+          return create(getProperty(GNUOB_PREFIX_PROPERTY + getSite() + LOGIN_REDIRECT_PREFIX_PROPERTY));
         }
       }
 
-      /**
-       * {@link GoogleAjaxLink} is a button that authenticated the {@link Customer} to the Google
-       * OAUTH2.0 provider.
-       *
-       * @author "Bernard Arjan Draaisma"
-       * @version 1.0
-       */
-      @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
+      @AuthorizeAction(action = Action.RENDER, roles = {GUEST})
       class GoogleAjaxLink extends AjaxLink<String> {
 
-        /**
-         * Serial version UID of class {@link GoogleAjaxLink}.
-         */
         private static final long serialVersionUID = -8317730269644885290L;
 
-        /**
-         * Constructor that initialize the {@link GoogleAjaxLink} presenting the login button where
-         * the {@link Customer} can authenticated with the Facebook OAUTH2.0 provider.
-         *
-         * @param id The component id.
-         * @param model The component's {@link String} model.
-         */
         public GoogleAjaxLink(final String id, final IModel<String> model) {
           super(id, model);
         }
 
-        /**
-         * {@inheritDoc}.
-         */
         @Override
         public void onClick(final AjaxRequestTarget target) {
           try {
-            final Shopper shopper = shopperDataProvider.find(new Shopper());
-            final URI issuerURI = new URI(GoogleAjaxLink.this.getDefaultModelObjectAsString());
-            final ClientID clientID =
-                OAuthUtils.getClientID(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
-            final State state = new State(shopper.getId());
-            final URI redirectURI = URI.create(System.getProperty(GNUOB_PREFIX_PROPERTY
-                + AppServletContainerAuthenticatedWebSession.getSite() + LOGIN_REDIRECT_PREFIX_PROPERTY));
-            final Scope scope = OAuthUtils.getScope(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
-            final OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
-            shopper.setIssuer(GoogleAjaxLink.this.getDefaultModelObjectAsString());
-            shopperDataProvider.merge(shopper);
-            throw new RedirectToUrlException(
-                OAuthUtils.getAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state).toURI()
-                    .toString());
-          } catch (GNUOpenBusinessApplicationException | URISyntaxException | SerializeException e) {
-            LOGGER.warn("OAuth Exception with Google.", e);
+            LOGGER.info("Redirecting customer to Google authentication service.");
+            throw new RedirectToUrlException(getGoogleRedirectUrlAsString());
+          } catch (GNUOpenBusinessApplicationException | SerializeException e) {
+            LOGGER.warn("OAuth exception with Google authentication service.", e);
+            warn(
+                "Sorry something went wrong and we couldn't redirecting to the Google authentication service, please try again later or use one of the other authentication options.");
           }
+        }
+
+        private String getGoogleRedirectUrlAsString() {
+          return getAuthenticationRequest(getOIDCProviderMetaData(getGoogleIssuerURI()),
+              getClientID(getSite(), getGoogleIssuerURI()), getRedirectUrl(), getScope(getSite(), getGoogleIssuerURI()),
+              getState()).toURI().toString();
+        }
+
+        private URI getGoogleIssuerURI() {
+          return create(GoogleAjaxLink.this.getDefaultModelObjectAsString());
+        }
+
+        private State getState() {
+          return new State(shopperDataProvider.merge(shopperDataProvider.find(Shopper.getInstance())
+              .setIssuer(GoogleAjaxLink.this.getDefaultModelObjectAsString())).getId());
+        }
+
+        private URI getRedirectUrl() {
+          return create(getProperty(GNUOB_PREFIX_PROPERTY + getSite() + LOGIN_REDIRECT_PREFIX_PROPERTY));
         }
       }
 
-      /**
-       * {@link MicrosoftAjaxLink} is a button that authenticated the {@link Customer} to the
-       * Microsoft OAUTH2.0 provider.
-       *
-       * @author "Bernard Arjan Draaisma"
-       * @version 1.0
-       */
-      @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
+      @AuthorizeAction(action = Action.RENDER, roles = {GUEST})
       class MicrosoftAjaxLink extends AjaxLink<String> {
 
-        /**
-         * Serial version UID of class {@link MicrosoftAjaxLink}.
-         */
         private static final long serialVersionUID = -8317730269644885290L;
 
-        /**
-         * Constructor that initialize the {@link MicrosoftAjaxLink} presenting the login button
-         * where the {@link Customer} can authenticated with to the Microsoft OAUTH2.0 provider.
-         *
-         * @param id The component id.
-         * @param model The component's {@link String} model.
-         */
         public MicrosoftAjaxLink(final String id, final IModel<String> model) {
           super(id, model);
         }
 
-        /**
-         * {@inheritDoc}.
-         */
         @Override
         public void onClick(final AjaxRequestTarget target) {
           try {
-            final Shopper shopper = shopperDataProvider.find(new Shopper());
-            final URI issuerURI = new URI(MicrosoftAjaxLink.this.getDefaultModelObjectAsString());
-            final ClientID clientID =
-                OAuthUtils.getClientID(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
-            final State state = new State(shopper.getId());
-            final URI redirectURI = URI.create(System.getProperty(GNUOB_PREFIX_PROPERTY
-                + AppServletContainerAuthenticatedWebSession.getSite() + LOGIN_REDIRECT_PREFIX_PROPERTY));
-            final Scope scope = OAuthUtils.getScope(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
-            final OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
-            shopper.setIssuer(MicrosoftAjaxLink.this.getDefaultModelObjectAsString());
-            shopperDataProvider.merge(shopper);
-            throw new RedirectToUrlException(
-                OAuthUtils.getMicrosoftAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state)
-                    .toURI().toString());
-          } catch (GNUOpenBusinessApplicationException | URISyntaxException | SerializeException e) {
-            LOGGER.warn("OAuth Exception with Microsoft.", e);
+            LOGGER.info("Redirecting customer to Microsoft authentication service.");
+            throw new RedirectToUrlException(getMicrosoftRedirectUrlAsString());
+          } catch (GNUOpenBusinessApplicationException | SerializeException e) {
+            LOGGER.warn("OAuth exception with Microsoft authentication service.", e);
+            warn(
+                "Sorry something went wrong and we couldn't redirecting to the Microsoft authentication service, please try again later or use one of the other authentication options.");
           }
+        }
+
+        private String getMicrosoftRedirectUrlAsString() {
+          return getAuthenticationRequest(getOIDCProviderMetaData(getMicrosoftIssuerURI()),
+              getClientID(getSite(), getMicrosoftIssuerURI()), getRedirectUrl(),
+              getScope(getSite(), getMicrosoftIssuerURI()), getState()).toURI().toString();
+        }
+
+        private URI getMicrosoftIssuerURI() {
+          return create(MicrosoftAjaxLink.this.getDefaultModelObjectAsString());
+        }
+
+        private State getState() {
+          return new State(shopperDataProvider.merge(shopperDataProvider.find(Shopper.getInstance())
+              .setIssuer(MicrosoftAjaxLink.this.getDefaultModelObjectAsString())).getId());
+        }
+
+        private URI getRedirectUrl() {
+          return create(getProperty(GNUOB_PREFIX_PROPERTY + getSite() + LOGIN_REDIRECT_PREFIX_PROPERTY));
         }
       }
 
-      /**
-       * {@link PayPalAjaxLink} is a button that authenticated the {@link Customer} to the PayPal
-       * OAUTH2.0 provider.
-       *
-       * @author "Bernard Arjan Draaisma"
-       * @version 1.0
-       */
-      @AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
+      @AuthorizeAction(action = Action.RENDER, roles = {GUEST})
       class PayPalAjaxLink extends AjaxLink<String> {
 
-        /**
-         * Serial version UID of class {@link PayPalAjaxLink}.
-         */
         private static final long serialVersionUID = -8317730269644885290L;
 
-        /**
-         * Constructor that initialize the {@link PayPalAjaxLink} presenting the login button where
-         * the {@link Customer} can authenticated with to the PayPal OAUTH2.0 provider.
-         *
-         * @param id The component id.
-         * @param model The component's {@link String} model.
-         */
         public PayPalAjaxLink(final String id, final IModel<String> model) {
           super(id, model);
         }
 
-        /**
-         * {@inheritDoc}.
-         */
         @Override
         public void onClick(final AjaxRequestTarget target) {
           try {
-            final Shopper shopper = shopperDataProvider.find(new Shopper());
-            final URI issuerURI = new URI(PayPalAjaxLink.this.getDefaultModelObjectAsString());
-            final ClientID clientID =
-                OAuthUtils.getClientID(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
-            final State state = new State(shopper.getId());
-            final URI redirectURI = URI.create(System.getProperty(GNUOB_PREFIX_PROPERTY
-                + AppServletContainerAuthenticatedWebSession.getSite() + LOGIN_REDIRECT_PREFIX_PROPERTY));
-            final Scope scope = OAuthUtils.getScope(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI);
-            final OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
-            shopper.setIssuer(PayPalAjaxLink.this.getDefaultModelObjectAsString());
-            shopperDataProvider.merge(shopper);
-            throw new RedirectToUrlException(
-                OAuthUtils.getAuthenticationRequest(providerConfiguration, clientID, redirectURI, scope, state).toURI()
-                    .toString());
-          } catch (GNUOpenBusinessApplicationException | URISyntaxException | SerializeException e) {
-            LOGGER.warn("OAuth Exception with PayPal.", e);
+            LOGGER.info("Redirecting customer to PayPal authentication service.");
+            throw new RedirectToUrlException(getPayPalRedirectUrlAsString());
+          } catch (GNUOpenBusinessApplicationException | SerializeException e) {
+            LOGGER.warn("OAuth exception with PayPal authentication service.", e);
+            warn(
+                "Sorry something went wrong and we couldn't redirecting to the PayPal authentication service, please try again later or use one of the other authentication options.");
           }
+        }
+
+        private String getPayPalRedirectUrlAsString() {
+          return getAuthenticationRequest(getOIDCProviderMetaData(getPayPalIssuerURI()),
+              getClientID(getSite(), getPayPalIssuerURI()), getRedirectUrl(), getScope(getSite(), getPayPalIssuerURI()),
+              getState()).toURI().toString();
+        }
+
+        private URI getPayPalIssuerURI() {
+          return create(PayPalAjaxLink.this.getDefaultModelObjectAsString());
+        }
+
+        private State getState() {
+          return new State(shopperDataProvider.merge(shopperDataProvider.find(Shopper.getInstance())
+              .setIssuer(PayPalAjaxLink.this.getDefaultModelObjectAsString())).getId());
+        }
+
+        private URI getRedirectUrl() {
+          return create(getProperty(GNUOB_PREFIX_PROPERTY + getSite() + LOGIN_REDIRECT_PREFIX_PROPERTY));
         }
       }
 
-      /**
-       * Prefix of a system property to get the login redirect value.
-       */
-      private static final String LOGIN_REDIRECT_PREFIX_PROPERTY = ".login.redirect";
-
-      /**
-       * Prefix of a system property to get the login redirect value.
-       */
-      private static final String GNUOB_PREFIX_PROPERTY = "gnuob.";
-
-      /**
-       * Wicket markup id of the Microsoft login button.
-       */
-      private static final String MICROSOFT_ID = "microsoft";
-
-      /**
-       * Wicket markup id of the PayPal login button.
-       */
-      private static final String PAYPAL_ID = "paypal";
-
-      /**
-       * Wicket markup id of the Google login button.
-       */
-      private static final String GOOGLE_ID = "google";
-
-      /**
-       * Wicket markup id of the Facebook login button.
-       */
-      private static final String FACEBOOK_ID = "facebook";
-
-      /**
-       * Serial version UID of class {@link AccountLoginContainer}.
-       */
       private static final long serialVersionUID = -4245331044839125796L;
 
-      /**
-       * Wicket markup id of the account login form.
-       */
-      private static final String ACCOUNT_LOGIN_FORM_COMPONENT_ID = "accountLoginForm";
-
-      /**
-       * Customer login form holding the login button components.
-       */
-      private final BootstrapForm<Contract> accountLoginForm;
-
-      /**
-       * Facebook login button for submitting and redirecting the customer to the Facebook OAUTH2.0
-       * provider.
-       */
-      private final FacebookAjaxLink facebookAjaxLink;
-
-      /**
-       * Google login button for submitting and redirecting the customer to the Google OAUTH2.0
-       * provider.
-       */
-      private final GoogleAjaxLink googleAjaxLink;
-
-      /**
-       * PayPal login button for submitting and redirecting the customer to the PayPal OAUTH2.0
-       * provider.
-       */
-      private final PayPalAjaxLink payPalAjaxLink;
-
-      /**
-       * Microsoft login button for submitting and redirecting the customer to the Microsoft
-       * OAUTH2.0 provider.
-       */
-      private final MicrosoftAjaxLink microsoftAjaxLink;
-
-      /**
-       * Constructor that initialize the {@link AccountLoginContainer} and initialize the actual
-       * login form with his login button components
-       *
-       * @param id The component id.
-       * @param model The component's {@link Contract} model.
-       */
       public AccountLoginContainer(final String id, final IModel<Contract> model) {
         super(id, model);
-        accountLoginForm = new BootstrapForm<Contract>(ACCOUNT_LOGIN_FORM_COMPONENT_ID,
-            new CompoundPropertyModel<Contract>((IModel<Contract>) AccountLoginContainer.this.getDefaultModel()));
-        facebookAjaxLink = new FacebookAjaxLink(FACEBOOK_ID, Model.of(OAuthUtils.ACCOUNTS_FACEBOOK_COM));
-        googleAjaxLink = new GoogleAjaxLink(GOOGLE_ID, Model.of(OAuthUtils.ACCOUNTS_GOOGLE_COM));
-        payPalAjaxLink = new PayPalAjaxLink(PAYPAL_ID, Model.of(OAuthUtils.ACCOUNTS_PAY_PAL_COM));
-        microsoftAjaxLink = new MicrosoftAjaxLink(MICROSOFT_ID, Model.of(OAuthUtils.ACCOUNTS_MICROSOFT_COM));
       }
 
-      /**
-       * {@inheritDoc}.
-       */
       @Override
       protected void onInitialize() {
-        accountLoginForm.add(googleAjaxLink.setOutputMarkupId(true));
-        accountLoginForm.add(facebookAjaxLink.setOutputMarkupId(true));
-        accountLoginForm.add(payPalAjaxLink.setOutputMarkupId(true));
-        accountLoginForm.add(microsoftAjaxLink.setOutputMarkupId(true));
-        accountLoginForm.add(new FormBehavior(FormType.Horizontal));
-        add(accountLoginForm.setOutputMarkupId(true));
+        add(getAccountLoginFormComponent());
         super.onInitialize();
+      }
+
+      private Component getAccountLoginFormComponent() {
+        return getAccountLoginForm().add(getGoogleAjaxLinkComponent()).add(getFaceBookAjaxLinkComponent())
+            .add(getPayPalAjaxLinkComponent()).add(getMicrosoftAjaxLinkComponent()).add(getHorizontalFormBehavior())
+            .setOutputMarkupId(true);
+      }
+
+      private BootstrapForm<Contract> getAccountLoginForm() {
+        return new BootstrapForm<>(ACCOUNT_LOGIN_FORM_COMPONENT_ID,
+            new CompoundPropertyModel<Contract>((IModel<Contract>) AccountLoginContainer.this.getDefaultModel()));
+      }
+
+      private Component getGoogleAjaxLinkComponent() {
+        return new GoogleAjaxLink(GOOGLE_ID, of(ACCOUNTS_GOOGLE_COM)).setOutputMarkupId(true);
+      }
+
+      private Component getFaceBookAjaxLinkComponent() {
+        return new FacebookAjaxLink(FACEBOOK_ID, of(ACCOUNTS_FACEBOOK_COM)).setOutputMarkupId(true);
+      }
+
+      private Component getPayPalAjaxLinkComponent() {
+        return new PayPalAjaxLink(PAYPAL_ID, of(ACCOUNTS_PAY_PAL_COM)).setOutputMarkupId(true);
+      }
+
+      private Component getMicrosoftAjaxLinkComponent() {
+        return new MicrosoftAjaxLink(MICROSOFT_ID, of(ACCOUNTS_MICROSOFT_COM)).setOutputMarkupId(true);
+      }
+
+      private FormBehavior getHorizontalFormBehavior() {
+        return new FormBehavior(Horizontal);
       }
     }
 
-    /**
-     * Wicket markup id of the account login or edit fragment.
-     */
-    private static final String ACCOUNT_LOGIN_OR_EDIT_FRAGMENT_ID = "accountLoginOrEditFragment";
-
-    /**
-     * Wicket markup id of the account login fragment.
-     */
-    private static final String ACCOUNT_LOGIN_FRAGMENT_MARKUP_ID = "accountLoginFragment";
-
-    /**
-     * Wicket markup id of the account login container.
-     */
-    private static final String ACCOUNT_LOGIN_CONTAINER_ID = "accountLoginContainer";
-
-    /**
-     * Serial version UID of class {@link AccountLoginFragment}.
-     */
     private static final long serialVersionUID = 1193409377850497931L;
 
-    /**
-     * Web markup container grouping the actual login form components.
-     */
-    private final AccountLoginContainer accountLoginContainer;
-
-    /**
-     * Constructor that initialize the {@link AccountLoginFragment} presenting the login form where
-     * the {@link Customer} can authenticated with a prefered OAUTH2.0 provider.
-     */
     public AccountLoginFragment() {
       super(ACCOUNT_LOGIN_OR_EDIT_FRAGMENT_ID, ACCOUNT_LOGIN_FRAGMENT_MARKUP_ID, AccountLoginOrEditPanel.this,
           AccountLoginOrEditPanel.this.getDefaultModel());
-      accountLoginContainer = new AccountLoginContainer(ACCOUNT_LOGIN_CONTAINER_ID,
-          (IModel<Contract>) AccountLoginFragment.this.getDefaultModel());
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     protected void onInitialize() {
-      add(accountLoginContainer.setOutputMarkupId(true));
+      initializeAccountLoginContainerComponent();
       super.onInitialize();
+    }
+
+    private void initializeAccountLoginContainerComponent() {
+      add(getAccountLoginContainerComponent());
+    }
+
+    private Component getAccountLoginContainerComponent() {
+      return new AccountLoginContainer(ACCOUNT_LOGIN_CONTAINER_ID,
+          (IModel<Contract>) AccountLoginFragment.this.getDefaultModel()).setOutputMarkupId(true);
     }
   }
 
-  /**
-   * The logger used by {@link AccountLoginOrEditPanel}
-   */
-  private static final Logger LOGGER = LoggerFactory.getLogger(AccountLoginOrEditPanel.class);
-
-  /**
-   * Serial version UID of class {@link AccountLoginOrEditPanel}.
-   */
   private static final long serialVersionUID = -4406441947235524118L;
+  private static final Logger LOGGER = getLogger(AccountLoginOrEditPanel.class);
 
-  /**
-   * Reference to the {@link Shopper} data provider instance of {@link ShopperDataProvider}.
-   */
-  @SpringBean(name = ShopperDataProvider.SHOPPER_DATA_PROVIDER_NAME, required = true)
+  @SpringBean(name = SHOPPER_DATA_PROVIDER_NAME, required = true)
   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
-  /**
-   * Reference to the {@link Contract} data provider instance of {@link ContractDataProvider}.
-   */
   @SpringBean(name = CONTRACT_DATA_PROVIDER_NAME, required = true)
   private transient IGenericTypeDataProvider<Contract> contractDataProvider;
 
-  /**
-   * Reference to the {@link PostalCode} data provider instance of {@link PostalCodeDataProvider}.
-   */
   @SpringBean(name = POSTAL_CODE_DATA_PROVIDER_NAME, required = true)
   private transient IGenericTypeDataProvider<PostalCode> postalCodeDataProvider;
 
-  /**
-   * Constructor that initialize the {@link AccountLoginOrEditPanel} presenting or the registration
-   * form fragment or the login form fragment.
-   *
-   * @param id The component id.
-   * @param model The component's {@link Contract} model.
-   */
   public AccountLoginOrEditPanel(final String id, final IModel<Contract> model) {
     super(id, model);
   }
 
-  /**
-   * {@inheritDoc}.
-   */
   @Override
   protected void onInitialize() {
-    contractDataProvider.setUser(AppServletContainerAuthenticatedWebSession.getUserName());
-    contractDataProvider.setPassword(AppServletContainerAuthenticatedWebSession.getPassword());
-    contractDataProvider.setSite(AppServletContainerAuthenticatedWebSession.getSite());
+    initializeContractDataProvider();
+    initializePostalCodeDataProvider();
+    super.onInitialize();
+  }
+
+  private void initializeContractDataProvider() {
+    LOGGER.debug("Setting up the contract data provider using the next values: user=[{}] site=[{}]", getUserName(),
+        getSite());
+    contractDataProvider.setUser(getUserName());
+    contractDataProvider.setPassword(getPassword());
+    contractDataProvider.setSite(getSite());
     contractDataProvider.setType(new Contract());
     contractDataProvider.getType().setActive(true);
-    postalCodeDataProvider.setUser(AppServletContainerAuthenticatedWebSession.getUserName());
-    postalCodeDataProvider.setPassword(AppServletContainerAuthenticatedWebSession.getPassword());
-    postalCodeDataProvider.setSite(AppServletContainerAuthenticatedWebSession.getSite());
+  }
+
+  private void initializePostalCodeDataProvider() {
+    LOGGER.debug("Setting up the postal code data provider using the next values: user=[{}] site=[{}]", getUserName(),
+        getSite());
+    postalCodeDataProvider.setUser(getUserName());
+    postalCodeDataProvider.setPassword(getPassword());
+    postalCodeDataProvider.setSite(getSite());
     postalCodeDataProvider.setType(new PostalCode());
     postalCodeDataProvider.getType().setCountryCode("BR"); // FIXME: No fixed value for Brazil.
-    super.onInitialize();
   }
 }

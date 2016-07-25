@@ -17,6 +17,7 @@ package br.com.netbrasoft.gnuob.shop.specification;
 import static br.com.netbrasoft.gnuob.api.generic.NetbrasoftApiConstants.CONTRACT_DATA_PROVIDER_NAME;
 import static br.com.netbrasoft.gnuob.api.generic.NetbrasoftApiConstants.ORDER_DATA_PROVIDER_NAME;
 import static br.com.netbrasoft.gnuob.api.generic.NetbrasoftApiConstants.POSTAL_CODE_DATA_PROVIDER_NAME;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.SHOPPER_DATA_PROVIDER_NAME;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
@@ -62,17 +63,15 @@ import br.com.netbrasoft.gnuob.api.Order;
 import br.com.netbrasoft.gnuob.api.OrderBy;
 import br.com.netbrasoft.gnuob.api.OrderRecord;
 import br.com.netbrasoft.gnuob.api.PostalCode;
+import br.com.netbrasoft.gnuob.api.generic.IGenericTypeDataProvider;
+import br.com.netbrasoft.gnuob.api.generic.converter.CurrencyConverter;
+import br.com.netbrasoft.gnuob.api.order.IGenericOrderCheckoutDataProvider;
+import br.com.netbrasoft.gnuob.api.order.OrderDataProvider.PaymentProviderEnum;
 import br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants;
 import br.com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
 import br.com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
 import br.com.netbrasoft.gnuob.shop.security.ShopRoles;
 import br.com.netbrasoft.gnuob.shop.shopper.Shopper;
-import br.com.netbrasoft.gnuob.shop.shopper.ShopperDataProvider;
-
-import br.com.netbrasoft.gnuob.api.generic.IGenericTypeDataProvider;
-import br.com.netbrasoft.gnuob.api.generic.converter.CurrencyConverter;
-import br.com.netbrasoft.gnuob.api.order.IGenericOrderCheckoutDataProvider;
-import br.com.netbrasoft.gnuob.api.order.OrderDataProvider.PaymentProviderEnum;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapAjaxButton;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.Buttons;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.Buttons.Type;
@@ -684,7 +683,7 @@ public class SpecificationEmptyOrEditPanel extends Panel {
 
   private static final long serialVersionUID = 293941244262646336L;
 
-  @SpringBean(name = ShopperDataProvider.SHOPPER_DATA_PROVIDER_NAME, required = true)
+  @SpringBean(name = SHOPPER_DATA_PROVIDER_NAME, required = true)
   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
   @SpringBean(name = CONTRACT_DATA_PROVIDER_NAME, required = true)

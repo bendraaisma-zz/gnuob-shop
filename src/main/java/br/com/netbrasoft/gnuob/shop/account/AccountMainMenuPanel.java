@@ -14,31 +14,37 @@
 
 package br.com.netbrasoft.gnuob.shop.account;
 
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.ACCOUNT_MESSAGE_KEY;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.CHECKOUT_MESSAGE_KEY;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.HOME_MESSAGE_KEY;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.MAIN_MENU_TABBED_PANEL_ID;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.NAV_NAV_PILLS_NAV_JUSTIFIED_CSS_CLASS;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.WISH_LIST_MESSAGE_KEY;
+import static br.com.netbrasoft.gnuob.shop.security.ShopRoles.GUEST;
+import static com.google.common.collect.Lists.newArrayList;
+import static org.apache.wicket.model.Model.of;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
+import org.apache.wicket.extensions.markup.html.tabs.AbstractTab;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 
-import br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants;
 import br.com.netbrasoft.gnuob.shop.page.tab.CheckoutTab;
 import br.com.netbrasoft.gnuob.shop.page.tab.HomeTab;
 import br.com.netbrasoft.gnuob.shop.page.tab.WishListTab;
-import br.com.netbrasoft.gnuob.shop.security.ShopRoles;
-
 import de.agilecoders.wicket.core.markup.html.bootstrap.tabs.BootstrapTabbedPanel;
 
-@AuthorizeAction(action = Action.RENDER, roles = {ShopRoles.GUEST})
+@AuthorizeAction(action = Action.RENDER, roles = {GUEST})
 public class AccountMainMenuPanel extends Panel {
 
-  @AuthorizeAction(action = Action.ENABLE, roles = {ShopRoles.GUEST})
+  @AuthorizeAction(action = Action.ENABLE, roles = {GUEST})
   class MainMenuTabbedPanel extends BootstrapTabbedPanel<ITab> {
-
-    private static final String NAV_NAV_PILLS_NAV_JUSTIFIED_CSS_CLASS = "nav nav-pills nav-justified";
 
     private static final long serialVersionUID = 6838221105862530322L;
 
@@ -52,35 +58,47 @@ public class AccountMainMenuPanel extends Panel {
     }
   }
 
-  private static final int SELECTED_TAB = 1;
-
-  private static final String MAIN_MENU_TABBED_PANEL_ID = "mainMenuTabbedPanel";
-
   private static final long serialVersionUID = 4037036072135523233L;
-
-  private final MainMenuTabbedPanel mainMenuTabbedPanel;
+  private static final int SELECTED_TAB = 1;
 
   public AccountMainMenuPanel(final String id) {
     super(id);
-    mainMenuTabbedPanel = new MainMenuTabbedPanel(MAIN_MENU_TABBED_PANEL_ID, new ArrayList<ITab>(), null);
   }
 
   @Override
   protected void onInitialize() {
-    final HomeTab homeTab =
-        new HomeTab(Model.of(AccountMainMenuPanel.this.getString(NetbrasoftShopConstants.HOME_MESSAGE_KEY)));
-    final AccountTab accountTab =
-        new AccountTab(Model.of(AccountMainMenuPanel.this.getString(NetbrasoftShopConstants.ACCOUNT_MESSAGE_KEY)));
-    final WishListTab wishListTab =
-        new WishListTab(Model.of(AccountMainMenuPanel.this.getString(NetbrasoftShopConstants.WISH_LIST_MESSAGE_KEY)));
-    final CheckoutTab checkoutTab =
-        new CheckoutTab(Model.of(AccountMainMenuPanel.this.getString(NetbrasoftShopConstants.CHECKOUT_MESSAGE_KEY)));
-    mainMenuTabbedPanel.getTabs().add(homeTab);
-    mainMenuTabbedPanel.getTabs().add(accountTab);
-    mainMenuTabbedPanel.getTabs().add(wishListTab);
-    mainMenuTabbedPanel.getTabs().add(checkoutTab);
-    mainMenuTabbedPanel.setSelectedTab(SELECTED_TAB);
-    add(mainMenuTabbedPanel.setOutputMarkupId(true));
+    add(getMainMenuTabbedPanelComponent());
     super.onInitialize();
+  }
+
+  private Component getMainMenuTabbedPanelComponent() {
+    final MainMenuTabbedPanel mainMenuTabbedPanel = getMainMenuTabbedPanel();
+    mainMenuTabbedPanel.getTabs().addAll(getTabs());
+    mainMenuTabbedPanel.setSelectedTab(SELECTED_TAB);
+    return mainMenuTabbedPanel.setOutputMarkupId(true);
+  }
+
+  private MainMenuTabbedPanel getMainMenuTabbedPanel() {
+    return new MainMenuTabbedPanel(MAIN_MENU_TABBED_PANEL_ID, new ArrayList<ITab>(), null);
+  }
+
+  private List<AbstractTab> getTabs() {
+    return newArrayList(getHomeTab(), getAccountTab(), getWishListTab(), getCheckoutTab());
+  }
+
+  private HomeTab getHomeTab() {
+    return new HomeTab(of(AccountMainMenuPanel.this.getString(HOME_MESSAGE_KEY)));
+  }
+
+  private AccountTab getAccountTab() {
+    return new AccountTab(of(AccountMainMenuPanel.this.getString(ACCOUNT_MESSAGE_KEY)));
+  }
+
+  private WishListTab getWishListTab() {
+    return new WishListTab(of(AccountMainMenuPanel.this.getString(WISH_LIST_MESSAGE_KEY)));
+  }
+
+  private CheckoutTab getCheckoutTab() {
+    return new CheckoutTab(of(AccountMainMenuPanel.this.getString(CHECKOUT_MESSAGE_KEY)));
   }
 }

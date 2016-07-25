@@ -1,6 +1,7 @@
 package br.com.netbrasoft.gnuob.shop.page;
 
 import static br.com.netbrasoft.gnuob.api.generic.NetbrasoftApiConstants.CONTRACT_DATA_PROVIDER_NAME;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.SHOPPER_DATA_PROVIDER_NAME;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -26,21 +27,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
-import br.com.netbrasoft.gnuob.api.Contract;
-import br.com.netbrasoft.gnuob.api.OrderBy;
-import br.com.netbrasoft.gnuob.shop.authentication.OAuthUtils;
-import br.com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
-import br.com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
-import br.com.netbrasoft.gnuob.shop.security.ShopRoles;
-import br.com.netbrasoft.gnuob.shop.shopper.Shopper;
-import br.com.netbrasoft.gnuob.shop.shopper.ShopperDataProvider;
 import com.nimbusds.oauth2.sdk.id.ClientID;
 import com.nimbusds.oauth2.sdk.id.State;
 import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
 
+import br.com.netbrasoft.gnuob.api.Contract;
+import br.com.netbrasoft.gnuob.api.OrderBy;
 import br.com.netbrasoft.gnuob.api.generic.GNUOpenBusinessApplicationException;
 import br.com.netbrasoft.gnuob.api.generic.IGenericTypeDataProvider;
+import br.com.netbrasoft.gnuob.shop.authentication.OAuthUtils;
+import br.com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
+import br.com.netbrasoft.gnuob.shop.generic.GenericTypeCacheDataProvider;
+import br.com.netbrasoft.gnuob.shop.security.ShopRoles;
+import br.com.netbrasoft.gnuob.shop.shopper.Shopper;
 import de.agilecoders.wicket.core.Bootstrap;
 import de.agilecoders.wicket.core.settings.IBootstrapSettings;
 import de.agilecoders.wicket.extensions.markup.html.bootstrap.confirmation.ConfirmationBehavior;
@@ -80,7 +80,7 @@ public abstract class BasePage extends WebPage implements IAjaxIndicatorAware {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(BasePage.class);
 
-  @SpringBean(name = ShopperDataProvider.SHOPPER_DATA_PROVIDER_NAME, required = true)
+  @SpringBean(name = SHOPPER_DATA_PROVIDER_NAME, required = true)
   private transient GenericTypeCacheDataProvider<Shopper> shopperDataProvider;
 
   @SpringBean(name = CONTRACT_DATA_PROVIDER_NAME, required = true)
@@ -132,9 +132,9 @@ public abstract class BasePage extends WebPage implements IAjaxIndicatorAware {
     final URI requestURI = URI.create(getRequest().getClientUrl().toString());
     final URI redirectURI = URI.create(
         System.getProperty("gnuob." + AppServletContainerAuthenticatedWebSession.getSite() + ".login.redirect"));
-    final OIDCProviderMetadata providerConfiguration = OAuthUtils.getProviderConfigurationURL(issuerURI);
+    final OIDCProviderMetadata providerConfiguration = OAuthUtils.getOIDCProviderMetaData(issuerURI);
     return OAuthUtils.getUserInfo(providerConfiguration, clientID, state, requestURI, redirectURI,
-        OAuthUtils.getClientSecret(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI));
+        OAuthUtils.getSecret(AppServletContainerAuthenticatedWebSession.getSite(), issuerURI));
   }
 
   private void initializeContractDataProvider() {

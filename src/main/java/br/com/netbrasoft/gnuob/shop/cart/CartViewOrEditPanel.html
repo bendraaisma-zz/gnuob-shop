@@ -2,7 +2,9 @@
    <wicket:container wicket:id="cartOfferRecordViewOrEditFragment" />
    <wicket:fragment wicket:id="cartOfferRecordEditFragment">
       <div wicket:id="cartOfferRecordEditContainer">
-         <form wicket:id="cartOfferRecordEditForm" action="">
+         <form
+            wicket:id="cartOfferRecordEditForm"
+            action="">
             <div class="col-md-6">
                <div wicket:id="productCarousel"></div>
             </div>
@@ -14,23 +16,30 @@
                   <span wicket:id="rating"></span>
                </p>
                <h5>
-                  <small><wicket:message key="quantityMessage" />&nbsp;<span wicket:id="product.stock.quantity"></span></small>
+                  <small><wicket:message key="quantityMessage" />&nbsp;<span
+                     wicket:id="product.stock.quantity"></span></small>
                </h5>
                <br>
                <h4>
-                  <span wicket:id="amount"></span>&nbsp;<small><span style="text-decoration: line-through;" wicket:id="product.amount"></span></small>
+                  <span wicket:id="amount"></span>&nbsp;<small><span
+                     style="text-decoration: line-through;"
+                     wicket:id="product.amount"></span></small>
                </h4>
                <br>
                <h5>
                   <wicket:message key="quantityMessage" />
                </h5>
-               <select wicket:id="quantity" class="form-control input-sm"></select>
+               <select
+                  wicket:id="quantity"
+                  class="form-control input-sm"></select>
                <h5>
                   <wicket:message key="optionMessage" />
                </h5>
                <wicket:container wicket:id="optionDataviewContainer">
                   <wicket:container wicket:id="optionDataview">
-                     <select wicket:id="option" class="form-control input-sm"></select>
+                     <select
+                        wicket:id="option"
+                        class="form-control input-sm"></select>
                      <br>
                   </wicket:container>
                </wicket:container>

@@ -1,7 +1,11 @@
 package br.com.netbrasoft.gnuob.shop.shopper;
 
+import static org.springframework.beans.BeanUtils.copyProperties;
+
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 
@@ -18,6 +22,8 @@ import br.com.netbrasoft.gnuob.api.Offer;
 import br.com.netbrasoft.gnuob.api.OfferRecord;
 import br.com.netbrasoft.gnuob.api.Option;
 import br.com.netbrasoft.gnuob.api.Order;
+import br.com.netbrasoft.gnuob.api.OrderRecord;
+import br.com.netbrasoft.gnuob.api.Product;
 import br.com.netbrasoft.gnuob.api.Shipment;
 import br.com.netbrasoft.gnuob.api.SubOption;
 
@@ -42,6 +48,10 @@ public class Shopper implements IClusterable {
 
   private boolean loggedIn = false;
 
+  public static final Shopper getInstance() {
+    return new Shopper();
+  }
+
   public synchronized void calculateCart() {
     calculateDiscountTotal();
     calculateHandlingTotal();
@@ -61,7 +71,8 @@ public class Shopper implements IClusterable {
       if (offerRecord.getDiscount() == null) {
         offerRecord.setDiscount(offerRecord.getProduct().getDiscount());
       }
-      discountTotal = discountTotal.add(offerRecord.getDiscount().multiply(BigDecimal.valueOf(offerRecord.getQuantity().longValue())));
+      discountTotal = discountTotal
+          .add(offerRecord.getDiscount().multiply(BigDecimal.valueOf(offerRecord.getQuantity().longValue())));
     }
     cart.setDiscountTotal(discountTotal);
   }
@@ -94,7 +105,8 @@ public class Shopper implements IClusterable {
           offerRecord.setAmount(offerRecord.getProduct().getAmount().subtract(offerRecord.getDiscount()));
         }
       }
-      itemTotal = itemTotal.add(offerRecord.getAmount().multiply(BigDecimal.valueOf(offerRecord.getQuantity().longValue())));
+      itemTotal =
+          itemTotal.add(offerRecord.getAmount().multiply(BigDecimal.valueOf(offerRecord.getQuantity().longValue())));
     }
     cart.setItemTotal(itemTotal);
   }
@@ -107,7 +119,8 @@ public class Shopper implements IClusterable {
 
   private void calculateOfferTotal() {
     BigDecimal offerTotal = BigDecimal.ZERO;
-    offerTotal = offerTotal.add(cart.getItemTotal()).add(cart.getShippingTotal()).subtract(cart.getShippingDiscount()).add(cart.getExtraAmount());
+    offerTotal = offerTotal.add(cart.getItemTotal()).add(cart.getShippingTotal()).subtract(cart.getShippingDiscount())
+        .add(cart.getExtraAmount());
     cart.setOfferTotal(offerTotal);
   }
 
@@ -123,7 +136,8 @@ public class Shopper implements IClusterable {
       if (offerRecord.getShippingCost() == null) {
         offerRecord.setShippingCost(offerRecord.getProduct().getShippingCost());
       }
-      shippingTotal = shippingTotal.add(offerRecord.getShippingCost().multiply(new BigDecimal(offerRecord.getQuantity())));
+      shippingTotal =
+          shippingTotal.add(offerRecord.getShippingCost().multiply(new BigDecimal(offerRecord.getQuantity())));
     }
     cart.setShippingTotal(shippingTotal);
   }
@@ -139,18 +153,45 @@ public class Shopper implements IClusterable {
     cart.setTaxTotal(taxTotal);
   }
 
+  public void addToCart(Product product) {
+    final OfferRecord offerRecord = new OfferRecord();
+    BeanUtils.copyProperties(product, offerRecord, ID_IGNORE_PROPERTIES, VERSION_IGNORE_PROPERTIES);
+    offerRecord.setProduct(product);
+    offerRecord.setProductNumber(product.getNumber());
+    offerRecord.setAmount(product.getAmount().subtract(product.getDiscount()));
+    offerRecord.setQuantity(BigInteger.ONE);
+    for (final Option rootOption : product.getOptions().stream().filter(e -> !e.isDisabled())
+        .collect(Collectors.toList())) {
+      final Option offerRecordRootOption = new Option();
+      BeanUtils.copyProperties(rootOption, offerRecordRootOption, ID_IGNORE_PROPERTIES, VERSION_IGNORE_PROPERTIES);
+      final SubOption offerRecordChildSubOption = new SubOption();
+      BeanUtils.copyProperties(rootOption.getSubOptions().stream().filter(e -> !e.isDisabled()).findFirst(),
+          offerRecordChildSubOption, ID_IGNORE_PROPERTIES, VERSION_IGNORE_PROPERTIES);
+      offerRecordRootOption.getSubOptions().add(offerRecordChildSubOption);
+      offerRecord.getOptions().add(offerRecordRootOption);
+    }
+    cart.getRecords().add(0, offerRecord);
+  }
+
+  public void emptyCart(final Contract contract) {
+    cart = copyPropertiesCart(cart);
+    cart.setContract(contract);
+    cart.setActive(true);
+  }
+
   private Offer copyPropertiesCart(final Offer sourceOffer) {
     final Offer targetOffer = new Offer();
-    BeanUtils.copyProperties(sourceOffer, targetOffer, ID_IGNORE_PROPERTIES, VERSION_IGNORE_PROPERTIES, PERMISSION_IGNORE_PROPERTIES);
+    copyProperties(sourceOffer, targetOffer, ID_IGNORE_PROPERTIES, VERSION_IGNORE_PROPERTIES,
+        PERMISSION_IGNORE_PROPERTIES);
     for (final OfferRecord sourceOfferRecord : sourceOffer.getRecords()) {
       final OfferRecord targetOfferRecord = new OfferRecord();
-      BeanUtils.copyProperties(sourceOfferRecord, targetOfferRecord, ID_IGNORE_PROPERTIES, VERSION_IGNORE_PROPERTIES);
+      copyProperties(sourceOfferRecord, targetOfferRecord, ID_IGNORE_PROPERTIES, VERSION_IGNORE_PROPERTIES);
       for (final Option sourceRootOption : sourceOfferRecord.getOptions()) {
         final Option targetRootOption = new Option();
-        BeanUtils.copyProperties(sourceRootOption, targetRootOption, ID_IGNORE_PROPERTIES, VERSION_IGNORE_PROPERTIES);
+        copyProperties(sourceRootOption, targetRootOption, ID_IGNORE_PROPERTIES, VERSION_IGNORE_PROPERTIES);
         for (final SubOption sourceChildSubOption : sourceRootOption.getSubOptions()) {
           final SubOption targetChildSubOption = new SubOption();
-          BeanUtils.copyProperties(sourceChildSubOption, targetChildSubOption, ID_IGNORE_PROPERTIES, VERSION_IGNORE_PROPERTIES);
+          copyProperties(sourceChildSubOption, targetChildSubOption, ID_IGNORE_PROPERTIES, VERSION_IGNORE_PROPERTIES);
           targetRootOption.getSubOptions().add(targetChildSubOption);
         }
         targetOfferRecord.getOptions().add(targetRootOption);
@@ -158,12 +199,6 @@ public class Shopper implements IClusterable {
       targetOffer.getRecords().add(targetOfferRecord);
     }
     return targetOffer;
-  }
-
-  public void emptyCart(final Contract contract) {
-    cart = copyPropertiesCart(cart);
-    cart.setContract(contract);
-    cart.setActive(true);
   }
 
   public void emptyCheckOut(final Contract contract) {
@@ -210,7 +245,8 @@ public class Shopper implements IClusterable {
   }
 
   public synchronized boolean login() {
-    return issuer != null && !"".equals(issuer) && RequestCycle.get().getRequest().getClientUrl().getQueryParameter("state") != null;
+    return issuer != null && !"".equals(issuer)
+        && RequestCycle.get().getRequest().getClientUrl().getQueryParameter("state") != null;
   }
 
   public synchronized void logout() {
@@ -229,17 +265,50 @@ public class Shopper implements IClusterable {
     this.checkout = checkout;
   }
 
-  public synchronized void setContract(@NotNull final Contract contract) {
-    this.cart.setContract(contract);
-    this.checkout.setContract(contract);
+  public void setCheckOutByOffer(Offer offer) {
+    copyProperties(offer, checkout, ID_IGNORE_PROPERTIES, VERSION_IGNORE_PROPERTIES);
+    for (final OfferRecord offerRecord : offer.getRecords()) {
+      final OrderRecord orderRecord = new OrderRecord();
+      copyProperties(offerRecord, orderRecord, ID_IGNORE_PROPERTIES, VERSION_IGNORE_PROPERTIES);
+      for (final Option offerRecordOption : offerRecord.getOptions()) {
+        final Option option = new Option();
+        copyProperties(offerRecordOption, option, ID_IGNORE_PROPERTIES, VERSION_IGNORE_PROPERTIES);
+        for (final SubOption offerRecordSubOption : offerRecordOption.getSubOptions()) {
+          final SubOption subOption = new SubOption();
+          copyProperties(offerRecordSubOption, subOption, ID_IGNORE_PROPERTIES, VERSION_IGNORE_PROPERTIES);
+          option.getSubOptions().add(subOption);
+        }
+        orderRecord.getOptions().add(option);
+      }
+      checkout.getRecords().add(orderRecord);
+    }
+    checkout.setOrderTotal(offer.getOfferTotal());
+    checkout.setOrderDescription(offer.getOfferDescription());
+    checkout.setInvoice(new Invoice());
+    checkout.setShipment(new Shipment());
+    checkout.getInvoice().setAddress(new Address());
+    checkout.getShipment().setAddress(new Address());
+    if (cart.getContract() != null) {
+      copyProperties(cart.getContract().getCustomer().getAddress(), checkout.getInvoice().getAddress(),
+          ID_IGNORE_PROPERTIES, VERSION_IGNORE_PROPERTIES);
+      copyProperties(cart.getContract().getCustomer().getAddress(), checkout.getShipment().getAddress(),
+          ID_IGNORE_PROPERTIES, VERSION_IGNORE_PROPERTIES);
+    }
+  }
+
+  public synchronized Shopper setContract(@NotNull final Contract contract) {
+    cart.setContract(contract);
+    checkout.setContract(contract);
+    return this;
   }
 
   public void setId(final String id) {
     this.id = id;
   }
 
-  public synchronized void setIssuer(@NotNull final String issuer) {
+  public synchronized Shopper setIssuer(@NotNull final String issuer) {
     this.issuer = issuer;
+    return this;
   }
 
   public void setLoggedIn(final boolean loggedIn) {

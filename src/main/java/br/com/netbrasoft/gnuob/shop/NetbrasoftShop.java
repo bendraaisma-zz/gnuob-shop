@@ -14,14 +14,16 @@
 
 package br.com.netbrasoft.gnuob.shop;
 
-import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.CDNJS_CLOUDFLARE_COM_80_DEF;
-import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.FALSE_DEF;
-import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.GNUOB_SITE_CDN_ENABLED_KEY;
-import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.GNUOB_SITE_CDN_URL_KEY;
-import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.GNUOB_SITE_ENCRYPTION_KEY;
-import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.INSPECTOR_PAGE_HTML;
-import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.NETBRASOFT_SHOPPING_JAVASCRIPT_CONTAINER_NAME;
-import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.WICKET_APPLICATION_VALUE;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.CDNJS_CLOUDFLARE_COM;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.FALSE;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.CDN_ENABLED_KEY;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.CDN_URL_KEY;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.SITE_ENCRYPTION_KEY;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.INSPECTOR_PAGE;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.JAVASCRIPT_RESOURCE_FILTER_NAME;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.WICKET_APPLICATION;
+import static br.com.netbrasoft.gnuob.shop.NetbrasoftShopConstants.getProperty;
+import static java.lang.Boolean.valueOf;
 import static org.apache.wicket.RuntimeConfigurationType.DEVELOPMENT;
 import static org.apache.wicket.settings.SecuritySettings.DEFAULT_ENCRYPTION_KEY;
 
@@ -41,15 +43,13 @@ import org.springframework.stereotype.Service;
 import org.wicketstuff.wicket.servlet3.auth.ServletContainerAuthenticatedWebApplication;
 import org.wicketstuff.wicket.servlet3.auth.ServletContainerAuthenticatedWebSession;
 
+import br.com.netbrasoft.gnuob.api.generic.converter.XmlGregorianCalendarConverter;
 import br.com.netbrasoft.gnuob.shop.authorization.AppServletContainerAuthenticatedWebSession;
-import br.com.netbrasoft.gnuob.shop.html.NetbrasoftShopTheme;
 import br.com.netbrasoft.gnuob.shop.html.NetbrasoftShopThemeProvider;
 import br.com.netbrasoft.gnuob.shop.page.MainPage;
 import br.com.netbrasoft.gnuob.shop.page.SignInPage;
 import br.com.netbrasoft.gnuob.shop.page.error.AccessDeniedPage;
 import br.com.netbrasoft.gnuob.shop.page.error.InternalErrorPage;
-
-import br.com.netbrasoft.gnuob.api.generic.converter.XmlGregorianCalendarConverter;
 import de.agilecoders.wicket.core.Bootstrap;
 import de.agilecoders.wicket.core.markup.html.RenderJavaScriptToFooterHeaderResponseDecorator;
 import de.agilecoders.wicket.core.settings.BootstrapSettings;
@@ -58,27 +58,20 @@ import de.agilecoders.wicket.webjars.WicketWebjars;
 import de.agilecoders.wicket.webjars.settings.WebjarsSettings;
 import net.ftlines.wicketsource.WicketSource;
 
-/**
- * Central location where the custom Wicket-, Bootstrap- and Web-jars configuration setup is managed
- * for running the web application correctly on WildFly application server.
- *
- * @author "Bernard Arjan Draaisma"
- * @version 1.0
- */
 @EnableCaching
-@Service(WICKET_APPLICATION_VALUE)
+@Service(WICKET_APPLICATION)
 public class NetbrasoftShop extends ServletContainerAuthenticatedWebApplication {
 
   private static final BootstrapSettings BOOTSTRAP_SETTINGS = new BootstrapSettings();
   private static final WebjarsSettings WEBJARS_SETTINGS = new WebjarsSettings();
 
   static {
-    BOOTSTRAP_SETTINGS.useCdnResources(Boolean.valueOf(System.getProperty(GNUOB_SITE_CDN_ENABLED_KEY, FALSE_DEF)));
-    BOOTSTRAP_SETTINGS.setJsResourceFilterName(NETBRASOFT_SHOPPING_JAVASCRIPT_CONTAINER_NAME);
-    BOOTSTRAP_SETTINGS.setThemeProvider(new NetbrasoftShopThemeProvider(NetbrasoftShopTheme.Localhost));
+    BOOTSTRAP_SETTINGS.useCdnResources(valueOf(getProperty(CDN_ENABLED_KEY, FALSE)));
+    BOOTSTRAP_SETTINGS.setJsResourceFilterName(JAVASCRIPT_RESOURCE_FILTER_NAME);
+    BOOTSTRAP_SETTINGS.setThemeProvider(NetbrasoftShopThemeProvider.getInstance());
     BOOTSTRAP_SETTINGS.setActiveThemeProvider(new CookieThemeProvider());
-    WEBJARS_SETTINGS.cdnUrl(System.getProperty(GNUOB_SITE_CDN_URL_KEY, CDNJS_CLOUDFLARE_COM_80_DEF));
-    WEBJARS_SETTINGS.useCdnResources(Boolean.valueOf(System.getProperty(GNUOB_SITE_CDN_ENABLED_KEY, FALSE_DEF)));
+    WEBJARS_SETTINGS.cdnUrl(getProperty(CDN_URL_KEY, CDNJS_CLOUDFLARE_COM));
+    WEBJARS_SETTINGS.useCdnResources(valueOf(getProperty(CDN_ENABLED_KEY, FALSE)));
   }
 
   @Override
@@ -118,8 +111,8 @@ public class NetbrasoftShop extends ServletContainerAuthenticatedWebApplication 
   }
 
   private void setupSecurityCryptoFactorySettings() {
-    getSecuritySettings().setCryptFactory(
-        new CachingSunJceCryptFactory(System.getProperty(GNUOB_SITE_ENCRYPTION_KEY, DEFAULT_ENCRYPTION_KEY)));
+    getSecuritySettings()
+        .setCryptFactory(new CachingSunJceCryptFactory(getProperty(SITE_ENCRYPTION_KEY, DEFAULT_ENCRYPTION_KEY)));
   }
 
   private void setupJavaScriptToFooterHeaderResponseDecorator() {
@@ -147,7 +140,7 @@ public class NetbrasoftShop extends ServletContainerAuthenticatedWebApplication 
   }
 
   private void mountInspectorPage() {
-    mountPage(INSPECTOR_PAGE_HTML, InspectorPage.class);
+    mountPage(INSPECTOR_PAGE, InspectorPage.class);
   }
 
   private void enableDevelopmentUtilsAndAjaxDebugMode() {
