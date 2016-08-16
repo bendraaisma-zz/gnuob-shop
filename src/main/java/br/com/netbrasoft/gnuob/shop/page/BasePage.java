@@ -178,11 +178,9 @@ public abstract class BasePage extends WebPage implements IAjaxIndicatorAware {
 
   private void saveOrLoadShopperContract(final Shopper shopper) {
     contractDataProvider.setType(shopper.getContract());
-    final Iterator<? extends Contract> iterator = contractDataProvider.iterator(0, 1);
-    if (iterator.hasNext()) {
+    if (contractDataProvider.size() > 0) {
+      final Iterator<? extends Contract> iterator = contractDataProvider.iterator(0, 1);
       shopper.setContract(iterator.next());
-    } else {
-      shopper.setContract(contractDataProvider.persist(shopper.getContract()));
     }
   }
 }
